@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Tao Wu" />
+<meta name="author" content="Xue-Song Liu (Corresponding author)" />
+
+<meta name="date" content="2020-11-09" />
+
+<title>Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</title>
+
+<script src="report_main_files/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="report_main_files/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+<script src="report_main_files/bootstrap-3.3.7/js/bootstrap.min.js"></script>
+<script src="report_main_files/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<script src="report_main_files/navigation-1.1/tabsets.js"></script>
+<script src="report_main_files/navigation-1.1/codefolding.js"></script>
+<link href="report_main_files/magnific-popup-1.1.0/magnific-popup.css" rel="stylesheet" />
+<script src="report_main_files/magnific-popup-1.1.0/jquery.magnific-popup.min.js"></script>
+<link href="report_main_files/readthedown-0.1/readthedown.css" rel="stylesheet" />
+<script src="report_main_files/readthedown-0.1/readthedown.js"></script>
+<script src="report_main_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="report_main_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="report_main_files/datatables-binding-0.13/datatables.js"></script>
+<link href="report_main_files/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="report_main_files/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="report_main_files/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
+<link href="report_main_files/crosstalk-1.1.0.1/css/crosstalk.css" rel="stylesheet" />
+<script src="report_main_files/crosstalk-1.1.0.1/js/crosstalk.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+</style>
+
+
+</head>
+
+<body>
+
+
+<div id="content" data-toggle="wy-nav-shift">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("text-table-of-contents");
+});
+</script>
+
+<!-- code folding -->
+
+<nav id="nav-top" role="navigation" aria-label="top navigation">
+    <a role="button" href="#" data-toggle="wy-nav-top"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+</nav>
+
+
+<div id="header">
+<h1 class="title">Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</h1>
+</div>
+
+
+<div id="sidebar">
+    <h2><a href="#content">Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</a></h2>
+    <div id="table-of-contents">
+      <ul>
+      <li><a href="#dependencies">Dependencies</a></li>
+      <li><a href="#data-download-and-preprocessing">Data download and preprocessing</a><ul>
+      <li><a href="#tcga-pancancer-data-download-and-clean">TCGA pancancer data download and clean</a><ul>
+      <li><a href="#mutation-data">Mutation data</a></li>
+      <li><a href="#copy-number-data">Copy number data</a></li>
+      <li><a href="#clinical-and-purity-data">Clinical and purity data</a></li>
+      <li><a href="#hla-typing-data">HLA typing data</a></li>
+      <li><a href="#immune-infiltration-data">Immune infiltration data</a></li>
+      <li><a href="#rna-seq-data">RNA-seq data</a></li>
+      </ul></li>
+      <li><a href="#tcga-pancancer-data-pre-process">TCGA pancancer data pre-process</a><ul>
+      <li><a href="#calculate-ccf-and-add-expression">Calculate ccf and add expression</a></li>
+      <li><a href="#calculate-neoantigen-enrichment-score">Calculate Neoantigen Enrichment score</a></li>
+      </ul></li>
+      </ul></li>
+      </ul>
+    </div>
+    
+    <div id="postamble" data-toggle="wy-nav-shift" class="status">
+              <p class="author"><span class="glyphicon glyphicon-user"></span> Tao Wu</p>
+                  <p class="author"><span class="glyphicon glyphicon-user"></span> Xue-Song Liu (Corresponding author)</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-11-09</p>
+        </div>
+</div>
+
+<div id="main">
+<div id="dependencies" class="section level1">
+<h1>Dependencies</h1>
+<p>This project is depended on R software, R packages, shell bash, Julia software and some Julia packages :</p>
+<ul>
+<li><a href="https://github.com/wt12318/NeoEnrichment">NeoEnrichment</a> - do neoantigen enrichment for this project.</li>
+<li><a href="https://www.tidyverse.org/">tidyverse</a> - tidy data</li>
+<li><a href="https://github.com/Rdatatable/data.table">data.table</a> - read and tidy data</li>
+<li><a href="https://github.com/therneau/survival">survival</a> - survival analysis</li>
+<li><a href="https://github.com/kassambara/survminer">survminer</a> - plot survival fit</li>
+<li><a href="https://cran.r-project.org/web/packages/DT/index.html">DT</a> - show data table as a table in html</li>
+<li><a href="https://github.com/IndrajeetPatil/ggstatsplot">ggstatsplot</a> - plot scatter with linear fit</li>
+<li><a href="https://cran.r-project.org/web/packages/corrplot/">corrplot</a> - plot correlation</li>
+<li><a href="https://julialang.org/">Julia</a> - do simulation</li>
+<li>knitr, rmdformats - used to compile this file</li>
+</ul>
+</div>
+<div id="data-download-and-preprocessing" class="section level1">
+<h1>Data download and preprocessing</h1>
+<p>This part will describe how and where the data that this project used is downloaded and pre-processed.</p>
+<div id="tcga-pancancer-data-download-and-clean" class="section level2">
+<h2>TCGA pancancer data download and clean</h2>
+<p>This part describes how and where to download raw data and clean them for following analysis.</p>
+<div id="mutation-data" class="section level3">
+<h3>Mutation data</h3>
+<p>Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from <a href="https://xenabrowser.net/datapages/?dataset=GDC-PANCAN.mutect2_snv.tsv&amp;host=https%3A%2F%2Fgdc.xenahubs.net&amp;removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443">Xena</a> and only keep missense variants for following analysis</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">mutect2 &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/useful_data/GDC-PANCAN.mutect2_snv.tsv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(effect<span class="op">==</span><span class="st">&quot;missense_variant&quot;</span> <span class="op">&amp;</span><span class="st"> </span>filter<span class="op">==</span><span class="st">&quot;PASS&quot;</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">saveRDS</span>(mutect2,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_mutation.rds&quot;</span>)</a></code></pre></div>
+<p>view this file:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">pancancer_mutation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_mutation.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(pancancer_mutation),</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">)</a></code></pre></div>
+<div id="htmlwidget-c351af6d5a522acec58d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c351af6d5a522acec58d">{"x":{"filter":"none","data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="copy-number-data" class="section level3">
+<h3>Copy number data</h3>
+<p>Absolute copy number data was download from <a href="https://portal.gdc.cancer.gov/repository?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_type%22%2C%22value%22%3A%5B%22Allele-specific%20Copy%20Number%20Segment%22%5D%7D%7D%5D%7D">TCGA GDC Data Portal</a>, then we converted the aliquot id of those files to TCGA sample barcode using <code>aliquot.tsv</code> (check Biosepcimen botton in the GDC Cart to download)</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="co">###convert id</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">nameconvert &lt;-<span class="st"> </span><span class="cf">function</span>(x,all){</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">  path &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;~/hrdect/HRDDATA/TCGA/segtxt/&quot;</span>,x,<span class="st">&quot;txt/&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">  <span class="kw">setwd</span>(path)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">  vcf &lt;-<span class="st"> </span><span class="kw">list.files</span>()</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">  vcfs &lt;-<span class="st"> </span>purrr<span class="op">::</span><span class="kw">map</span>(vcf, <span class="op">~</span>data.table<span class="op">::</span><span class="kw">fread</span>(.))</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">  <span class="kw">names</span>(vcfs) &lt;-<span class="st"> </span><span class="kw">sub</span>(<span class="st">&quot;.ascat2.allelic_specific.seg.txt&quot;</span>, <span class="st">&quot;&quot;</span>, vcf)</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8">  vcfs &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">rbindlist</span>(vcfs, <span class="dt">use.names =</span> <span class="ot">FALSE</span>, <span class="dt">idcol =</span> <span class="st">&quot;sample&quot;</span>)</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">  <span class="kw">names</span>(vcfs)[<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;aliquot_id&quot;</span>)</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">  </a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">  vcfs &lt;-<span class="st"> </span><span class="kw">inner_join</span>(all,vcfs,<span class="dt">by=</span><span class="st">&quot;aliquot_id&quot;</span>)</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">  filepath &lt;-<span class="st"> </span><span class="kw">paste</span>(<span class="st">&quot;~/hrdect/HRDDATA/TCGA/segtxt/rdsdata/&quot;</span>,x,<span class="st">&quot;.rds&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">  <span class="kw">saveRDS</span>(vcfs, <span class="dt">file =</span> filepath)</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">}</a>
+<a class="sourceLine" id="cb3-15" data-line-number="15">c &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="st">&quot;~/hrdect/HRDDATA/TCGA/segtxt/&quot;</span>)</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">c &lt;-<span class="st"> </span><span class="kw">sub</span>(<span class="st">&quot;txt&quot;</span>, <span class="st">&quot;&quot;</span>, c)</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="cf">for</span> (i <span class="cf">in</span> <span class="kw">seq_along</span>(c)){</a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">  <span class="kw">nameconvert</span>(c[i],<span class="dt">all =</span> allquote.rds)</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20">}</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="co">###merge all data</span></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23">file &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="st">&quot;~/neo_dep/ssNEA/data/copy_number/&quot;</span>)</a>
+<a class="sourceLine" id="cb3-24" data-line-number="24">dt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">sample=</span><span class="ot">NA</span>,<span class="dt">Chromosome=</span><span class="ot">NA</span>,<span class="dt">Start=</span><span class="ot">NA</span>,<span class="dt">End=</span><span class="ot">NA</span>,<span class="dt">Copy_Number=</span><span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb3-25" data-line-number="25">dt &lt;-<span class="st"> </span>dt[<span class="op">-</span><span class="dv">1</span>,]</a>
+<a class="sourceLine" id="cb3-26" data-line-number="26"><span class="cf">for</span> (i <span class="cf">in</span> file){</a>
+<a class="sourceLine" id="cb3-27" data-line-number="27">  tmp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/ssNEA/data/copy_number/&quot;</span>,i,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-28" data-line-number="28"><span class="st">    </span><span class="kw">select</span>(sample_submitter_id,Chromosome,Start,End,Copy_Number) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb3-29" data-line-number="29"><span class="st">    </span><span class="kw">rename</span>(<span class="dt">sample=</span>sample_submitter_id)</a>
+<a class="sourceLine" id="cb3-30" data-line-number="30">  dt &lt;-<span class="st"> </span><span class="kw">rbind</span>(dt,tmp)</a>
+<a class="sourceLine" id="cb3-31" data-line-number="31">}</a>
+<a class="sourceLine" id="cb3-32" data-line-number="32"><span class="kw">saveRDS</span>(dt,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_copy_number.rds&quot;</span>)</a></code></pre></div>
+<p>view this file:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">pancancer_copy_number &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_copy_number.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(pancancer_copy_number),</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">)</a></code></pre></div>
+<div id="htmlwidget-4c9bd182732c2317ca2d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4c9bd182732c2317ca2d">{"x":{"filter":"none","data":[["TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A"],["chr1","chr1","chr1","chr1","chr1","chr1"],[62920,34270420,34277475,190071104,190486414,190498696],[34270337,34276711,190070024,190486031,190498683,201225667],[3,1,3,1,2,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>Chromosome<\/th>\n      <th>Start<\/th>\n      <th>End<\/th>\n      <th>Copy_Number<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[2,3,4]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="clinical-and-purity-data" class="section level3">
+<h3>Clinical and purity data</h3>
+<p>Clinical and tumor purity data was obtained from <a href="https://gdc.cancer.gov/about-data/publications/pancanatlas">TCGA PanCanAtlas Publications</a></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co">###Clinical</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">survial &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/neo_dep/afteranalysis/survial/TCGA-CDR-survial.csv&quot;</span>)</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">saveRDS</span>(survial,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_survial.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">###purity</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">purity &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">  <span class="dt">file =</span> <span class="st">&quot;~/neo_dep/envolution/TCGA_mastercalls.abs_tables_JSedit.fixed.txt&quot;</span>)</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">saveRDS</span>(purity,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancaner_purity.rds&quot;</span>)</a></code></pre></div>
+<p>Clean the clinical data.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">pancancer_survial &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_survial.rds&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw">rename</span>(</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="dt">sample =</span> bcr_patient_barcode,</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">    <span class="dt">age =</span> age_at_initial_pathologic_diagnosis</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">  ) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">gender =</span> <span class="kw">case_when</span>(</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">    gender <span class="op">==</span><span class="st"> &quot;FEMALE&quot;</span> <span class="op">~</span><span class="st"> &quot;Female&quot;</span>,</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">    gender <span class="op">==</span><span class="st"> &quot;MALE&quot;</span> <span class="op">~</span><span class="st"> &quot;Male&quot;</span>,</a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">    <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">  ), <span class="dt">Tumor_stage =</span> <span class="kw">case_when</span>(</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">    ajcc_pathologic_tumor_stage <span class="op">==</span><span class="st"> &quot;Stage 0&quot;</span> <span class="op">~</span><span class="st"> &quot;0&quot;</span>,</a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">    ajcc_pathologic_tumor_stage <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Stage I&quot;</span>, <span class="st">&quot;Stage IA&quot;</span>, <span class="st">&quot;Stage IB&quot;</span>) <span class="op">~</span><span class="st"> &quot;I&quot;</span>,</a>
+<a class="sourceLine" id="cb6-13" data-line-number="13">    ajcc_pathologic_tumor_stage <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Stage II&quot;</span>, <span class="st">&quot;Stage IIA&quot;</span>, <span class="st">&quot;Stage IIB&quot;</span>, <span class="st">&quot;Stage IIC&quot;</span>) <span class="op">~</span><span class="st"> &quot;II&quot;</span>,</a>
+<a class="sourceLine" id="cb6-14" data-line-number="14">    ajcc_pathologic_tumor_stage <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Stage IIIA&quot;</span>, <span class="st">&quot;Stage IIIB&quot;</span>, <span class="st">&quot;Stage IIIC&quot;</span>) <span class="op">~</span><span class="st"> &quot;III&quot;</span>,</a>
+<a class="sourceLine" id="cb6-15" data-line-number="15">    ajcc_pathologic_tumor_stage <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Stage IV&quot;</span>, <span class="st">&quot;Stage IVA&quot;</span>, <span class="st">&quot;Stage IVB&quot;</span>, <span class="st">&quot;Stage IVC&quot;</span>) <span class="op">~</span><span class="st"> &quot;IV&quot;</span>,</a>
+<a class="sourceLine" id="cb6-16" data-line-number="16">    ajcc_pathologic_tumor_stage <span class="op">==</span><span class="st"> &quot;Stage X&quot;</span> <span class="op">~</span><span class="st"> &quot;X&quot;</span>,</a>
+<a class="sourceLine" id="cb6-17" data-line-number="17">    <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> </span><span class="ot">NA_character_</span></a>
+<a class="sourceLine" id="cb6-18" data-line-number="18">  )) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb6-19" data-line-number="19"><span class="st">  </span><span class="kw">select</span>(sample,age,gender,Tumor_stage,OS,OS.time)</a>
+<a class="sourceLine" id="cb6-20" data-line-number="20"><span class="kw">saveRDS</span>(pancancer_survial,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_survial.rds&quot;</span>)</a></code></pre></div>
+<p>View the clinical data:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">pancancer_survial &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_survial.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(pancancer_survial),</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">)</a></code></pre></div>
+<div id="htmlwidget-8947ed8e5d6405b2c3ba" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8947ed8e5d6405b2c3ba">{"x":{"filter":"none","data":[["TCGA-OR-A5J1","TCGA-OR-A5J2","TCGA-OR-A5J3","TCGA-OR-A5J4","TCGA-OR-A5J5","TCGA-OR-A5J6"],[58,44,23,23,30,29],["Male","Female","Female","Female","Male","Female"],["II","IV",null,"IV",null,"II"],[1,1,0,1,1,0],[1355,1677,2091,423,365,2703]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>age<\/th>\n      <th>gender<\/th>\n      <th>Tumor_stage<\/th>\n      <th>OS<\/th>\n      <th>OS.time<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,4,5]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="hla-typing-data" class="section level3">
+<h3>HLA typing data</h3>
+<p>HLA typing data was obtained from <a href="The%20Immune%20Landscape%20of%20Cancer">The immune landscape of cancer</a> For samples which do not have mutation data in HLA typing data set (1168 samples) or samples which do not have HLA typing data in mutation data set (2404 samples), we download raw bam files from TCGA to call mutatioins and type HLA genotypes.</p>
+</div>
+<div id="immune-infiltration-data" class="section level3">
+<h3>Immune infiltration data</h3>
+<p>Immune infiltration estimation data for all TCGA tumors was downloaded from <a href="http://timer.comp-genomics.org/">TIMER2.0</a> and we used CIBERSORT data, which has 22 immune cell types. In addition, the Leukocyte Fraction (LF) data reported in Vesteinn Thorsson et.al was downloaded from <a href="The%20Immune%20Landscape%20of%20Cancer">The immune landscape of cancer</a>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="co">###Immune infiltration estimation</span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">immune &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/useful_data/infiltration_estimation_for_tcga.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">sample=</span>cell_type) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="st">  </span><span class="kw">select</span>(sample,<span class="kw">ends_with</span>(<span class="st">&quot;CIBERSORT&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">filter</span>(<span class="kw">substr</span>(sample,<span class="dv">14</span>,<span class="dv">15</span>) <span class="op">!=</span><span class="st"> &quot;11&quot;</span>)<span class="co">## checked the 14-15 of sample names</span></a>
+<a class="sourceLine" id="cb8-6" data-line-number="6"><span class="kw">saveRDS</span>(immune,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/immue_estimate.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">###LF</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9">lf &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/useful_data/immune_landscape.csv&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="st">  </span><span class="kw">select</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">32</span>)</a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="kw">saveRDS</span>(lf,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/immune_landscape.rds&quot;</span>)</a></code></pre></div>
+<p>view those files:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">immue_estimate &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immue_estimate.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(immue_estimate),</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">)</a></code></pre></div>
+<div id="htmlwidget-106d4a16d00576145b9d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-106d4a16d00576145b9d">{"x":{"filter":"none","data":[["TCGA-OR-A5J1-01","TCGA-OR-A5J2-01","TCGA-OR-A5J3-01","TCGA-OR-A5J5-01","TCGA-OR-A5J6-01","TCGA-OR-A5J7-01"],[0.0029373088206278,0.0463802907976036,0.0610348745304148,0.253704389810328,0.00580568600359582,0.0529828377590554],[0.00228257173010433,0,0,0,0,0],[0,0.151495204055632,0.190537616062825,0.0396446949128339,0.00641966127820587,0.0949267650607863],[0.112941117133302,0.0735190377799121,0.0164945327908085,0.0373471743521868,0.0398617660974766,0.00442663729062006],[0,0,0.0607173163690066,0,0,0],[0.208749660768029,0.0835329844967111,0.138748228775299,0.146511521487652,0.0915359091787475,0.107660114044787],[0,0,0,0,0,0],[0.0201536321045871,0.0573361993915214,0,0.0111619968670559,0.00278919922364009,0.039621764025784],[0.0498026656691441,0,0,0.000778040273527457,0.0013283356166335,0],[0,0,0,0,0,0],[0.00623861069019448,0,0.00682599654402694,0.0484544008421466,0.00148120590773582,0],[0.0423236073663891,0.0468549147738652,0.070830489025141,0.0217944204272078,0.0304839082076406,0.0649952050002194],[0.0983073779934503,0.0221877572729679,0.0360031339520444,0.0785835744835366,0.0946417792873206,0.0973007489424286],[0,0.0441248660052828,0,0.211280949276753,0,0],[0,0.0201711431621239,0,0.007589552762671,0,0],[0.379331427065951,0.413936379142649,0.219405538128663,0.103569215571829,0.648498923839878,0.1731154200896],[0,0,0,0,0.00626047342378013,0],[0.0141508629628002,0.0308199129337631,0.15191142257008,0,0.00347921740629432,0.3052265535577],[0.0610774311733168,0,0.0474908512516912,0.0395800689322722,0.0674139345290515,0],[0,0.0096413101879684,0,0,0,0.0597439542290187],[0.00170372652210366,0,0,0,0,0],[0,0,0,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>B cell naive_CIBERSORT<\/th>\n      <th>B cell memory_CIBERSORT<\/th>\n      <th>B cell plasma_CIBERSORT<\/th>\n      <th>T cell CD8+_CIBERSORT<\/th>\n      <th>T cell CD4+ naive_CIBERSORT<\/th>\n      <th>T cell CD4+ memory resting_CIBERSORT<\/th>\n      <th>T cell CD4+ memory activated_CIBERSORT<\/th>\n      <th>T cell follicular helper_CIBERSORT<\/th>\n      <th>T cell regulatory (Tregs)_CIBERSORT<\/th>\n      <th>T cell gamma delta_CIBERSORT<\/th>\n      <th>NK cell resting_CIBERSORT<\/th>\n      <th>NK cell activated_CIBERSORT<\/th>\n      <th>Monocyte_CIBERSORT<\/th>\n      <th>Macrophage M0_CIBERSORT<\/th>\n      <th>Macrophage M1_CIBERSORT<\/th>\n      <th>Macrophage M2_CIBERSORT<\/th>\n      <th>Myeloid dendritic cell resting_CIBERSORT<\/th>\n      <th>Myeloid dendritic cell activated_CIBERSORT<\/th>\n      <th>Mast cell activated_CIBERSORT<\/th>\n      <th>Mast cell resting_CIBERSORT<\/th>\n      <th>Eosinophil_CIBERSORT<\/th>\n      <th>Neutrophil_CIBERSORT<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">immune_landscape &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immune_landscape.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(<span class="kw">head</span>(immune_landscape),</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">)</a></code></pre></div>
+<div id="htmlwidget-09ea51d4aa0db59086ea" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-09ea51d4aa0db59086ea">{"x":{"filter":"none","data":[["TCGA-01-0639","TCGA-02-0007","TCGA-02-0011","TCGA-02-0023","TCGA-02-0025","TCGA-02-0051"],["OV","GBM","GBM","GBM","GBM","GBM"],[null,null,null,null,null,null],[null,"GBM_LGG.Classic-like","GBM_LGG.LGm6-GBM","GBM_LGG.","GBM_LGG.","GBM_LGG."],[null,0.047660194,0.062099252,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,161,107,423,600,446],[null,0.903696282,0.938564861,0.188328465,0.362993009,0.601357415],[null,4,5,8,9,14],[null,18,12,6,36,12],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null],[null,null,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>TCGA Participant Barcode<\/th>\n      <th>TCGA Study<\/th>\n      <th>Immune Subtype<\/th>\n      <th>TCGA Subtype<\/th>\n      <th>Leukocyte Fraction<\/th>\n      <th>Stromal Fraction<\/th>\n      <th>Intratumor Heterogeneity<\/th>\n      <th>TIL Regional Fraction<\/th>\n      <th>Proliferation<\/th>\n      <th>Wound Healing<\/th>\n      <th>Macrophage Regulation<\/th>\n      <th>Lymphocyte Infiltration Signature Score<\/th>\n      <th>IFN-gamma Response<\/th>\n      <th>TGF-beta Response<\/th>\n      <th>SNV Neoantigens<\/th>\n      <th>Indel Neoantigens<\/th>\n      <th>Silent Mutation Rate<\/th>\n      <th>Nonsilent Mutation Rate<\/th>\n      <th>Number of Segments<\/th>\n      <th>Fraction Altered<\/th>\n      <th>Aneuploidy Score<\/th>\n      <th>Homologous Recombination Defects<\/th>\n      <th>BCR Evenness<\/th>\n      <th>BCR Shannon<\/th>\n      <th>BCR Richness<\/th>\n      <th>TCR Shannon<\/th>\n      <th>TCR Richness<\/th>\n      <th>TCR Evenness<\/th>\n      <th>CTA Score<\/th>\n      <th>Th1 Cells<\/th>\n      <th>Th2 Cells<\/th>\n      <th>Th17 Cells<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="rna-seq-data" class="section level3">
+<h3>RNA-seq data</h3>
+<p>The normalized gene-level RNA-seq data (TPM,Transcripts Per Million) for 33 TCGA cohorts were downloaded from <a href="https://xenabrowser.net/datapages/?dataset=tcga_RSEM_gene_tpm&amp;host=https%3A%2F%2Ftoil.xenahubs.net&amp;removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443">Xena</a>.(This file is too large, so I don’t push it to github)</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="co">###transform ENSG id to gene symbol</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">tpm &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/useful_data/xena_RSEM_TPM/xena_tpm&quot;</span>)</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">mapping_probe &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/useful_data/xena_RSEM_TPM/mapping_probe&quot;</span>)</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">tpm &lt;-<span class="st"> </span><span class="kw">left_join</span>(tpm <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">id=</span>sample),</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">                 mapping_probe <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(id,gene),</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">                 <span class="dt">by=</span><span class="st">&quot;id&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8"><span class="st">  </span><span class="kw">select</span>(id,gene,<span class="kw">everything</span>())</a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="co">####transform unit</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11">tpm[,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(tpm)]  &lt;-<span class="st"> </span>tpm[,<span class="kw">lapply</span>(.SD,<span class="cf">function</span>(x){x<span class="op">^</span><span class="dv">2</span><span class="fl">-0.001</span>}),</a>
+<a class="sourceLine" id="cb11-12" data-line-number="12">                          .SDcols=<span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(tpm))]</a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="kw">saveRDS</span>(tpm,<span class="dt">file =</span> <span class="st">&quot;~/useful_data/xena_RSEM_TPM/tpm_gene.rds&quot;</span>)</a></code></pre></div>
+</div>
+</div>
+<div id="tcga-pancancer-data-pre-process" class="section level2">
+<h2>TCGA pancancer data pre-process</h2>
+<p>This part describes</p>
+<div id="calculate-ccf-and-add-expression" class="section level3">
+<h3>Calculate ccf and add expression</h3>
+<p>In this project, we quantified Neoantigen Enrichment in the aspect of ccf and expression of neoantigen. So, we need calculate ccf and add expression information for each mutation.</p>
+<p>The proportion of cancer cells carrying a particular mutation (cancer cell fraction, CCF) was calculated from the VAF of the mutation, sample purity (tumour content), and copy number (CN) of the mutation’s genomic locus as follows: <span class="math display">\[
+CCF = \frac{VAF*CN}{purity}
+\]</span> CCF values above 1 (arising from sequencing noise and copy-neutral loss-of-heterozygosity events) were assumed to be 1.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="co">###load data</span></a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">pancancer_copy_number &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_copy_number.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">pancaner_purity &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancaner_purity.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5">pancancer_copy_number &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_copy_number,</a>
+<a class="sourceLine" id="cb12-6" data-line-number="6">                                   pancaner_purity <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="st">                                     </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">16</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="st">                                     </span><span class="kw">select</span>(sample,purity),</a>
+<a class="sourceLine" id="cb12-9" data-line-number="9">                                   <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>)</a>
+<a class="sourceLine" id="cb12-10" data-line-number="10"><span class="co">###add copy number to mutation data</span></a>
+<a class="sourceLine" id="cb12-11" data-line-number="11">pancancer_mutation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_mutation.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb12-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb12-13" data-line-number="13">dt &lt;-<span class="st"> </span>pancancer_mutation <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-14" data-line-number="14"><span class="st">  </span><span class="kw">filter</span>(effect<span class="op">==</span><span class="st">&quot;missense_variant&quot;</span> <span class="op">&amp;</span><span class="st"> </span>filter<span class="op">==</span><span class="st">&quot;PASS&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-15" data-line-number="15"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">chr_sample=</span><span class="kw">paste</span>(chrom,Sample_ID,<span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>),</a>
+<a class="sourceLine" id="cb12-16" data-line-number="16">         <span class="dt">pos=</span>start)<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-17" data-line-number="17"><span class="st">  </span><span class="kw">select</span>(chr_sample,pos,gene,dna_vaf) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">x=</span>chr_sample)</a>
+<a class="sourceLine" id="cb12-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb12-19" data-line-number="19">copynumber_dt &lt;-<span class="st"> </span>pancancer_copy_number <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-20" data-line-number="20"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">chr_sample=</span><span class="kw">paste</span>(Chromosome,sample,<span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>))<span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-21" data-line-number="21"><span class="st">  </span><span class="kw">select</span>(chr_sample,Start,End,Copy_Number,purity) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">x=</span>chr_sample)</a>
+<a class="sourceLine" id="cb12-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb12-23" data-line-number="23">dt &lt;-<span class="st"> </span><span class="kw">setDT</span>(dt)</a>
+<a class="sourceLine" id="cb12-24" data-line-number="24">copynumber_dt &lt;-<span class="st"> </span><span class="kw">setDT</span>(copynumber_dt)</a>
+<a class="sourceLine" id="cb12-25" data-line-number="25">overlap &lt;-<span class="st"> </span>dt[copynumber_dt, .(x, <span class="dt">pos=</span>x.pos,Start,End,Copy_Number,purity,gene,dna_vaf),</a>
+<a class="sourceLine" id="cb12-26" data-line-number="26">              on=.(x, pos<span class="op">&gt;=</span>Start, pos<span class="op">&lt;=</span>End), nomatch=F,allow.cartesian=<span class="ot">TRUE</span>]</a>
+<a class="sourceLine" id="cb12-27" data-line-number="27">overlap &lt;-<span class="st"> </span>overlap[,index<span class="op">:</span><span class="er">=</span><span class="kw">paste</span>(x,pos,<span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>)]</a>
+<a class="sourceLine" id="cb12-28" data-line-number="28">overlap &lt;-<span class="st"> </span>overlap <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-29" data-line-number="29"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ccf=</span>dna_vaf<span class="op">*</span>Copy_Number<span class="op">/</span>purity) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-30" data-line-number="30"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">ccf_cn_assume=</span><span class="kw">ifelse</span>(ccf<span class="op">&gt;</span><span class="dv">1</span>,<span class="dv">1</span>,ccf)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb12-31" data-line-number="31"><span class="st">  </span><span class="kw">separate</span>(<span class="dt">col =</span> x,<span class="dt">into =</span> <span class="kw">c</span>(<span class="st">&quot;chromosome&quot;</span>,<span class="st">&quot;sample&quot;</span>),<span class="dt">sep =</span> <span class="st">&quot;,&quot;</span>)</a>
+<a class="sourceLine" id="cb12-32" data-line-number="32">overlap<span class="op">$</span>cancer_type &lt;-<span class="st"> </span>NeoEnrichment<span class="op">::</span><span class="kw">getcancer_type</span>(overlap<span class="op">$</span>sample,<span class="dt">cores =</span> <span class="dv">6</span>,<span class="dt">par =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>Add RNA expression to each mutation:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">tpm &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/useful_data/xena_RSEM_TPM/tpm_gene.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">overlap_add_tpm &lt;-<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">left_join</span>(</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">    overlap <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample, <span class="dv">1</span>, <span class="dv">15</span>)),</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">    tpm <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-5" data-line-number="5"><span class="st">      </span>tidyr<span class="op">::</span><span class="kw">pivot_longer</span>(<span class="dt">cols =</span> dplyr<span class="op">::</span><span class="kw">starts_with</span>(<span class="st">&quot;TCGA&quot;</span>), <span class="dt">names_to =</span> <span class="st">&quot;sample&quot;</span>, <span class="dt">values_to =</span> <span class="st">&quot;exp&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb13-6" data-line-number="6"><span class="st">      </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">sample =</span> <span class="kw">substr</span>(sample, <span class="dv">1</span>, <span class="dv">15</span>)),</a>
+<a class="sourceLine" id="cb13-7" data-line-number="7">    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;sample&quot;</span>, <span class="st">&quot;gene&quot;</span>)</a>
+<a class="sourceLine" id="cb13-8" data-line-number="8">  )</a>
+<a class="sourceLine" id="cb13-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb13-10" data-line-number="10"><span class="co">###remove dupliated gene</span></a>
+<a class="sourceLine" id="cb13-11" data-line-number="11">overlap_add_tpm &lt;-<span class="st"> </span>overlap_add_tpm[<span class="op">!</span><span class="kw">duplicated</span>(overlap_add_tpm<span class="op">$</span>index),]</a>
+<a class="sourceLine" id="cb13-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb13-13" data-line-number="13"><span class="kw">saveRDS</span>(overlap_add_tpm,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_ccf_exp.rds&quot;</span>)</a></code></pre></div>
+</div>
+<div id="calculate-neoantigen-enrichment-score" class="section level3">
+<h3>Calculate Neoantigen Enrichment score</h3>
+<p>We use pvactools to predict mutated peptides binding affinity, see methods for more details.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+</div>
+
+
+
+
+<script>
+$(document).ready(function () {
+ 	  });
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

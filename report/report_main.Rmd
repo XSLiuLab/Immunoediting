@@ -1,0 +1,50 @@
+---
+title: "Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution"
+author: ["Tao Wu", "Xue-Song Liu (Corresponding author)"]
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r knitr_init, echo=FALSE}
+library(knitr)
+library(rmdformats)
+## Global options
+options(max.print = "75")
+opts_chunk$set(
+  echo = TRUE,
+  comment = "#>",
+  cache = TRUE, dpi = 300
+)
+opts_knit$set(width = 75)
+Sys.setenv("LANGUAGE"="EN")
+```
+
+# Dependencies
+
+This project is depended on R software, R packages, shell bash, Julia software and some Julia packages :
+
+- [NeoEnrichment](https://github.com/wt12318/NeoEnrichment) - do neoantigen enrichment for this project.
+- [tidyverse](https://www.tidyverse.org/) - tidy data
+- [data.table](https://github.com/Rdatatable/data.table) - read and tidy data
+- [survival](https://github.com/therneau/survival) - survival analysis 
+- [survminer](https://github.com/kassambara/survminer) - plot survival fit
+- [DT](https://cran.r-project.org/web/packages/DT/index.html) - show data table as a table in html
+- [ggstatsplot](https://github.com/IndrajeetPatil/ggstatsplot) - plot scatter with linear fit
+- [corrplot](https://cran.r-project.org/web/packages/corrplot/) - plot correlation
+- [Julia](https://julialang.org/) - do simulation
+- knitr, rmdformats - used to compile this file
+
+# Data download and preprocessing
+
+```{r child = 'data_download_preprocessing.Rmd'}
+```
+
+
+
+
+

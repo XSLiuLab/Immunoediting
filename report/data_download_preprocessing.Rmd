@@ -18,7 +18,260 @@ knitr::opts_knit$set(width = 75)
 
 This part will describe how and where the data that this project used is downloaded and pre-processed.
 
-## TCGA pancancer data download
-Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from Xena and only keep missense variants for following analysis
+## TCGA pancancer data download and clean
+This part describes how and where to download raw data and clean them for following analysis.
+
+### Mutation data
+Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from [Xena](https://xenabrowser.net/datapages/?dataset=GDC-PANCAN.mutect2_snv.tsv&host=https%3A%2F%2Fgdc.xenahubs.net&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443) and only keep missense variants for following analysis
+
+```{r mut_data,eval=FALSE}
+mutect2 <- data.table::fread("~/useful_data/GDC-PANCAN.mutect2_snv.tsv") %>% 
+  dplyr::filter(effect=="missense_variant" & filter=="PASS")
+saveRDS(mutect2,file = "~/Immunoediting/data/pancancer_mutation.rds")
+```
+view this file:
+
+```{r view_mut,eval=TRUE}
+pancancer_mutation <- readRDS("~/Immunoediting/data/pancancer_mutation.rds")
+DT::datatable(head(pancancer_mutation),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+
+```
+
+### Copy number data
+Absolute copy number data was download from [TCGA GDC Data Portal](https://portal.gdc.cancer.gov/repository?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_type%22%2C%22value%22%3A%5B%22Allele-specific%20Copy%20Number%20Segment%22%5D%7D%7D%5D%7D), then we converted the aliquot id of those files to TCGA sample barcode using `aliquot.tsv` (check Biosepcimen botton in the GDC Cart to download)
+
+```{r convert_id,eval=FALSE}
+###convert id
+nameconvert <- function(x,all){
+  path <- paste("~/hrdect/HRDDATA/TCGA/segtxt/",x,"txt/",sep = "")
+  setwd(path)
+  vcf <- list.files()
+  vcfs <- purrr::map(vcf, ~data.table::fread(.))
+  names(vcfs) <- sub(".ascat2.allelic_specific.seg.txt", "", vcf)
+  vcfs <- data.table::rbindlist(vcfs, use.names = FALSE, idcol = "sample")
+  names(vcfs)[2] <- c("aliquot_id")
+  
+  vcfs <- inner_join(all,vcfs,by="aliquot_id")
+  filepath <- paste("~/hrdect/HRDDATA/TCGA/segtxt/rdsdata/",x,".rds",sep = "")
+  saveRDS(vcfs, file = filepath)
+}
+c <- list.files("~/hrdect/HRDDATA/TCGA/segtxt/")
+c <- sub("txt", "", c)
+
+for (i in seq_along(c)){
+  nameconvert(c[i],all = allquote.rds)
+}
+
+###merge all data
+file <- dir("~/neo_dep/ssNEA/data/copy_number/")
+dt <- data.frame(sample=NA,Chromosome=NA,Start=NA,End=NA,Copy_Number=NA)
+dt <- dt[-1,]
+for (i in file){
+  tmp <- readRDS(paste("~/neo_dep/ssNEA/data/copy_number/",i,sep = "")) %>%
+    select(sample_submitter_id,Chromosome,Start,End,Copy_Number) %>%
+    rename(sample=sample_submitter_id)
+  dt <- rbind(dt,tmp)
+}
+saveRDS(dt,file = "~/Immunoediting/data/pancancer_copy_number.rds")
+```
+
+view this file:
+
+```{r view_cn,eval=TRUE}
+pancancer_copy_number <- readRDS("~/Immunoediting/data/pancancer_copy_number.rds")
+DT::datatable(head(pancancer_copy_number),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+
+```
+
+### Clinical and purity data
+Clinical and tumor purity data was obtained from [TCGA PanCanAtlas Publications](https://gdc.cancer.gov/about-data/publications/pancanatlas)
+
+```{r survial_purity,eval=FALSE}
+###Clinical
+survial <- data.table::fread("~/neo_dep/afteranalysis/survial/TCGA-CDR-survial.csv")
+saveRDS(survial,file = "~/Immunoediting/data/pancancer_survial.rds")
+###purity
+purity <- data.table::fread(
+  file = "~/neo_dep/envolution/TCGA_mastercalls.abs_tables_JSedit.fixed.txt")
+saveRDS(purity,file = "~/Immunoediting/data/pancaner_purity.rds")
+```
+
+Clean the clinical data.
+
+```{r clean_clinical,eval=FALSE}
+pancancer_survial <- readRDS("~/Immunoediting/data/pancancer_survial.rds") %>%
+  rename(
+    sample = bcr_patient_barcode,
+    age = age_at_initial_pathologic_diagnosis
+  ) %>%
+  mutate(gender = case_when(
+    gender == "FEMALE" ~ "Female",
+    gender == "MALE" ~ "Male",
+    TRUE ~ NA_character_
+  ), Tumor_stage = case_when(
+    ajcc_pathologic_tumor_stage == "Stage 0" ~ "0",
+    ajcc_pathologic_tumor_stage %in% c("Stage I", "Stage IA", "Stage IB") ~ "I",
+    ajcc_pathologic_tumor_stage %in% c("Stage II", "Stage IIA", "Stage IIB", "Stage IIC") ~ "II",
+    ajcc_pathologic_tumor_stage %in% c("Stage IIIA", "Stage IIIB", "Stage IIIC") ~ "III",
+    ajcc_pathologic_tumor_stage %in% c("Stage IV", "Stage IVA", "Stage IVB", "Stage IVC") ~ "IV",
+    ajcc_pathologic_tumor_stage == "Stage X" ~ "X",
+    TRUE ~ NA_character_
+  )) %>% 
+  select(sample,age,gender,Tumor_stage,OS,OS.time)
+saveRDS(pancancer_survial,file = "~/Immunoediting/data/pancancer_survial.rds")
+```
+
+View the clinical data:
+```{r view_clinical,eval=TRUE}
+pancancer_survial <- readRDS("~/Immunoediting/data/pancancer_survial.rds")
+DT::datatable(head(pancancer_survial),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+
+```
 
 
+### HLA typing data
+HLA typing data was obtained from [The immune landscape of cancer](The Immune Landscape of Cancer)
+For samples which do not have mutation data in HLA typing data set (1168 samples) or samples which do not have HLA typing data in mutation data set (2404 samples), we download raw bam files from TCGA to call mutatioins and type HLA genotypes.
+
+### Immune infiltration data
+
+Immune infiltration estimation data for all TCGA tumors was downloaded from [TIMER2.0](http://timer.comp-genomics.org/) and we used CIBERSORT data, which has 22 immune cell types. In addition, the Leukocyte Fraction (LF) data reported in Vesteinn Thorsson et.al was downloaded from [The immune landscape of cancer](The Immune Landscape of Cancer).
+
+```{r immune,eval=FALSE}
+###Immune infiltration estimation
+immune <- data.table::fread("~/useful_data/infiltration_estimation_for_tcga.csv") %>% 
+  rename(sample=cell_type) %>% 
+  select(sample,ends_with("CIBERSORT")) %>%
+  filter(substr(sample,14,15) != "11")## checked the 14-15 of sample names
+saveRDS(immune,file = "~/Immunoediting/data/immue_estimate.rds")
+
+###LF
+lf <- data.table::fread("~/useful_data/immune_landscape.csv") %>% 
+  select(1:32)
+saveRDS(lf,file = "~/Immunoediting/data/immune_landscape.rds")
+```
+
+view those files:
+```{r view_immune,eval=TRUE}
+immue_estimate <- readRDS("~/Immunoediting/data/immue_estimate.rds")
+DT::datatable(head(immue_estimate),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
+```{r view_lf,eval=TRUE}
+immune_landscape <- readRDS("~/Immunoediting/data/immune_landscape.rds")
+DT::datatable(head(immune_landscape),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
+### RNA-seq data
+
+The normalized gene-level RNA-seq data (TPM,Transcripts Per Million) for 33 TCGA cohorts were downloaded from [Xena](https://xenabrowser.net/datapages/?dataset=tcga_RSEM_gene_tpm&host=https%3A%2F%2Ftoil.xenahubs.net&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443).(This file is too large, so I don't push it to github)
+
+```{r rna-seq,eval=FALSE}
+###transform ENSG id to gene symbol
+tpm <- data.table::fread("~/useful_data/xena_RSEM_TPM/xena_tpm")
+mapping_probe <- data.table::fread("~/useful_data/xena_RSEM_TPM/mapping_probe")
+
+tpm <- left_join(tpm %>% rename(id=sample),
+                 mapping_probe %>% select(id,gene),
+                 by="id") %>% 
+  select(id,gene,everything())
+
+####transform unit
+tpm[,3:ncol(tpm)]  <- tpm[,lapply(.SD,function(x){x^2-0.001}),
+                          .SDcols=c(3:ncol(tpm))]
+saveRDS(tpm,file = "~/useful_data/xena_RSEM_TPM/tpm_gene.rds")
+```
+
+## TCGA pancancer data pre-process
+
+This part describes 
+
+### Calculate ccf and add expression
+
+In this project, we quantified Neoantigen Enrichment in the aspect of ccf and expression of neoantigen. So, we need calculate ccf and add expression information for each mutation.
+
+The proportion of cancer cells carrying a particular mutation (cancer cell fraction, CCF) was calculated from the VAF of the mutation, sample purity (tumour content), and copy number (CN) of the mutation’s genomic locus as follows:
+$$
+CCF = \frac{VAF*CN}{purity}
+$$
+CCF values above 1 (arising from sequencing noise and copy-neutral loss-of-heterozygosity events) were assumed to be 1.
+
+```{r cal_ccf,eval=FALSE}
+###load data
+pancancer_copy_number <- readRDS("~/Immunoediting/data/pancancer_copy_number.rds")
+pancaner_purity <- readRDS("~/Immunoediting/data/pancaner_purity.rds")
+
+pancancer_copy_number <- left_join(pancancer_copy_number,
+                                   pancaner_purity %>%
+                                     mutate(sample=substr(sample,1,16)) %>%
+                                     select(sample,purity),
+                                   by="sample")
+###add copy number to mutation data
+pancancer_mutation <- readRDS("~/Immunoediting/data/pancancer_mutation.rds")
+
+dt <- pancancer_mutation %>%
+  filter(effect=="missense_variant" & filter=="PASS") %>%
+  mutate(chr_sample=paste(chrom,Sample_ID,sep = ","),
+         pos=start)%>%
+  select(chr_sample,pos,gene,dna_vaf) %>% rename(x=chr_sample)
+
+copynumber_dt <- pancancer_copy_number %>%
+  mutate(chr_sample=paste(Chromosome,sample,sep = ","))%>%
+  select(chr_sample,Start,End,Copy_Number,purity) %>% rename(x=chr_sample)
+
+dt <- setDT(dt)
+copynumber_dt <- setDT(copynumber_dt)
+overlap <- dt[copynumber_dt, .(x, pos=x.pos,Start,End,Copy_Number,purity,gene,dna_vaf),
+              on=.(x, pos>=Start, pos<=End), nomatch=F,allow.cartesian=TRUE]
+overlap <- overlap[,index:=paste(x,pos,sep = ",")]
+overlap <- overlap %>%
+  mutate(ccf=dna_vaf*Copy_Number/purity) %>%
+  mutate(ccf_cn_assume=ifelse(ccf>1,1,ccf)) %>%
+  separate(col = x,into = c("chromosome","sample"),sep = ",")
+overlap$cancer_type <- NeoEnrichment::getcancer_type(overlap$sample,cores = 6,par = TRUE)
+```
+
+Add RNA expression to each mutation:
+
+```{r add_exp,eval=FALSE}
+tpm <- readRDS("~/useful_data/xena_RSEM_TPM/tpm_gene.rds")
+overlap_add_tpm <- dplyr::left_join(
+    overlap %>% mutate(sample=substr(sample, 1, 15)),
+    tpm %>%
+      tidyr::pivot_longer(cols = dplyr::starts_with("TCGA"), names_to = "sample", values_to = "exp") %>%
+      dplyr::mutate(sample = substr(sample, 1, 15)),
+    by = c("sample", "gene")
+  )
+
+###remove dupliated gene
+overlap_add_tpm <- overlap_add_tpm[!duplicated(overlap_add_tpm$index),]
+
+saveRDS(overlap_add_tpm,file = "~/Immunoediting/data/pancancer_ccf_exp.rds")
+```
+
+### Calculate Neoantigen Enrichment score
+We use pvactools to predict mutated peptides binding affinity, see methods for more details.
+
+Firstly, we need add the results of neoantigen prediction (aggregated IC50) to mutation data.
+```{r add_IC50,eval=FALSE}
+###add IC50
+pancancer_ccf_exp <- readRDS("~/Immunoediting/data/pancancer_ccf_exp.rds")
+neoantigen <- readRDS("~/neo_dep/ssNEA/data/update_data.rds")
+neoantigen <- neoantigen %>%
+  mutate(index=paste(chr,Tumor_Barcode,Stop,sep = ","))
+mut_with_IC50 <- left_join(neoantigen,
+                         pancancer_ccf_exp %>%
+                           select(index,ccf_cn_assume,cancer_type,exp),
+                         by="index")
+saveRDS(mut_with_IC50,file = "~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds")
+```
