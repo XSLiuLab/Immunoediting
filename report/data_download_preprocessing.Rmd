@@ -1,0 +1,24 @@
+---
+title: "Data download and preprocessing"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r pre-process-setup, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
+knitr::opts_knit$set(width = 75)
+```
+
+This part will describe how and where the data that this project used is downloaded and pre-processed.
+
+## TCGA pancancer data download
+Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from Xena and only keep missense variants for following analysis
+
+
