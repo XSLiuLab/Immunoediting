@@ -44,7 +44,12 @@ This project is depended on R software, R packages, shell bash, Julia software a
 ```{r child = 'data_download_preprocessing.Rmd'}
 ```
 
+# TCGA pancancer analysis
+```{r child = 'tcga_pancancer_analysis.Rmd'}
+```
 
+# Simulation analysis
 
+# Supplementary analysis
 
 

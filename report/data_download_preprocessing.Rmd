@@ -275,3 +275,64 @@ mut_with_IC50 <- left_join(neoantigen,
                          by="index")
 saveRDS(mut_with_IC50,file = "~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds")
 ```
+
+Then we can calculate the Enrichment score for ccf and expression of neoantigens based on package `NeoEnrichment` (This package is developed for this project and can be installed by `devtools::install_github("wt12318/NeoEnrichment")`). The detail of method, please check the package document or our paper.
+
+```{r cal_nes,eval=FALSE}
+pancancer_neoantigen_exp_ccf <- readRDS("~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds")
+pancancer_neoantigen_exp_ccf <- pancancer_neoantigen_exp_ccf %>% 
+  rename(sample=Tumor_Barcode,chromosome=chr,position=Stop,MT_mean=MT_har_mean) %>% 
+  as.data.frame(stringsAsFactors=FALSE)
+
+###ccf
+results_ccf <- vector("list",length = length(unique(pancancer_neoantigen_exp_ccf$sample)))
+names(results_ccf) <- unique(pancancer_neoantigen_exp_ccf$sample)
+
+cl <- makeCluster(getOption("cl.cores", 10),type="FORK")
+set.seed(202011101)
+results_ccf <- parSapply(cl=cl,names(results_ccf),
+                         function(x){
+                           NeoEnrichment::cales_t(pancancer_neoantigen_exp_ccf,x,
+                                                  calp=TRUE,cal_type="ccf",mhc_type="I")
+                         })
+stopCluster(cl)
+
+results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+pancancer_nes_ccf <- bind_rows(results_ccf,.id = "sample")
+saveRDS(pancancer_nes_ccf,file = "~/Immunoediting/data/pancancer_nes_ccf.rds")
+
+###exp
+results_exp <- vector("list",length = length(unique(pancancer_neoantigen_exp_ccf$sample)))
+names(results_exp) <- unique(pancancer_neoantigen_exp_ccf$sample)
+
+cl <- makeCluster(getOption("cl.cores", 12),type="FORK")
+set.seed(202011102)
+results_exp <- parSapply(cl=cl,names(results_exp),
+                         function(x){
+                           NeoEnrichment::cales_t(pancancer_neoantigen_exp_ccf,x,
+                                                  calp=TRUE,cal_type="exp",mhc_type="I")
+                         })
+stopCluster(cl)
+
+results_exp <- Filter(function(x){length(x)>1},results_exp)
+pancancer_nes_exp <- bind_rows(results_exp,.id = "sample")
+saveRDS(pancancer_nes_exp,file = "~/Immunoediting/data/pancancer_nes_exp.rds")
+```
+
+View the results:
+```{r view_nes,eval=TRUE}
+pancancer_nes_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds")
+pancancer_nes_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+DT::datatable(head(pancancer_nes_ccf),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+DT::datatable(head(pancancer_nes_exp),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
+## Immunotherapy data download and clean
+
+
+
+## Immunotherapy data pre-process

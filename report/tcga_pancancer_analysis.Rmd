@@ -1,0 +1,79 @@
+---
+title: "tcga_pancancer_analysis"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r tcga_pancancer_analysis-setup, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
+knitr::opts_knit$set(width = 75)
+```
+
+##  The existence of significant immunoediting signal
+
+From our pan-cancer data, we can get two distributions: mutation counts of samples and IC50 values of neoantigens. 
+We randomly selected 10000 counts from the distribution of mutation counts to construct simulated samples which each sample has its own mutation counts. For each mutations in a simulated sample, we randomly selected a IC50 value from IC50 distribution. Now we have 10000 samples, each sample has its mutation counts and each mutations has its IC50 values. Given that CCF or expression is a criterion for ranking, we just used the natural order to rank the simulated mutations. At last, we calculated NES for these simulated samples to get neutral distribution of NES.
+
+```{r simulation,eval=FALSE}
+pancancer_neoantigen_exp_ccf <- readRDS("~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds")
+pancancer_neoantigen_exp_ccf <- pancancer_neoantigen_exp_ccf %>%
+  rename(sample=Tumor_Barcode,chromosome=chr,position=Stop,MT_mean=MT_har_mean) %>% 
+  as.data.frame(stringsAsFactors=FALSE)
+cancer_type <- names(table(pancancer_neoantigen_exp_ccf$cancer_type))
+set.seed(202011104)
+for (i in 1:length(cancer_type)){
+  cancer <- pancancer_neoantigen_exp_ccf %>% 
+    dplyr::filter(cancer_type==.env$cancer_type[i])
+  cancer %>% group_by(sample) %>%
+    summarise(mutation_counts=n()) -> mutation_counts
+  ##sampling mutation counts
+  sample_mt <- sample(mutation_counts$mutation_counts,10000,replace = T)
+  
+  sample <- vector("list",length = 10000)
+  names(sample) <- c(1:10000)
+  sample <- lapply(sample_mt,
+                    function(x){
+                      tmp <- data.frame(mutation_id=c(1:x),
+                                        IC50=sample(cancer$MT_mean,x),
+                                        rank=c(x:1))
+                      a <- nrow(tmp)
+                      tmp <- tmp %>% 
+                        mutate(rank=abs((a/2)-rank)+1)
+                      return(tmp)
+                    })
+  
+  result <- vector("list",length = 10000)
+  names(result) <- c(1:10000)
+  cl <- makeCluster(getOption("cl.cores", 12),type="FORK")
+  result <- parLapply(cl=cl,sample,
+                          function(x){
+                            neoantigen_list <- x %>% 
+                              filter(IC50<500) %>% 
+                              select(mutation_id)
+                            neoantigen_list <- neoantigen_list[[1]]
+                            if(length(neoantigen_list)==0){
+                              return(NA)
+                            }else{
+                              es <- NeoEnrichment::cales_simulation(x,neoantigen_list)
+                              nes <- NeoEnrichment::cal_nes_simulation(es,neoantigen_list,x)
+                              return(nes)
+                            }
+                          })
+  stopCluster(cl)
+  
+  result <- Filter(function(x){length(x)>1},result)
+  result_sim <- bind_rows(result)
+  saveRDS(result_sim,
+          file = paste0("~/Immunoediting/data/simulation/",cancer_type[i],"_simulation.rds"))
+}
+
+```
+
+
