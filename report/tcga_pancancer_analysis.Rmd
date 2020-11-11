@@ -109,7 +109,7 @@ dt_exp <- data.frame(type=c(rep("simulation",nrow(pancancer_simulation)),
                      NES=c(pancancer_simulation$nes,pancancer_nes_exp$nes))
 
 p1 <- ggplot(dt_ccf, aes(x=type, y=NES, fill=type)) +
-  scale_fill_manual(values=c("#66C2A5", "#FC8D62"))+
+  scale_fill_manual(values=c("white", "#FC8D62"))+
   stat_compare_means(aes(x=type, y=NES))+
   geom_violin(width=0.8, alpha=0.2)+
   geom_boxplot(width=0.2) +
@@ -118,7 +118,7 @@ p1 <- ggplot(dt_ccf, aes(x=type, y=NES, fill=type)) +
   labs(title="CCF")
 
 p2 <- ggplot(dt_exp, aes(x=type, y=NES, fill=type)) +
-  scale_fill_manual(values=c("#66C2A5", "#FC8D62"))+
+  scale_fill_manual(values=c("white", "#FC8D62"))+
   stat_compare_means(aes(x=type, y=NES))+
   geom_violin(width=0.8, alpha=0.2)+
   geom_boxplot(width=0.2) +
@@ -148,7 +148,181 @@ p4 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.05 & 
 
 Thus we conclude that the immunoediting signal is undoubtedly exist, however in majority of cancer patient, this signal is undetectable, and only 2.5% (CCF FDR<0.25) of patient show this significant immunoediting signal.
 
+Then we view the cancer type distribution of NES and compare with cancer type simulation:
+```{r view_cancer_type_nes,eval=TRUE}
+
+```
+
+
+
+## Neoantigen enrichment score is associated with immune cell infiltration 
+NES reflects neoantigen-mediated immune selection, thus we want to check relation between the immune cell infiltration level and our NES score.
+
+```{r immune_cor,eval=TRUE}
+pancancer_nes_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds")
+pancancer_nes_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+
+###load all immune data
+cibersort_immune <- readRDS("~/Immunoediting/data/immue_estimate.rds")
+lf <- readRDS("~/Immunoediting/data/immune_landscape.rds") %>% 
+  select(`TCGA Participant Barcode`,`Leukocyte Fraction`,
+         `Stromal Fraction`,`Intratumor Heterogeneity`) %>% 
+  rename(sample=`TCGA Participant Barcode`)
+elife <- readRDS("~/Immunoediting/data/wang_2019_elife.rds")
+cyt <- readRDS("~/Immunoediting/data/pancancer_cyt.rds")
+```
+
+Firstly, we calculate correlation using spearman method by cancer types
+
+```{r cal_cor_cancertype,eval=TRUE,warning = FALSE}
+##bind all data
+all_immune <- left_join(elife %>% 
+                          rename(sample=Tumor_Sample_Barcode),
+                        cibersort_immune,
+                        by="sample") %>% 
+  left_join(.,cyt %>% 
+              mutate(sample=substr(sample,1,15)),
+            by="sample") %>% 
+  mutate(sample=substr(sample,1,12)) %>% 
+  left_join(.,lf,by="sample") %>% 
+  distinct(sample,.keep_all = T)
+
+pancancer_nes_ccf <- left_join(pancancer_nes_ccf %>% 
+                                 mutate(sample=substr(sample,1,12)),
+                               all_immune,by="sample")
+pancancer_nes_ccf$cancer <- getcancer_type(pancancer_nes_ccf$sample)
+pancancer_nes_ccf <- pancancer_nes_ccf %>%
+  select(-c(sample, es, p_value, Project)) %>%
+  filter(!is.na(nes)) %>%
+  select(cancer, nes, everything())
+
+
+pancancer_nes_exp <- left_join(pancancer_nes_exp %>% 
+                                 mutate(sample=substr(sample,1,12)),
+                               all_immune,by="sample")
+pancancer_nes_exp$cancer <- getcancer_type(pancancer_nes_exp$sample)
+pancancer_nes_exp <- pancancer_nes_exp %>%
+  select(-c(sample, es, p_value, Project)) %>%
+  filter(!is.na(nes)) %>%
+  select(cancer, nes, everything())
+
+
+summ_ccf <- pancancer_nes_ccf %>% 
+  group_by(cancer) %>%
+  summarise(across(nes:`Intratumor Heterogeneity`,~median(.x, na.rm = TRUE)))
+summ_exp <- pancancer_nes_exp %>% 
+  group_by(cancer) %>%
+  summarise(across(nes:`Intratumor Heterogeneity`,~median(.x, na.rm = TRUE)))
+
+cor_mat1 <- cor(summ_ccf %>% select(-cancer), 
+                method = "spearman", use = "pairwise.complete.obs")
+cor_mat1 <- cor_mat1[,1]  %>% as.data.frame()
+colnames(cor_mat1) <- "NES(CCF)"
+cor_mat2 <- cor(summ_exp %>% select(-cancer), 
+                method = "spearman", use = "pairwise.complete.obs")
+cor_mat2 <- cor_mat2[,1]  %>% as.data.frame()
+colnames(cor_mat2) <- "NES(EXP)"
+
+ccf_exp_cor <- cbind(cor_mat1,cor_mat2)
+ccf_exp_cor <- ccf_exp_cor[-1,]
+ggcorrplot::ggcorrplot(t(ccf_exp_cor))
+
+##view data
+DT::datatable(ccf_exp_cor,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = TRUE
+)
+```
+We can see the negative corrlation between nes and most immune score.
+Plot LF:
+
+```{r plot_LF,eval=TRUE,warning = FALSE,message=FALSE}
+##this code is modified from wang et.al 2019 elife 
+###https://xsliulab.github.io/tumor-immunogenicity-score/#strong-association-between-aps-and-immune-cell-infiltration-level
+library(ggpubr)
+plot_scatter <- function(data, x, y, xlab = "Median NES", ylab = "Median LF", conf.int = TRUE, method = "spearman", label.x = -0.7, label.y = 0.1, label = "cancer", ...) {
+  ggscatter(data,
+    x = x, y = y,
+    xlab = xlab, ylab = ylab,
+    shape = 21, size = 3, color = "black",
+    add = "reg.line", add.params = list(color = "blue", fill = "lightgray"),
+    conf.int = conf.int,
+    cor.coef = TRUE,
+    cor.coeff.args = list(method = method, label.x = label.x, label.y = label.y, label.sep = "\n"),
+    label = label, repel = TRUE, ...
+  )
+}
+
+plot_scatter(data = summ_ccf %>% mutate(cancer=gsub("TCGA-","",cancer)),
+             x="nes",y="Leukocyte Fraction",label.x = -0.8,label.y = 0.1)
+plot_scatter(data = summ_exp %>% mutate(cancer=gsub("TCGA-","",cancer)),
+             x="nes",y="Leukocyte Fraction",label.x = -0.7,label.y = 0.1)
+```
+
+We can see the CCF NES is significantly corrlated with LF, while EXP NES is not.
+
+The negative NES value indicates that samples are under immune negative selection, thus we then consider NES as categorical variable and check the difference between positive and negative NES.
+
+```{r diff_nes,eval=TRUE,message=FALSE,warning=FALSE}
+
+plot_diff_box <- function(data,var,title,laby){
+  ggplot(data, aes(x=type, y=get(var), fill=type)) +
+  scale_fill_manual(values=c("white", "#FC8D62"))+
+  stat_compare_means()+
+  geom_violin(width=0.8, alpha=0.2)+
+  geom_boxplot(width=0.2) +
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  labs(title=title,y=laby)
+}
+
+pancancer_nes_ccf <- pancancer_nes_ccf %>% 
+  mutate(type=ifelse(nes<0,"negative","positive"))
+pancancer_nes_exp <- pancancer_nes_exp %>% 
+  mutate(type=ifelse(nes<0,"negative","positive"))
+
+pancancer_nes_ccf$type <- factor(pancancer_nes_ccf$type,levels = c("positive","negative"))
+pancancer_nes_exp$type <- factor(pancancer_nes_exp$type,levels = c("positive","negative"))  
+
+###LF
+plot_diff_box(data = pancancer_nes_ccf,var = "Leukocyte Fraction",title = "CCF",
+              laby = "Leukocyte Fraction")
+plot_diff_box(data = pancancer_nes_exp,var = "Leukocyte Fraction",title = "EXP",
+              laby = "Leukocyte Fraction")
+
+###T_cells_CD8
+plot_diff_box(data = pancancer_nes_ccf,var = "T_cells_CD8",title = "CCF",
+              laby = "CD8 T Cells")
+plot_diff_box(data = pancancer_nes_exp,var = "T_cells_CD8",title = "EXP",
+              laby = "CD8 T Cells")
+
+###CYT
+ggplot(pancancer_nes_ccf, aes(x=type, y=log(cyt+1), fill=type)) +
+  scale_fill_manual(values=c("white", "#FC8D62"))+
+  stat_compare_means()+
+  geom_violin(width=0.8, alpha=0.2)+
+  geom_boxplot(width=0.2) +
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  labs(title="CCF",y="log(CYT+1)")
+ggplot(pancancer_nes_exp, aes(x=type, y=log(cyt+1), fill=type)) +
+  scale_fill_manual(values=c("white", "#FC8D62"))+
+  stat_compare_means()+
+  geom_violin(width=0.8, alpha=0.2)+
+  geom_boxplot(width=0.2) +
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  labs(title="EXP",y="log(CYT+1)")
+```
+
+
+
+
 ## Neoantigen enrichment score and immune negative selection selection
 We use a stochastic branching process model (2020 Nature genetics, Eszter Lakatos et.al) to model tumor growth integrating neoantigen-mediated negative selection. The detailed method please see our paper or the [origin NG paper](https://doi.org/10.1038/s41588-020-0687-1)
 
 The Julia scripts used in this simulation can be found in `code/julia`.
+
+
+
+
+

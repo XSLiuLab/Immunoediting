@@ -16,6 +16,13 @@ knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
 knitr::opts_knit$set(width = 75)
 ```
 
+```{r lib,echo=TRUE,eval=TRUE,include=FALSE}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(viridis)
+library(NeoEnrichment)
+```
 This part will describe how and where the data that this project used is downloaded and pre-processed.
 
 ## TCGA pancancer data download and clean
@@ -40,30 +47,9 @@ DT::datatable(head(pancancer_mutation),
 ```
 
 ### Copy number data
-Absolute copy number data was download from [TCGA GDC Data Portal](https://portal.gdc.cancer.gov/repository?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_type%22%2C%22value%22%3A%5B%22Allele-specific%20Copy%20Number%20Segment%22%5D%7D%7D%5D%7D), then we converted the aliquot id of those files to TCGA sample barcode using `aliquot.tsv` (check Biosepcimen botton in the GDC Cart to download)
+Absolute copy number data was download from [TCGA GDC Data Portal](https://portal.gdc.cancer.gov/repository?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_type%22%2C%22value%22%3A%5B%22Allele-specific%20Copy%20Number%20Segment%22%5D%7D%7D%5D%7D), then we converted the aliquot id of those files to TCGA sample barcode using `aliquot.tsv` (check Biosepcimen botton in the GDC Cart to download),the code used to convert id is in `code/R/convert_aliquot_id.R`
 
 ```{r convert_id,eval=FALSE}
-###convert id
-nameconvert <- function(x,all){
-  path <- paste("~/hrdect/HRDDATA/TCGA/segtxt/",x,"txt/",sep = "")
-  setwd(path)
-  vcf <- list.files()
-  vcfs <- purrr::map(vcf, ~data.table::fread(.))
-  names(vcfs) <- sub(".ascat2.allelic_specific.seg.txt", "", vcf)
-  vcfs <- data.table::rbindlist(vcfs, use.names = FALSE, idcol = "sample")
-  names(vcfs)[2] <- c("aliquot_id")
-  
-  vcfs <- inner_join(all,vcfs,by="aliquot_id")
-  filepath <- paste("~/hrdect/HRDDATA/TCGA/segtxt/rdsdata/",x,".rds",sep = "")
-  saveRDS(vcfs, file = filepath)
-}
-c <- list.files("~/hrdect/HRDDATA/TCGA/segtxt/")
-c <- sub("txt", "", c)
-
-for (i in seq_along(c)){
-  nameconvert(c[i],all = allquote.rds)
-}
-
 ###merge all data
 file <- dir("~/neo_dep/ssNEA/data/copy_number/")
 dt <- data.frame(sample=NA,Chromosome=NA,Start=NA,End=NA,Copy_Number=NA)
@@ -148,7 +134,20 @@ Immune infiltration estimation data for all TCGA tumors was downloaded from [TIM
 immune <- data.table::fread("~/useful_data/infiltration_estimation_for_tcga.csv") %>% 
   rename(sample=cell_type) %>% 
   select(sample,ends_with("CIBERSORT")) %>%
-  filter(substr(sample,14,15) != "11")## checked the 14-15 of sample names
+  filter(substr(sample,14,15) != "11") %>% ## checked the 14-15 of sample names
+  mutate(
+    Macrophage=`Monocyte_CIBERSORT`+`Macrophage M0_CIBERSORT`+`Macrophage M1_CIBERSORT`,
+    Dendritic_cell=`Myeloid dendritic cell resting_CIBERSORT`+`Myeloid dendritic cell activated_CIBERSORT`,
+    Mast_cell=`Mast cell activated_CIBERSORT`+`Mast cell resting_CIBERSORT`,
+    Neutrophils=`Eosinophil_CIBERSORT`,
+    Eosinophils=`Neutrophil_CIBERSORT`,
+    T_cells_CD8=`T cell CD8+_CIBERSORT`,
+    T_cells_CD4=`T cell CD4+ memory resting_CIBERSORT`+`T cell CD4+ memory activated_CIBERSORT`+
+      `T cell CD4+ naive_CIBERSORT`,
+    B_cells=`B cell naive_CIBERSORT`+`B cell memory_CIBERSORT`,
+    NK_cells=`NK cell resting_CIBERSORT`+`NK cell activated_CIBERSORT`,
+    Supress_cell=`Macrophage M2_CIBERSORT`+`T cell regulatory (Tregs)_CIBERSORT`
+  ) %>% select(1,24:33)
 saveRDS(immune,file = "~/Immunoediting/data/immue_estimate.rds")
 
 ###LF
@@ -171,6 +170,25 @@ DT::datatable(head(immune_landscape),
   options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
 )
 ```
+
+In addition, we also obtain the data from [Wang S et.al, 2019 elife](10.7554/eLife.49020), and use APM score , Aggregate TIS (T cell infiltration score) and IIS (Immune cell infiltration score).
+
+
+```{r wang_gsva,eval=FALSE}
+load("~/Immunoediting/data/df_combine_gsva_clinical.rdata")
+df.gsva <- df.gsva %>% 
+  select(Project,Tumor_Sample_Barcode,APM,TIS,IIS)
+saveRDS(df.gsva,file = "~/Immunoediting/data/wang_2019_elife.rds")
+```
+
+view the data:
+```{r view_gsva,eval=TRUE}
+wang_2019_elife <- readRDS("~/Immunoediting/data/wang_2019_elife.rds")
+DT::datatable(head(wang_2019_elife),
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
 
 ### RNA-seq data
 
@@ -225,6 +243,10 @@ for (i in cancer$V1){
   fpkm2tpm(i)
 }
 ```
+
+Based on RNA-seq data, we can also calculate CYT values. Cytolytic activity (CYT) was calculated as the geometric mean of GZMA and PRF1 (as expressed in TPM, 0.01 offset)(Michael S. Rooney et.al, 2015 Cell)
+
+The code used to calculate CYT can be found in `code/R/cal_CYT`
 
 ## TCGA pancancer data pre-process
 
