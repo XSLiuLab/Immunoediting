@@ -15,7 +15,7 @@ options(max.print = "75")
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
 knitr::opts_knit$set(width = 75)
 ```
-```{r lib,echo=TRUE,eval=TRUE,include=FALSE}
+```{r lib1,echo=TRUE,eval=TRUE,include=FALSE}
 library(tidyverse)
 library(ggpubr)
 library(cowplot)
@@ -150,7 +150,17 @@ Thus we conclude that the immunoediting signal is undoubtedly exist, however in 
 
 Then we view the cancer type distribution of NES and compare with cancer type simulation:
 ```{r view_cancer_type_nes,eval=TRUE}
+pancancer_simulation <- readRDS("~/Immunoediting/data/simulation/pancancer_simulation.rds")
+pancancer_nes_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+pancancer_nes_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds") 
 
+##load function
+source("~/Immunoediting/code/R/plot_pancancer_nes_distribution.R")
+pancancer_simulation$cancer <- gsub("TCGA-","",pancancer_simulation$cancer)
+pancancer_nes_ccf$cancer <- gsub("TCGA-","",getcancer_type(pancancer_nes_ccf$sample))
+pancancer_nes_exp$cancer <- gsub("TCGA-","",getcancer_type(pancancer_nes_exp$sample))
+plot_pancancer(pancancer_nes_ccf,pancancer_simulation,text_position = 4,size=3)
+plot_pancancer(pancancer_nes_exp,pancancer_simulation,text_position = -6,size=3)
 ```
 
 
@@ -314,7 +324,7 @@ ggplot(pancancer_nes_exp, aes(x=type, y=log(cyt+1), fill=type)) +
   labs(title="EXP",y="log(CYT+1)")
 ```
 
-
+In the categorical aspect, negative and positive show significant difference in those immune scores.
 
 
 ## Neoantigen enrichment score and immune negative selection selection
