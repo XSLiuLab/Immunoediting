@@ -15,11 +15,20 @@ options(max.print = "75")
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
 knitr::opts_knit$set(width = 75)
 ```
+```{r lib,echo=TRUE,eval=TRUE,include=FALSE}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(viridis)
+library(NeoEnrichment)
+```
 
 ##  The existence of significant immunoediting signal
 
 From our pan-cancer data, we can get two distributions: mutation counts of samples and IC50 values of neoantigens. 
 We randomly selected 10000 counts from the distribution of mutation counts to construct simulated samples which each sample has its own mutation counts. For each mutations in a simulated sample, we randomly selected a IC50 value from IC50 distribution. Now we have 10000 samples, each sample has its mutation counts and each mutations has its IC50 values. Given that CCF or expression is a criterion for ranking, we just used the natural order to rank the simulated mutations. At last, we calculated NES for these simulated samples to get neutral distribution of NES.
+
+The following code do this simulation step for each cancer type:
 
 ```{r simulation,eval=FALSE}
 pancancer_neoantigen_exp_ccf <- readRDS("~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds")
@@ -41,7 +50,7 @@ for (i in 1:length(cancer_type)){
   sample <- lapply(sample_mt,
                     function(x){
                       tmp <- data.frame(mutation_id=c(1:x),
-                                        IC50=sample(cancer$MT_mean,x),
+                                        IC50=sample(cancer$MT_mean,x),##sample IC50 for mutations
                                         rank=c(x:1))
                       a <- nrow(tmp)
                       tmp <- tmp %>% 
@@ -73,7 +82,73 @@ for (i in 1:length(cancer_type)){
   saveRDS(result_sim,
           file = paste0("~/Immunoediting/data/simulation/",cancer_type[i],"_simulation.rds"))
 }
+```
+Then we bind all cancer type simulation data:
 
+```{r bind_sim,eval=FALSE}
+bind_all <- lapply(list.files("~/Immunoediting/data/simulation/"),
+                   function(x){
+                     re <- readRDS(paste0("~/Immunoediting/data/simulation/",x)) %>% 
+                       mutate(cancer=gsub("_simulation.rds","",x))
+                   })
+pancancer_simulation_data <- bind_rows(bind_all)
+saveRDS(pancancer_simulation_data,file = "~/Immunoediting/data/simulation/pancancer_simulation.rds")
+```
+This simulation can considered as neutral (or random) nes distribution, so we can compare our TCGA pancancer real nes distribution to this data. If the two distributions are significantly different, then we can conclude that the observed nes in TCGA real data is not random.
+
+```{r compare_nes,eval=TRUE}
+pancancer_simulation <- readRDS("~/Immunoediting/data/simulation/pancancer_simulation.rds")
+pancancer_nes_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+pancancer_nes_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds")  
+
+dt_ccf <- data.frame(type=c(rep("simulation",nrow(pancancer_simulation)),
+                        rep("TCGA pancancer",nrow(pancancer_nes_ccf))),
+                     NES=c(pancancer_simulation$nes,pancancer_nes_ccf$nes))
+dt_exp <- data.frame(type=c(rep("simulation",nrow(pancancer_simulation)),
+                            rep("TCGA pancancer",nrow(pancancer_nes_exp))),
+                     NES=c(pancancer_simulation$nes,pancancer_nes_exp$nes))
+
+p1 <- ggplot(dt_ccf, aes(x=type, y=NES, fill=type)) +
+  scale_fill_manual(values=c("#66C2A5", "#FC8D62"))+
+  stat_compare_means(aes(x=type, y=NES))+
+  geom_violin(width=0.8, alpha=0.2)+
+  geom_boxplot(width=0.2) +
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  labs(title="CCF")
+
+p2 <- ggplot(dt_exp, aes(x=type, y=NES, fill=type)) +
+  scale_fill_manual(values=c("#66C2A5", "#FC8D62"))+
+  stat_compare_means(aes(x=type, y=NES))+
+  geom_violin(width=0.8, alpha=0.2)+
+  geom_boxplot(width=0.2) +
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  labs(title="EXP")
+
+plot_grid(p1,p2)
 ```
 
+From the pancancer overview, It has significant difference between neutral simulation and TCGA real data.
 
+Then we can check how many patients have significant neoantigen negative enrichment signal.
+
+```{r p_distribution,eval=TRUE}
+###firstly, we adjust p value to FDR q values:
+pancancer_nes_ccf$fdr <- p.adjust(pancancer_nes_ccf$p_value,method = "fdr")
+pancancer_nes_exp$fdr <- p.adjust(pancancer_nes_exp$p_value,method = "fdr")
+
+p1 <- plot_pie(pancancer_nes_ccf$fdr,expression = "pancancer_nes_ccf$fdr<0.25 & pancancer_nes_ccf$nes<0",label = c("samples with FDR<25% \n and NES(CCF) < 0","others"))
+p2 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.25 & pancancer_nes_exp$nes<0",label = c("samples with FDR<25% \n and NES(EXP) < 0","others"))
+
+###FDR 5%
+p3 <- plot_pie(pancancer_nes_ccf$fdr,expression = "pancancer_nes_ccf$fdr<0.05 & pancancer_nes_ccf$nes<0",label = c("samples with FDR<5% \n and NES(CCF) < 0","others"))
+p4 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.05 & pancancer_nes_exp$nes<0",label = c("samples with FDR<5% \n and NES(EXP) < 0","others"))
+```
+
+Thus we conclude that the immunoediting signal is undoubtedly exist, however in majority of cancer patient, this signal is undetectable, and only 2.5% (CCF FDR<0.25) of patient show this significant immunoediting signal.
+
+## Neoantigen enrichment score and immune negative selection selection
+We use a stochastic branching process model (2020 Nature genetics, Eszter Lakatos et.al) to model tumor growth integrating neoantigen-mediated negative selection. The detailed method please see our paper or the [origin NG paper](https://doi.org/10.1038/s41588-020-0687-1)
+
+The Julia scripts used in this simulation can be found in `code/julia`.

@@ -174,22 +174,56 @@ DT::datatable(head(immune_landscape),
 
 ### RNA-seq data
 
-The normalized gene-level RNA-seq data (TPM,Transcripts Per Million) for 33 TCGA cohorts were downloaded from [Xena](https://xenabrowser.net/datapages/?dataset=tcga_RSEM_gene_tpm&host=https%3A%2F%2Ftoil.xenahubs.net&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443).(This file is too large, so I don't push it to github)
+The normalized gene-level RNA-seq data (TPM,Transcripts Per Million) for 33 TCGA cohorts were downloaded from [Xena](https://xenabrowser.net/).We chose GDC TCGA cohort and `HTSeq - FPKM` data, then we transfrom FPKM to TPM.(Those file is too large, so I don't push it to github)
 
 ```{r rna-seq,eval=FALSE}
-###transform ENSG id to gene symbol
-tpm <- data.table::fread("~/useful_data/xena_RSEM_TPM/xena_tpm")
-mapping_probe <- data.table::fread("~/useful_data/xena_RSEM_TPM/mapping_probe")
+fpkmToTpm <- function(fpkm)
+{
+  exp(log(fpkm) - log(sum(fpkm)) + log(1e6))
+}
 
-tpm <- left_join(tpm %>% rename(id=sample),
-                 mapping_probe %>% select(id,gene),
-                 by="id") %>% 
-  select(id,gene,everything())
+fpkm2tpm <- function(cancertype){
+  ##read fpkm data
+  f2 = paste("~/neo_dep/RNA-seq/TCGA_pancancer/",cancertype,"/",cancertype,".htseq_fpkm.tsv",sep = "")
+  cancer_exp <- data.table::fread(
+    file = f2,
+    stringsAsFactors = FALSE,
+    verbose = FALSE,
+    data.table = TRUE,
+    showProgress = TRUE,
+    header = T,
+    quote = ""
+  ) 
+  
+  ##tranform fpkm to tpm
+  #the data in the matrix is log2(fpkm+1)
+  cancer_exp[,2:ncol(cancer_exp)] <- 2^(cancer_exp[,2:ncol(cancer_exp)])-1
+  cancer_exp <- as.data.frame(cancer_exp)
+  cancer_exp[,2:ncol(cancer_exp)] <- apply(cancer_exp[,2:ncol(cancer_exp)],2,fpkmToTpm)
+  
+  ##remove normal samples
+  i = which(substr(colnames(cancer_exp),14,15)%in%c("01","02","03","04","05",
+                                                    "06","07","08","09","10"))
+  cancer_exp = cancer_exp %>% select(c(1,i))
+  ## add gene symbol
+  map = data.table::fread(
+    file = "~/neo_dep/RNA-seq/TCGA_pancancer/acc/gencode.v22.annotation.gene.probeMap",
+    stringsAsFactors = FALSE,
+    verbose = FALSE,
+    data.table = TRUE,
+    showProgress = TRUE,
+    header = T,
+    quote = ""
+  )
+  cancer_exp <- left_join(cancer_exp,map %>% select(id,gene),by=c("Ensembl_ID"="id")) %>% 
+    select(Ensembl_ID,gene,everything())
+  save(cancer_exp,file = paste("~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/",cancertype,"_exp.Rdata",sep = "")) 
+}
 
-####transform unit
-tpm[,3:ncol(tpm)]  <- tpm[,lapply(.SD,function(x){x^2-0.001}),
-                          .SDcols=c(3:ncol(tpm))]
-saveRDS(tpm,file = "~/useful_data/xena_RSEM_TPM/tpm_gene.rds")
+cancer <- read.table("~/neo_dep/RNA-seq/TCGA_pancancer/cancer")
+for (i in cancer$V1){
+  fpkm2tpm(i)
+}
 ```
 
 ## TCGA pancancer data pre-process
@@ -238,20 +272,30 @@ overlap <- overlap %>%
   mutate(ccf=dna_vaf*Copy_Number/purity) %>%
   mutate(ccf_cn_assume=ifelse(ccf>1,1,ccf)) %>%
   separate(col = x,into = c("chromosome","sample"),sep = ",")
-overlap$cancer_type <- NeoEnrichment::getcancer_type(overlap$sample,cores = 6,par = TRUE)
+overlap$cancer_type <- NeoEnrichment::getcancer_type(overlap$sample,cores = 12,par = TRUE)
 ```
 
 Add RNA expression to each mutation:
 
 ```{r add_exp,eval=FALSE}
-tpm <- readRDS("~/useful_data/xena_RSEM_TPM/tpm_gene.rds")
-overlap_add_tpm <- dplyr::left_join(
-    overlap %>% mutate(sample=substr(sample, 1, 15)),
-    tpm %>%
+cancer_type <- names(table(overlap$cancer_type))
+
+with_tpm <- vector("list",33)
+names(with_tpm) <- cancer_type
+
+for(i in seq_along(with_tpm)){
+  load(paste("~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/",
+             tolower(gsub("TCGA-","",names(with_tpm)[i])),"_exp.Rdata",sep = ""))
+  a <- overlap %>% filter(cancer_type==names(with_tpm)[i])
+  with_tpm[[i]] <- dplyr::left_join(
+    a %>% mutate(sample=substr(sample, 1, 15)),
+    cancer_exp %>%
       tidyr::pivot_longer(cols = dplyr::starts_with("TCGA"), names_to = "sample", values_to = "exp") %>%
       dplyr::mutate(sample = substr(sample, 1, 15)),
     by = c("sample", "gene")
   )
+}
+overlap_add_tpm <- bind_rows(with_tpm)
 
 ###remove dupliated gene
 overlap_add_tpm <- overlap_add_tpm[!duplicated(overlap_add_tpm$index),]
@@ -288,8 +332,8 @@ pancancer_neoantigen_exp_ccf <- pancancer_neoantigen_exp_ccf %>%
 results_ccf <- vector("list",length = length(unique(pancancer_neoantigen_exp_ccf$sample)))
 names(results_ccf) <- unique(pancancer_neoantigen_exp_ccf$sample)
 
-cl <- makeCluster(getOption("cl.cores", 10),type="FORK")
-set.seed(202011101)
+cl <- makeCluster(getOption("cl.cores", 12),type="FORK")
+set.seed(202011105)
 results_ccf <- parSapply(cl=cl,names(results_ccf),
                          function(x){
                            NeoEnrichment::cales_t(pancancer_neoantigen_exp_ccf,x,
@@ -305,8 +349,8 @@ saveRDS(pancancer_nes_ccf,file = "~/Immunoediting/data/pancancer_nes_ccf.rds")
 results_exp <- vector("list",length = length(unique(pancancer_neoantigen_exp_ccf$sample)))
 names(results_exp) <- unique(pancancer_neoantigen_exp_ccf$sample)
 
-cl <- makeCluster(getOption("cl.cores", 12),type="FORK")
-set.seed(202011102)
+cl <- makeCluster(getOption("cl.cores", 10),type="FORK")
+set.seed(202011106)
 results_exp <- parSapply(cl=cl,names(results_exp),
                          function(x){
                            NeoEnrichment::cales_t(pancancer_neoantigen_exp_ccf,x,
