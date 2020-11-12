@@ -46,6 +46,9 @@ DT::datatable(head(pancancer_mutation),
 
 ```
 
+We also downloaded xena non-silent mutation data from [xena](https://xenabrowser.net/datapages/?cohort=TCGA%20Pan-Cancer%20(PANCAN)&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443). This file records mutations as 1 for non_slient mutation and 0 for slient mutation. 
+
+
 ### Copy number data
 Absolute copy number data was download from [TCGA GDC Data Portal](https://portal.gdc.cancer.gov/repository?filters=%7B%22op%22%3A%22and%22%2C%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_type%22%2C%22value%22%3A%5B%22Allele-specific%20Copy%20Number%20Segment%22%5D%7D%7D%5D%7D), then we converted the aliquot id of those files to TCGA sample barcode using `aliquot.tsv` (check Biosepcimen botton in the GDC Cart to download),the code used to convert id is in `code/R/convert_aliquot_id.R`
 
@@ -72,6 +75,8 @@ DT::datatable(head(pancancer_copy_number),
 )
 
 ```
+
+And we also download Gistic copynumber data from [The Immune Landscape of Cancer](https://gdc.cancer.gov/about-data/publications/panimmune#:~:text=Across%20cancer%20types%2C%20we%20identified%20six%20immune%20subtypes%3A,aneuploidy%2C%20extent%20of%20neoantigen%20load%2C%20overall%20cell%20)(GISTIC2.0 all_thresholded.by_genes file)
 
 ### Clinical and purity data
 Clinical and tumor purity data was obtained from [TCGA PanCanAtlas Publications](https://gdc.cancer.gov/about-data/publications/pancanatlas)
@@ -220,6 +225,7 @@ fpkm2tpm <- function(cancertype){
   cancer_exp[,2:ncol(cancer_exp)] <- apply(cancer_exp[,2:ncol(cancer_exp)],2,fpkmToTpm)
   
   ##remove normal samples
+  ##for get normal samples expression, see code/R/get_expmatrix_normal.R
   i = which(substr(colnames(cancer_exp),14,15)%in%c("01","02","03","04","05",
                                                     "06","07","08","09","10"))
   cancer_exp = cancer_exp %>% select(c(1,i))
@@ -395,6 +401,135 @@ DT::datatable(head(pancancer_nes_ccf),
 DT::datatable(head(pancancer_nes_exp),
   options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
 )
+```
+
+### Process immune escape sample
+
+We consider following immune escape mechanisms:
+
+- Suppress the transcription/expression of genome alterations encoding high antigenicity (quantified by NES(EXP))
+- Antigen presentation pathway gene mutation
+- Up-regulate the expression of immune suppressive signaling, like PD-L1, CTLA-4
+
+As for antigen presentation pathway gene, we use KEGG Antigen processing and presentation pathway: [hsa04612](https://www.kegg.jp/dbget-bin/www_bget?path:hsa04612):
+
+```{r process_escape_TPM,eval=FALSE}
+library("KEGGREST")
+gs<-keggGet('hsa04612')
+gene <- str_extract(gs[[1]]$GENE,".+; ") %>% na.omit()
+gene <- gsub("; ","",gene)
+another_apm <- c("CIITA","IRF1","PSME1","PSME2","PSME3","ERAP1","ERAP2","PSMA7",
+         "HSPBP1","TAP1","TAP2","TAPBP","CALR","CANX","PDIA3","B2M","PSMB5","PSMB6","PSMB7",
+         "PSMB8","PSMB9","PSMB10")
+apm_gene <- union(gene,another_apm)
+saveRDS(apm_gene,file = "~/Immunoediting/data/apm_gene.rds")
+
+pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+pancancer_exp$adj_p <- p.adjust(pancancer_exp$p_value,method = "fdr")
+
+pancancer_exp <- pancancer_exp %>% 
+  mutate(exp_escape=ifelse(nes<0 & adj_p<0.25,"yes","no"))
+#exp_escape_sample <- pancancer_exp[pancancer_exp$exp_escape=="yes","sample"] %>% substr(.,1,15)
+
+###apm mutate sample
+apm_gene <- readRDS("~/Immunoediting/data/apm_gene.rds")
+
+##non-slient mutation
+mut <- data.table::fread("~/PD_L1_ubiquitination/data/mc3.v0.2.8.PUBLIC.nonsilentGene.xena")
+mut <- mut %>% 
+  filter(sample %in% apm_gene) %>% 
+  select(any_of(substr(pancancer_exp$sample,1,15)))
+
+pancancer_exp$apm_mut <- ifelse(substr(pancancer_exp$sample,1,15) %in% colnames(mut),1,NA)
+
+apm_mutation_sample <- apply(mut[,1:ncol(mut)],2,sum)
+apm_mutation_sample <- names(apm_mutation_sample[apm_mutation_sample>=1])
+
+pancancer_exp$apm_mut <- ifelse(is.na(pancancer_exp$apm_mut),NA,
+                                ifelse(substr(pancancer_exp$sample,1,15) %in% apm_mutation_sample,"yes","no"))
+saveRDS(pancancer_exp,file = "~/Immunoediting/data/pancancer_nes_exp.rds")
+```
+Immune checkpoint overexpression was assessed using RNA-seq data. Normal expression values (in transcripts per million mapped reads (TPM)) of PD-L1 and CTLA-4 were established for each cohort from the TCGA based on RNA-seq counts of the two proteins in solid tissue normal samples. Checkpoint overexpression was called if either PD-L1 or CTLA-4 expression in the tumor was higher than the mean plus two s.d. of normal expression :
+
+```{r process_escape_CHECK,eval=FALSE}
+###normal
+cancer <- read.table("~/neo_dep/RNA-seq/TCGA_pancancer/cancer")
+cancer <- cancer %>% 
+  mutate(mean_pdl1=NA,
+         mean_ctla4=NA,
+         sd_pdl1=NA,
+         sd_ctla4=NA) %>% rename(caner=V1)
+file <- dir("~/neo_dep/RNA-seq/TCGA_pancancer/exp_tpm_mat_normal/")
+for(i in file){
+  a <- readRDS(paste("~/neo_dep/RNA-seq/TCGA_pancancer/exp_tpm_mat_normal/",i,sep = ""))
+  a <- a %>% filter(gene %in% c("CD274","CTLA4"))
+  b <- gsub("_exp.rds","",i)
+  cancer[cancer$caner==b,"mean_pdl1"] <- mean(as.numeric(a[a$gene=="CD274",3:ncol(a)]))
+  cancer[cancer$caner==b,"mean_ctla4"] <- mean(as.numeric(a[a$gene=="CTLA4",3:ncol(a)]))
+  cancer[cancer$caner==b,"sd_pdl1"] <- sd(as.numeric(a[a$gene=="CD274",3:ncol(a)]))
+  cancer[cancer$caner==b,"sd_ctla4"] <- sd(as.numeric(a[a$gene=="CTLA4",3:ncol(a)]))
+}
+saveRDS(cancer,file = "~/Immunoediting/data/normal_checkpoint.rds")
+
+###cancer
+a <- data.frame(CTLA4=NA,CD274=NA,sample=NA)
+for (i in cancer$V1) {
+  load(paste("~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/",i,"_exp.Rdata",sep = ""))
+  cancer_exp <- cancer_exp %>% filter(gene%in%c("CD274","CTLA4")) %>% select(-1)
+  rownames(cancer_exp) <- cancer_exp$gene
+  cancer_exp <- cancer_exp[,-1]
+  cancer_exp <- as.data.frame(t(cancer_exp),stringsAsFactors = F)
+  cancer_exp$sample <- rownames(cancer_exp)
+  a <- rbind(a,cancer_exp)
+}
+a <- na.omit(a)
+a$sample <- substr(a$sample,1,15)
+a <- a[!duplicated(a$sample),]
+saveRDS(a,file = "~/Immunoediting/data/cancer_checkpoint.rds")
+
+###find overexpression
+cancer_checkpoint_exp <- readRDS("~/Immunoediting/data/cancer_checkpoint.rds")
+normal_checkpoint_exp <- readRDS("~/Immunoediting/data/normal_checkpoint.rds")
+
+cancer_checkpoint_exp$cancer <- tolower(gsub("TCGA-","",getcancer_type(cancer_checkpoint_exp$sample)))
+sample_checkpoint_exp <- left_join(cancer_checkpoint_exp,normal_checkpoint_exp,
+                                   by=c("cancer"="caner"))
+sample_checkpoint_exp <- sample_checkpoint_exp %>% 
+  filter(!(is.na(mean_pdl1) & is.na(sd_pdl1)))
+
+sample_checkpoint_exp <- sample_checkpoint_exp %>% 
+  dplyr::mutate(CTLA4_overexpression=mapply(function(x,y,z){
+    if(is.na(z)){
+     return(ifelse(x>3*y,"yes","no")) 
+    }else{
+      return(ifelse(x>(y+2*z),"yes","no"))
+    }
+  },CTLA4,mean_ctla4,sd_ctla4),
+  PDL1_overexpression=mapply(function(x,y,z){
+    if(is.na(z)){
+      return(ifelse(x>3*y,"yes","no")) 
+    }else{
+      return(ifelse(x>(y+2*z),"yes","no"))
+    }
+  },CD274,mean_pdl1,sd_pdl1))
+
+sample_checkpoint_exp <- sample_checkpoint_exp %>% 
+  select(sample,CTLA4_overexpression,PDL1_overexpression)
+saveRDS(sample_checkpoint_exp,"~/Immunoediting/data/checkpoint_overexpression_sample.rds")
+```
+Then we can find escape samples:
+
+```{r find_escape,eval=FALSE}
+checkpoint_overexpression_sample <- readRDS("~/Immunoediting/data/checkpoint_overexpression_sample.rds")
+
+checkpoint_escape_sample <- checkpoint_overexpression_sample[checkpoint_overexpression_sample$CTLA4_overexpression=="yes" | checkpoint_overexpression_sample$PDL1_overexpression=="yes","sample"]
+
+pancancer_exp$checkpoint_overexpression <- ifelse(substr(pancancer_exp$sample,1,15) %in% checkpoint_overexpression_sample$sample,1,NA)
+
+pancancer_exp$checkpoint_overexpression <- ifelse(is.na(pancancer_exp$checkpoint_overexpression),NA,
+                                ifelse(substr(pancancer_exp$sample,1,15) %in% checkpoint_escape_sample,"yes","no"))
+
+saveRDS(pancancer_exp,file = "~/Immunoediting/data/pancancer_nes_exp.rds")
 ```
 
 ## Immunotherapy data download and clean

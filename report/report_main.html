@@ -9,9 +9,11 @@
 <meta name="generator" content="pandoc" />
 
 <meta name="author" content="Tao Wu" />
+<meta name="author" content="Xuan Wang" />
+<meta name="author" content="Huimin Li" />
 <meta name="author" content="Xue-Song Liu (Corresponding author)" />
 
-<meta name="date" content="2020-11-11" />
+<meta name="date" content="2020-11-12" />
 
 <title>Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</title>
 
@@ -148,6 +150,7 @@ $(document).ready(function () {
       <li><a href="#tcga-pancancer-data-pre-process">TCGA pancancer data pre-process</a><ul>
       <li><a href="#calculate-ccf-and-add-expression">Calculate ccf and add expression</a></li>
       <li><a href="#calculate-neoantigen-enrichment-score">Calculate Neoantigen Enrichment score</a></li>
+      <li><a href="#process-immune-escape-sample">Process immune escape sample</a></li>
       </ul></li>
       <li><a href="#immunotherapy-data-download-and-clean">Immunotherapy data download and clean</a></li>
       <li><a href="#immunotherapy-data-pre-process">Immunotherapy data pre-process</a></li>
@@ -155,17 +158,19 @@ $(document).ready(function () {
       <li><a href="#tcga-pancancer-analysis">TCGA pancancer analysis</a><ul>
       <li><a href="#the-existence-of-significant-immunoediting-signal">The existence of significant immunoediting signal</a></li>
       <li><a href="#neoantigen-enrichment-score-is-associated-with-immune-cell-infiltration">Neoantigen enrichment score is associated with immune cell infiltration</a></li>
-      <li><a href="#neoantigen-enrichment-score-and-immune-negative-selection-selection">Neoantigen enrichment score and immune negative selection selection</a></li>
+      <li><a href="#neoantigen-enrichment-score-and-immune-negative-selection">Neoantigen enrichment score and immune negative selection</a></li>
+      <li><a href="#tcga-pancancer-survial-analysis">TCGA Pancancer survial analysis</a></li>
       </ul></li>
-      <li><a href="#simulation-analysis">Simulation analysis</a></li>
       <li><a href="#supplementary-analysis">Supplementary analysis</a></li>
       </ul>
     </div>
     
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
               <p class="author"><span class="glyphicon glyphicon-user"></span> Tao Wu</p>
+                  <p class="author"><span class="glyphicon glyphicon-user"></span> Xuan Wang</p>
+                  <p class="author"><span class="glyphicon glyphicon-user"></span> Huimin Li</p>
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Xue-Song Liu (Corresponding author)</p>
-                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-11-11</p>
+                  <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2020-11-12</p>
         </div>
 </div>
 
@@ -205,6 +210,7 @@ $(document).ready(function () {
 <a class="sourceLine" id="cb2-4" data-line-number="4">)</a></code></pre></div>
 <div id="htmlwidget-c351af6d5a522acec58d" style="width:100%;height:auto;" class="datatables html-widget"></div>
 <script type="application/json" data-for="htmlwidget-c351af6d5a522acec58d">{"x":{"filter":"none","data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>We also downloaded xena non-silent mutation data from <a href="https://xenabrowser.net/datapages/?cohort=TCGA%20Pan-Cancer%20(PANCAN)&amp;removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443">xena</a>. This file records mutations as 1 for non_slient mutation and 0 for slient mutation.</p>
 </div>
 <div id="copy-number-data" class="section level3">
 <h3>Copy number data</h3>
@@ -227,6 +233,7 @@ $(document).ready(function () {
 <a class="sourceLine" id="cb4-4" data-line-number="4">)</a></code></pre></div>
 <div id="htmlwidget-4c9bd182732c2317ca2d" style="width:100%;height:auto;" class="datatables html-widget"></div>
 <script type="application/json" data-for="htmlwidget-4c9bd182732c2317ca2d">{"x":{"filter":"none","data":[["TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A","TCGA-OR-A5JR-01A"],["chr1","chr1","chr1","chr1","chr1","chr1"],[62920,34270420,34277475,190071104,190486414,190498696],[34270337,34276711,190070024,190486031,190498683,201225667],[3,1,3,1,2,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>Chromosome<\/th>\n      <th>Start<\/th>\n      <th>End<\/th>\n      <th>Copy_Number<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[2,3,4]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>And we also download Gistic copynumber data from <a href="https://gdc.cancer.gov/about-data/publications/panimmune#:~:text=Across%20cancer%20types%2C%20we%20identified%20six%20immune%20subtypes%3A,aneuploidy%2C%20extent%20of%20neoantigen%20load%2C%20overall%20cell%20">The Immune Landscape of Cancer</a>(GISTIC2.0 all_thresholded.by_genes file)</p>
 </div>
 <div id="clinical-and-purity-data" class="section level3">
 <h3>Clinical and purity data</h3>
@@ -352,28 +359,29 @@ $(document).ready(function () {
 <a class="sourceLine" id="cb13-23" data-line-number="23">  cancer_exp[,<span class="dv">2</span><span class="op">:</span><span class="kw">ncol</span>(cancer_exp)] &lt;-<span class="st"> </span><span class="kw">apply</span>(cancer_exp[,<span class="dv">2</span><span class="op">:</span><span class="kw">ncol</span>(cancer_exp)],<span class="dv">2</span>,fpkmToTpm)</a>
 <a class="sourceLine" id="cb13-24" data-line-number="24">  </a>
 <a class="sourceLine" id="cb13-25" data-line-number="25">  <span class="co">##remove normal samples</span></a>
-<a class="sourceLine" id="cb13-26" data-line-number="26">  i =<span class="st"> </span><span class="kw">which</span>(<span class="kw">substr</span>(<span class="kw">colnames</span>(cancer_exp),<span class="dv">14</span>,<span class="dv">15</span>)<span class="op">%in%</span><span class="kw">c</span>(<span class="st">&quot;01&quot;</span>,<span class="st">&quot;02&quot;</span>,<span class="st">&quot;03&quot;</span>,<span class="st">&quot;04&quot;</span>,<span class="st">&quot;05&quot;</span>,</a>
-<a class="sourceLine" id="cb13-27" data-line-number="27">                                                    <span class="st">&quot;06&quot;</span>,<span class="st">&quot;07&quot;</span>,<span class="st">&quot;08&quot;</span>,<span class="st">&quot;09&quot;</span>,<span class="st">&quot;10&quot;</span>))</a>
-<a class="sourceLine" id="cb13-28" data-line-number="28">  cancer_exp =<span class="st"> </span>cancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="kw">c</span>(<span class="dv">1</span>,i))</a>
-<a class="sourceLine" id="cb13-29" data-line-number="29">  <span class="co">## add gene symbol</span></a>
-<a class="sourceLine" id="cb13-30" data-line-number="30">  map =<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(</a>
-<a class="sourceLine" id="cb13-31" data-line-number="31">    <span class="dt">file =</span> <span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/acc/gencode.v22.annotation.gene.probeMap&quot;</span>,</a>
-<a class="sourceLine" id="cb13-32" data-line-number="32">    <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb13-33" data-line-number="33">    <span class="dt">verbose =</span> <span class="ot">FALSE</span>,</a>
-<a class="sourceLine" id="cb13-34" data-line-number="34">    <span class="dt">data.table =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb13-35" data-line-number="35">    <span class="dt">showProgress =</span> <span class="ot">TRUE</span>,</a>
-<a class="sourceLine" id="cb13-36" data-line-number="36">    <span class="dt">header =</span> T,</a>
-<a class="sourceLine" id="cb13-37" data-line-number="37">    <span class="dt">quote =</span> <span class="st">&quot;&quot;</span></a>
-<a class="sourceLine" id="cb13-38" data-line-number="38">  )</a>
-<a class="sourceLine" id="cb13-39" data-line-number="39">  cancer_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(cancer_exp,map <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(id,gene),<span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;Ensembl_ID&quot;</span>=<span class="st">&quot;id&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb13-40" data-line-number="40"><span class="st">    </span><span class="kw">select</span>(Ensembl_ID,gene,<span class="kw">everything</span>())</a>
-<a class="sourceLine" id="cb13-41" data-line-number="41">  <span class="kw">save</span>(cancer_exp,<span class="dt">file =</span> <span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/&quot;</span>,cancertype,<span class="st">&quot;_exp.Rdata&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)) </a>
-<a class="sourceLine" id="cb13-42" data-line-number="42">}</a>
-<a class="sourceLine" id="cb13-43" data-line-number="43"></a>
-<a class="sourceLine" id="cb13-44" data-line-number="44">cancer &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/cancer&quot;</span>)</a>
-<a class="sourceLine" id="cb13-45" data-line-number="45"><span class="cf">for</span> (i <span class="cf">in</span> cancer<span class="op">$</span>V1){</a>
-<a class="sourceLine" id="cb13-46" data-line-number="46">  <span class="kw">fpkm2tpm</span>(i)</a>
-<a class="sourceLine" id="cb13-47" data-line-number="47">}</a></code></pre></div>
+<a class="sourceLine" id="cb13-26" data-line-number="26">  <span class="co">##for get normal samples expression, see code/R/get_expmatrix_normal.R</span></a>
+<a class="sourceLine" id="cb13-27" data-line-number="27">  i =<span class="st"> </span><span class="kw">which</span>(<span class="kw">substr</span>(<span class="kw">colnames</span>(cancer_exp),<span class="dv">14</span>,<span class="dv">15</span>)<span class="op">%in%</span><span class="kw">c</span>(<span class="st">&quot;01&quot;</span>,<span class="st">&quot;02&quot;</span>,<span class="st">&quot;03&quot;</span>,<span class="st">&quot;04&quot;</span>,<span class="st">&quot;05&quot;</span>,</a>
+<a class="sourceLine" id="cb13-28" data-line-number="28">                                                    <span class="st">&quot;06&quot;</span>,<span class="st">&quot;07&quot;</span>,<span class="st">&quot;08&quot;</span>,<span class="st">&quot;09&quot;</span>,<span class="st">&quot;10&quot;</span>))</a>
+<a class="sourceLine" id="cb13-29" data-line-number="29">  cancer_exp =<span class="st"> </span>cancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="kw">c</span>(<span class="dv">1</span>,i))</a>
+<a class="sourceLine" id="cb13-30" data-line-number="30">  <span class="co">## add gene symbol</span></a>
+<a class="sourceLine" id="cb13-31" data-line-number="31">  map =<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(</a>
+<a class="sourceLine" id="cb13-32" data-line-number="32">    <span class="dt">file =</span> <span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/acc/gencode.v22.annotation.gene.probeMap&quot;</span>,</a>
+<a class="sourceLine" id="cb13-33" data-line-number="33">    <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb13-34" data-line-number="34">    <span class="dt">verbose =</span> <span class="ot">FALSE</span>,</a>
+<a class="sourceLine" id="cb13-35" data-line-number="35">    <span class="dt">data.table =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb13-36" data-line-number="36">    <span class="dt">showProgress =</span> <span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb13-37" data-line-number="37">    <span class="dt">header =</span> T,</a>
+<a class="sourceLine" id="cb13-38" data-line-number="38">    <span class="dt">quote =</span> <span class="st">&quot;&quot;</span></a>
+<a class="sourceLine" id="cb13-39" data-line-number="39">  )</a>
+<a class="sourceLine" id="cb13-40" data-line-number="40">  cancer_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(cancer_exp,map <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(id,gene),<span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;Ensembl_ID&quot;</span>=<span class="st">&quot;id&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb13-41" data-line-number="41"><span class="st">    </span><span class="kw">select</span>(Ensembl_ID,gene,<span class="kw">everything</span>())</a>
+<a class="sourceLine" id="cb13-42" data-line-number="42">  <span class="kw">save</span>(cancer_exp,<span class="dt">file =</span> <span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/&quot;</span>,cancertype,<span class="st">&quot;_exp.Rdata&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)) </a>
+<a class="sourceLine" id="cb13-43" data-line-number="43">}</a>
+<a class="sourceLine" id="cb13-44" data-line-number="44"></a>
+<a class="sourceLine" id="cb13-45" data-line-number="45">cancer &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/cancer&quot;</span>)</a>
+<a class="sourceLine" id="cb13-46" data-line-number="46"><span class="cf">for</span> (i <span class="cf">in</span> cancer<span class="op">$</span>V1){</a>
+<a class="sourceLine" id="cb13-47" data-line-number="47">  <span class="kw">fpkm2tpm</span>(i)</a>
+<a class="sourceLine" id="cb13-48" data-line-number="48">}</a></code></pre></div>
 <p>Based on RNA-seq data, we can also calculate CYT values. Cytolytic activity (CYT) was calculated as the geometric mean of GZMA and PRF1 (as expressed in TPM, 0.01 offset)(Michael S. Rooney et.al, 2015 Cell)</p>
 <p>The code used to calculate CYT can be found in <code>code/R/cal_CYT</code></p>
 </div>
@@ -511,6 +519,126 @@ CCF = \frac{VAF*CN}{purity}
 <div id="htmlwidget-1dccbf08b1619000865b" style="width:100%;height:auto;" class="datatables html-widget"></div>
 <script type="application/json" data-for="htmlwidget-1dccbf08b1619000865b">{"x":{"filter":"none","data":[["TCGA-2F-A9KO-01A","TCGA-2F-A9KP-01A","TCGA-2F-A9KQ-01A","TCGA-2F-A9KR-01A","TCGA-2F-A9KT-01A","TCGA-2F-A9KW-01A"],[-0.008402297481543,0.171822492289279,-0.283738191632928,0.0461048682041273,-0.23109768603979,0.0538020086083214],[-0.110050178019362,0.781167760862394,-1.43440741252395,0.302899947514656,-1.91244046988545,0.303587926523307],[0.467,0.305,0.112,0.413,0.054,0.436]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>es<\/th>\n      <th>nes<\/th>\n      <th>p_value<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
+<div id="process-immune-escape-sample" class="section level3">
+<h3>Process immune escape sample</h3>
+<p>We consider following immune escape mechanisms:</p>
+<ul>
+<li>Suppress the transcription/expression of genome alterations encoding high antigenicity (quantified by NES(EXP))</li>
+<li>Antigen presentation pathway gene mutation</li>
+<li>Up-regulate the expression of immune suppressive signaling, like PD-L1, CTLA-4</li>
+</ul>
+<p>As for antigen presentation pathway gene, we use KEGG Antigen processing and presentation pathway: <a href="https://www.kegg.jp/dbget-bin/www_bget?path:hsa04612">hsa04612</a>:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">library</span>(<span class="st">&quot;KEGGREST&quot;</span>)</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">gs&lt;-<span class="kw">keggGet</span>(<span class="st">&#39;hsa04612&#39;</span>)</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">gene &lt;-<span class="st"> </span><span class="kw">str_extract</span>(gs[[<span class="dv">1</span>]]<span class="op">$</span>GENE,<span class="st">&quot;.+; &quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">na.omit</span>()</a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">gene &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;; &quot;</span>,<span class="st">&quot;&quot;</span>,gene)</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">another_apm &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;CIITA&quot;</span>,<span class="st">&quot;IRF1&quot;</span>,<span class="st">&quot;PSME1&quot;</span>,<span class="st">&quot;PSME2&quot;</span>,<span class="st">&quot;PSME3&quot;</span>,<span class="st">&quot;ERAP1&quot;</span>,<span class="st">&quot;ERAP2&quot;</span>,<span class="st">&quot;PSMA7&quot;</span>,</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">         <span class="st">&quot;HSPBP1&quot;</span>,<span class="st">&quot;TAP1&quot;</span>,<span class="st">&quot;TAP2&quot;</span>,<span class="st">&quot;TAPBP&quot;</span>,<span class="st">&quot;CALR&quot;</span>,<span class="st">&quot;CANX&quot;</span>,<span class="st">&quot;PDIA3&quot;</span>,<span class="st">&quot;B2M&quot;</span>,<span class="st">&quot;PSMB5&quot;</span>,<span class="st">&quot;PSMB6&quot;</span>,<span class="st">&quot;PSMB7&quot;</span>,</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7">         <span class="st">&quot;PSMB8&quot;</span>,<span class="st">&quot;PSMB9&quot;</span>,<span class="st">&quot;PSMB10&quot;</span>)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">apm_gene &lt;-<span class="st"> </span><span class="kw">union</span>(gene,another_apm)</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="kw">saveRDS</span>(apm_gene,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/apm_gene.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">pancancer_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">pancancer_exp<span class="op">$</span>adj_p &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(pancancer_exp<span class="op">$</span>p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
+<a class="sourceLine" id="cb20-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14">pancancer_exp &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">exp_escape=</span><span class="kw">ifelse</span>(nes<span class="op">&lt;</span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>adj_p<span class="op">&lt;</span><span class="fl">0.25</span>,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="co">#exp_escape_sample &lt;- pancancer_exp[pancancer_exp$exp_escape==&quot;yes&quot;,&quot;sample&quot;] %&gt;% substr(.,1,15)</span></a>
+<a class="sourceLine" id="cb20-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb20-18" data-line-number="18"><span class="co">###apm mutate sample</span></a>
+<a class="sourceLine" id="cb20-19" data-line-number="19">apm_gene &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/apm_gene.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb20-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb20-21" data-line-number="21"><span class="co">##non-slient mutation</span></a>
+<a class="sourceLine" id="cb20-22" data-line-number="22">mut &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(<span class="st">&quot;~/PD_L1_ubiquitination/data/mc3.v0.2.8.PUBLIC.nonsilentGene.xena&quot;</span>)</a>
+<a class="sourceLine" id="cb20-23" data-line-number="23">mut &lt;-<span class="st"> </span>mut <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-24" data-line-number="24"><span class="st">  </span><span class="kw">filter</span>(sample <span class="op">%in%</span><span class="st"> </span>apm_gene) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-25" data-line-number="25"><span class="st">  </span><span class="kw">select</span>(<span class="kw">any_of</span>(<span class="kw">substr</span>(pancancer_exp<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>)))</a>
+<a class="sourceLine" id="cb20-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb20-27" data-line-number="27">pancancer_exp<span class="op">$</span>apm_mut &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">substr</span>(pancancer_exp<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>) <span class="op">%in%</span><span class="st"> </span><span class="kw">colnames</span>(mut),<span class="dv">1</span>,<span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb20-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb20-29" data-line-number="29">apm_mutation_sample &lt;-<span class="st"> </span><span class="kw">apply</span>(mut[,<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(mut)],<span class="dv">2</span>,sum)</a>
+<a class="sourceLine" id="cb20-30" data-line-number="30">apm_mutation_sample &lt;-<span class="st"> </span><span class="kw">names</span>(apm_mutation_sample[apm_mutation_sample<span class="op">&gt;=</span><span class="dv">1</span>])</a>
+<a class="sourceLine" id="cb20-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb20-32" data-line-number="32">pancancer_exp<span class="op">$</span>apm_mut &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(pancancer_exp<span class="op">$</span>apm_mut),<span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb20-33" data-line-number="33">                                <span class="kw">ifelse</span>(<span class="kw">substr</span>(pancancer_exp<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>) <span class="op">%in%</span><span class="st"> </span>apm_mutation_sample,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</a>
+<a class="sourceLine" id="cb20-34" data-line-number="34"><span class="kw">saveRDS</span>(pancancer_exp,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a></code></pre></div>
+<p>Immune checkpoint overexpression was assessed using RNA-seq data. Normal expression values (in transcripts per million mapped reads (TPM)) of PD-L1 and CTLA-4 were established for each cohort from the TCGA based on RNA-seq counts of the two proteins in solid tissue normal samples. Checkpoint overexpression was called if either PD-L1 or CTLA-4 expression in the tumor was higher than the mean plus two s.d. of normal expression :</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="co">###normal</span></a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">cancer &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/cancer&quot;</span>)</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">cancer &lt;-<span class="st"> </span>cancer <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">mean_pdl1=</span><span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">         <span class="dt">mean_ctla4=</span><span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb21-6" data-line-number="6">         <span class="dt">sd_pdl1=</span><span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb21-7" data-line-number="7">         <span class="dt">sd_ctla4=</span><span class="ot">NA</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">rename</span>(<span class="dt">caner=</span>V1)</a>
+<a class="sourceLine" id="cb21-8" data-line-number="8">file &lt;-<span class="st"> </span><span class="kw">dir</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/exp_tpm_mat_normal/&quot;</span>)</a>
+<a class="sourceLine" id="cb21-9" data-line-number="9"><span class="cf">for</span>(i <span class="cf">in</span> file){</a>
+<a class="sourceLine" id="cb21-10" data-line-number="10">  a &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/exp_tpm_mat_normal/&quot;</span>,i,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</a>
+<a class="sourceLine" id="cb21-11" data-line-number="11">  a &lt;-<span class="st"> </span>a <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(gene <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;CD274&quot;</span>,<span class="st">&quot;CTLA4&quot;</span>))</a>
+<a class="sourceLine" id="cb21-12" data-line-number="12">  b &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;_exp.rds&quot;</span>,<span class="st">&quot;&quot;</span>,i)</a>
+<a class="sourceLine" id="cb21-13" data-line-number="13">  cancer[cancer<span class="op">$</span>caner<span class="op">==</span>b,<span class="st">&quot;mean_pdl1&quot;</span>] &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">as.numeric</span>(a[a<span class="op">$</span>gene<span class="op">==</span><span class="st">&quot;CD274&quot;</span>,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(a)]))</a>
+<a class="sourceLine" id="cb21-14" data-line-number="14">  cancer[cancer<span class="op">$</span>caner<span class="op">==</span>b,<span class="st">&quot;mean_ctla4&quot;</span>] &lt;-<span class="st"> </span><span class="kw">mean</span>(<span class="kw">as.numeric</span>(a[a<span class="op">$</span>gene<span class="op">==</span><span class="st">&quot;CTLA4&quot;</span>,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(a)]))</a>
+<a class="sourceLine" id="cb21-15" data-line-number="15">  cancer[cancer<span class="op">$</span>caner<span class="op">==</span>b,<span class="st">&quot;sd_pdl1&quot;</span>] &lt;-<span class="st"> </span><span class="kw">sd</span>(<span class="kw">as.numeric</span>(a[a<span class="op">$</span>gene<span class="op">==</span><span class="st">&quot;CD274&quot;</span>,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(a)]))</a>
+<a class="sourceLine" id="cb21-16" data-line-number="16">  cancer[cancer<span class="op">$</span>caner<span class="op">==</span>b,<span class="st">&quot;sd_ctla4&quot;</span>] &lt;-<span class="st"> </span><span class="kw">sd</span>(<span class="kw">as.numeric</span>(a[a<span class="op">$</span>gene<span class="op">==</span><span class="st">&quot;CTLA4&quot;</span>,<span class="dv">3</span><span class="op">:</span><span class="kw">ncol</span>(a)]))</a>
+<a class="sourceLine" id="cb21-17" data-line-number="17">}</a>
+<a class="sourceLine" id="cb21-18" data-line-number="18"><span class="kw">saveRDS</span>(cancer,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/normal_checkpoint.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb21-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb21-20" data-line-number="20"><span class="co">###cancer</span></a>
+<a class="sourceLine" id="cb21-21" data-line-number="21">a &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">CTLA4=</span><span class="ot">NA</span>,<span class="dt">CD274=</span><span class="ot">NA</span>,<span class="dt">sample=</span><span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb21-22" data-line-number="22"><span class="cf">for</span> (i <span class="cf">in</span> cancer<span class="op">$</span>V1) {</a>
+<a class="sourceLine" id="cb21-23" data-line-number="23">  <span class="kw">load</span>(<span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/RNA-seq/TCGA_pancancer/exp_matrix_tpm/&quot;</span>,i,<span class="st">&quot;_exp.Rdata&quot;</span>,<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</a>
+<a class="sourceLine" id="cb21-24" data-line-number="24">  cancer_exp &lt;-<span class="st"> </span>cancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(gene<span class="op">%in%</span><span class="kw">c</span>(<span class="st">&quot;CD274&quot;</span>,<span class="st">&quot;CTLA4&quot;</span>)) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb21-25" data-line-number="25">  <span class="kw">rownames</span>(cancer_exp) &lt;-<span class="st"> </span>cancer_exp<span class="op">$</span>gene</a>
+<a class="sourceLine" id="cb21-26" data-line-number="26">  cancer_exp &lt;-<span class="st"> </span>cancer_exp[,<span class="op">-</span><span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb21-27" data-line-number="27">  cancer_exp &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">t</span>(cancer_exp),<span class="dt">stringsAsFactors =</span> F)</a>
+<a class="sourceLine" id="cb21-28" data-line-number="28">  cancer_exp<span class="op">$</span>sample &lt;-<span class="st"> </span><span class="kw">rownames</span>(cancer_exp)</a>
+<a class="sourceLine" id="cb21-29" data-line-number="29">  a &lt;-<span class="st"> </span><span class="kw">rbind</span>(a,cancer_exp)</a>
+<a class="sourceLine" id="cb21-30" data-line-number="30">}</a>
+<a class="sourceLine" id="cb21-31" data-line-number="31">a &lt;-<span class="st"> </span><span class="kw">na.omit</span>(a)</a>
+<a class="sourceLine" id="cb21-32" data-line-number="32">a<span class="op">$</span>sample &lt;-<span class="st"> </span><span class="kw">substr</span>(a<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>)</a>
+<a class="sourceLine" id="cb21-33" data-line-number="33">a &lt;-<span class="st"> </span>a[<span class="op">!</span><span class="kw">duplicated</span>(a<span class="op">$</span>sample),]</a>
+<a class="sourceLine" id="cb21-34" data-line-number="34"><span class="kw">saveRDS</span>(a,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/cancer_checkpoint.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb21-35" data-line-number="35"></a>
+<a class="sourceLine" id="cb21-36" data-line-number="36"><span class="co">###find overexpression</span></a>
+<a class="sourceLine" id="cb21-37" data-line-number="37">cancer_checkpoint_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/cancer_checkpoint.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb21-38" data-line-number="38">normal_checkpoint_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/normal_checkpoint.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb21-39" data-line-number="39"></a>
+<a class="sourceLine" id="cb21-40" data-line-number="40">cancer_checkpoint_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">tolower</span>(<span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(cancer_checkpoint_exp<span class="op">$</span>sample)))</a>
+<a class="sourceLine" id="cb21-41" data-line-number="41">sample_checkpoint_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(cancer_checkpoint_exp,normal_checkpoint_exp,</a>
+<a class="sourceLine" id="cb21-42" data-line-number="42">                                   <span class="dt">by=</span><span class="kw">c</span>(<span class="st">&quot;cancer&quot;</span>=<span class="st">&quot;caner&quot;</span>))</a>
+<a class="sourceLine" id="cb21-43" data-line-number="43">sample_checkpoint_exp &lt;-<span class="st"> </span>sample_checkpoint_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-44" data-line-number="44"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(mean_pdl1) <span class="op">&amp;</span><span class="st"> </span><span class="kw">is.na</span>(sd_pdl1)))</a>
+<a class="sourceLine" id="cb21-45" data-line-number="45"></a>
+<a class="sourceLine" id="cb21-46" data-line-number="46">sample_checkpoint_exp &lt;-<span class="st"> </span>sample_checkpoint_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-47" data-line-number="47"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">mutate</span>(<span class="dt">CTLA4_overexpression=</span><span class="kw">mapply</span>(<span class="cf">function</span>(x,y,z){</a>
+<a class="sourceLine" id="cb21-48" data-line-number="48">    <span class="cf">if</span>(<span class="kw">is.na</span>(z)){</a>
+<a class="sourceLine" id="cb21-49" data-line-number="49">     <span class="kw">return</span>(<span class="kw">ifelse</span>(x<span class="op">&gt;</span><span class="dv">3</span><span class="op">*</span>y,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>)) </a>
+<a class="sourceLine" id="cb21-50" data-line-number="50">    }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb21-51" data-line-number="51">      <span class="kw">return</span>(<span class="kw">ifelse</span>(x<span class="op">&gt;</span>(y<span class="op">+</span><span class="dv">2</span><span class="op">*</span>z),<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</a>
+<a class="sourceLine" id="cb21-52" data-line-number="52">    }</a>
+<a class="sourceLine" id="cb21-53" data-line-number="53">  },CTLA4,mean_ctla4,sd_ctla4),</a>
+<a class="sourceLine" id="cb21-54" data-line-number="54">  <span class="dt">PDL1_overexpression=</span><span class="kw">mapply</span>(<span class="cf">function</span>(x,y,z){</a>
+<a class="sourceLine" id="cb21-55" data-line-number="55">    <span class="cf">if</span>(<span class="kw">is.na</span>(z)){</a>
+<a class="sourceLine" id="cb21-56" data-line-number="56">      <span class="kw">return</span>(<span class="kw">ifelse</span>(x<span class="op">&gt;</span><span class="dv">3</span><span class="op">*</span>y,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>)) </a>
+<a class="sourceLine" id="cb21-57" data-line-number="57">    }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb21-58" data-line-number="58">      <span class="kw">return</span>(<span class="kw">ifelse</span>(x<span class="op">&gt;</span>(y<span class="op">+</span><span class="dv">2</span><span class="op">*</span>z),<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</a>
+<a class="sourceLine" id="cb21-59" data-line-number="59">    }</a>
+<a class="sourceLine" id="cb21-60" data-line-number="60">  },CD274,mean_pdl1,sd_pdl1))</a>
+<a class="sourceLine" id="cb21-61" data-line-number="61"></a>
+<a class="sourceLine" id="cb21-62" data-line-number="62">sample_checkpoint_exp &lt;-<span class="st"> </span>sample_checkpoint_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb21-63" data-line-number="63"><span class="st">  </span><span class="kw">select</span>(sample,CTLA4_overexpression,PDL1_overexpression)</a>
+<a class="sourceLine" id="cb21-64" data-line-number="64"><span class="kw">saveRDS</span>(sample_checkpoint_exp,<span class="st">&quot;~/Immunoediting/data/checkpoint_overexpression_sample.rds&quot;</span>)</a></code></pre></div>
+<p>Then we can find escape samples:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">checkpoint_overexpression_sample &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/checkpoint_overexpression_sample.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">checkpoint_escape_sample &lt;-<span class="st"> </span>checkpoint_overexpression_sample[checkpoint_overexpression_sample<span class="op">$</span>CTLA4_overexpression<span class="op">==</span><span class="st">&quot;yes&quot;</span> <span class="op">|</span><span class="st"> </span>checkpoint_overexpression_sample<span class="op">$</span>PDL1_overexpression<span class="op">==</span><span class="st">&quot;yes&quot;</span>,<span class="st">&quot;sample&quot;</span>]</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb22-5" data-line-number="5">pancancer_exp<span class="op">$</span>checkpoint_overexpression &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">substr</span>(pancancer_exp<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>) <span class="op">%in%</span><span class="st"> </span>checkpoint_overexpression_sample<span class="op">$</span>sample,<span class="dv">1</span>,<span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb22-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb22-7" data-line-number="7">pancancer_exp<span class="op">$</span>checkpoint_overexpression &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">is.na</span>(pancancer_exp<span class="op">$</span>checkpoint_overexpression),<span class="ot">NA</span>,</a>
+<a class="sourceLine" id="cb22-8" data-line-number="8">                                <span class="kw">ifelse</span>(<span class="kw">substr</span>(pancancer_exp<span class="op">$</span>sample,<span class="dv">1</span>,<span class="dv">15</span>) <span class="op">%in%</span><span class="st"> </span>checkpoint_escape_sample,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</a>
+<a class="sourceLine" id="cb22-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb22-10" data-line-number="10"><span class="kw">saveRDS</span>(pancancer_exp,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a></code></pre></div>
+</div>
 </div>
 <div id="immunotherapy-data-download-and-clean" class="section level2">
 <h2>Immunotherapy data download and clean</h2>
@@ -525,202 +653,206 @@ CCF = \frac{VAF*CN}{purity}
 <h2>The existence of significant immunoediting signal</h2>
 <p>From our pan-cancer data, we can get two distributions: mutation counts of samples and IC50 values of neoantigens. We randomly selected 10000 counts from the distribution of mutation counts to construct simulated samples which each sample has its own mutation counts. For each mutations in a simulated sample, we randomly selected a IC50 value from IC50 distribution. Now we have 10000 samples, each sample has its mutation counts and each mutations has its IC50 values. Given that CCF or expression is a criterion for ranking, we just used the natural order to rank the simulated mutations. At last, we calculated NES for these simulated samples to get neutral distribution of NES.</p>
 <p>The following code do this simulation step for each cancer type:</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">pancancer_neoantigen_exp_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb20-2" data-line-number="2">pancancer_neoantigen_exp_ccf &lt;-<span class="st"> </span>pancancer_neoantigen_exp_ccf <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">sample=</span>Tumor_Barcode,<span class="dt">chromosome=</span>chr,<span class="dt">position=</span>Stop,<span class="dt">MT_mean=</span>MT_har_mean) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-4" data-line-number="4"><span class="st">  </span><span class="kw">as.data.frame</span>(<span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb20-5" data-line-number="5">cancer_type &lt;-<span class="st"> </span><span class="kw">names</span>(<span class="kw">table</span>(pancancer_neoantigen_exp_ccf<span class="op">$</span>cancer_type))</a>
-<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="kw">set.seed</span>(<span class="dv">202011104</span>)</a>
-<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(cancer_type)){</a>
-<a class="sourceLine" id="cb20-8" data-line-number="8">  cancer &lt;-<span class="st"> </span>pancancer_neoantigen_exp_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-9" data-line-number="9"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cancer_type<span class="op">==</span>.env<span class="op">$</span>cancer_type[i])</a>
-<a class="sourceLine" id="cb20-10" data-line-number="10">  cancer <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(sample) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb20-11" data-line-number="11"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">mutation_counts=</span><span class="kw">n</span>()) -&gt;<span class="st"> </span>mutation_counts</a>
-<a class="sourceLine" id="cb20-12" data-line-number="12">  <span class="co">##sampling mutation counts</span></a>
-<a class="sourceLine" id="cb20-13" data-line-number="13">  sample_mt &lt;-<span class="st"> </span><span class="kw">sample</span>(mutation_counts<span class="op">$</span>mutation_counts,<span class="dv">10000</span>,<span class="dt">replace =</span> T)</a>
-<a class="sourceLine" id="cb20-14" data-line-number="14">  </a>
-<a class="sourceLine" id="cb20-15" data-line-number="15">  sample &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="dt">length =</span> <span class="dv">10000</span>)</a>
-<a class="sourceLine" id="cb20-16" data-line-number="16">  <span class="kw">names</span>(sample) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10000</span>)</a>
-<a class="sourceLine" id="cb20-17" data-line-number="17">  sample &lt;-<span class="st"> </span><span class="kw">lapply</span>(sample_mt,</a>
-<a class="sourceLine" id="cb20-18" data-line-number="18">                    <span class="cf">function</span>(x){</a>
-<a class="sourceLine" id="cb20-19" data-line-number="19">                      tmp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">mutation_id=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>x),</a>
-<a class="sourceLine" id="cb20-20" data-line-number="20">                                        <span class="dt">IC50=</span><span class="kw">sample</span>(cancer<span class="op">$</span>MT_mean,x),<span class="co">##sample IC50 for mutations</span></a>
-<a class="sourceLine" id="cb20-21" data-line-number="21">                                        <span class="dt">rank=</span><span class="kw">c</span>(x<span class="op">:</span><span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb20-22" data-line-number="22">                      a &lt;-<span class="st"> </span><span class="kw">nrow</span>(tmp)</a>
-<a class="sourceLine" id="cb20-23" data-line-number="23">                      tmp &lt;-<span class="st"> </span>tmp <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-24" data-line-number="24"><span class="st">                        </span><span class="kw">mutate</span>(<span class="dt">rank=</span><span class="kw">abs</span>((a<span class="op">/</span><span class="dv">2</span>)<span class="op">-</span>rank)<span class="op">+</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb20-25" data-line-number="25">                      <span class="kw">return</span>(tmp)</a>
-<a class="sourceLine" id="cb20-26" data-line-number="26">                    })</a>
-<a class="sourceLine" id="cb20-27" data-line-number="27">  </a>
-<a class="sourceLine" id="cb20-28" data-line-number="28">  result &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="dt">length =</span> <span class="dv">10000</span>)</a>
-<a class="sourceLine" id="cb20-29" data-line-number="29">  <span class="kw">names</span>(result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10000</span>)</a>
-<a class="sourceLine" id="cb20-30" data-line-number="30">  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(<span class="kw">getOption</span>(<span class="st">&quot;cl.cores&quot;</span>, <span class="dv">12</span>),<span class="dt">type=</span><span class="st">&quot;FORK&quot;</span>)</a>
-<a class="sourceLine" id="cb20-31" data-line-number="31">  result &lt;-<span class="st"> </span><span class="kw">parLapply</span>(<span class="dt">cl=</span>cl,sample,</a>
-<a class="sourceLine" id="cb20-32" data-line-number="32">                          <span class="cf">function</span>(x){</a>
-<a class="sourceLine" id="cb20-33" data-line-number="33">                            neoantigen_list &lt;-<span class="st"> </span>x <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-34" data-line-number="34"><span class="st">                              </span><span class="kw">filter</span>(IC50<span class="op">&lt;</span><span class="dv">500</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb20-35" data-line-number="35"><span class="st">                              </span><span class="kw">select</span>(mutation_id)</a>
-<a class="sourceLine" id="cb20-36" data-line-number="36">                            neoantigen_list &lt;-<span class="st"> </span>neoantigen_list[[<span class="dv">1</span>]]</a>
-<a class="sourceLine" id="cb20-37" data-line-number="37">                            <span class="cf">if</span>(<span class="kw">length</span>(neoantigen_list)<span class="op">==</span><span class="dv">0</span>){</a>
-<a class="sourceLine" id="cb20-38" data-line-number="38">                              <span class="kw">return</span>(<span class="ot">NA</span>)</a>
-<a class="sourceLine" id="cb20-39" data-line-number="39">                            }<span class="cf">else</span>{</a>
-<a class="sourceLine" id="cb20-40" data-line-number="40">                              es &lt;-<span class="st"> </span>NeoEnrichment<span class="op">::</span><span class="kw">cales_simulation</span>(x,neoantigen_list)</a>
-<a class="sourceLine" id="cb20-41" data-line-number="41">                              nes &lt;-<span class="st"> </span>NeoEnrichment<span class="op">::</span><span class="kw">cal_nes_simulation</span>(es,neoantigen_list,x)</a>
-<a class="sourceLine" id="cb20-42" data-line-number="42">                              <span class="kw">return</span>(nes)</a>
-<a class="sourceLine" id="cb20-43" data-line-number="43">                            }</a>
-<a class="sourceLine" id="cb20-44" data-line-number="44">                          })</a>
-<a class="sourceLine" id="cb20-45" data-line-number="45">  <span class="kw">stopCluster</span>(cl)</a>
-<a class="sourceLine" id="cb20-46" data-line-number="46">  </a>
-<a class="sourceLine" id="cb20-47" data-line-number="47">  result &lt;-<span class="st"> </span><span class="kw">Filter</span>(<span class="cf">function</span>(x){<span class="kw">length</span>(x)<span class="op">&gt;</span><span class="dv">1</span>},result)</a>
-<a class="sourceLine" id="cb20-48" data-line-number="48">  result_sim &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(result)</a>
-<a class="sourceLine" id="cb20-49" data-line-number="49">  <span class="kw">saveRDS</span>(result_sim,</a>
-<a class="sourceLine" id="cb20-50" data-line-number="50">          <span class="dt">file =</span> <span class="kw">paste0</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>,cancer_type[i],<span class="st">&quot;_simulation.rds&quot;</span>))</a>
-<a class="sourceLine" id="cb20-51" data-line-number="51">}</a></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">pancancer_neoantigen_exp_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_neoantigen_exp_ccf.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">pancancer_neoantigen_exp_ccf &lt;-<span class="st"> </span>pancancer_neoantigen_exp_ccf <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-3" data-line-number="3"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">sample=</span>Tumor_Barcode,<span class="dt">chromosome=</span>chr,<span class="dt">position=</span>Stop,<span class="dt">MT_mean=</span>MT_har_mean) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-4" data-line-number="4"><span class="st">  </span><span class="kw">as.data.frame</span>(<span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb23-5" data-line-number="5">cancer_type &lt;-<span class="st"> </span><span class="kw">names</span>(<span class="kw">table</span>(pancancer_neoantigen_exp_ccf<span class="op">$</span>cancer_type))</a>
+<a class="sourceLine" id="cb23-6" data-line-number="6"><span class="kw">set.seed</span>(<span class="dv">202011104</span>)</a>
+<a class="sourceLine" id="cb23-7" data-line-number="7"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(cancer_type)){</a>
+<a class="sourceLine" id="cb23-8" data-line-number="8">  cancer &lt;-<span class="st"> </span>pancancer_neoantigen_exp_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-9" data-line-number="9"><span class="st">    </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cancer_type<span class="op">==</span>.env<span class="op">$</span>cancer_type[i])</a>
+<a class="sourceLine" id="cb23-10" data-line-number="10">  cancer <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">group_by</span>(sample) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb23-11" data-line-number="11"><span class="st">    </span><span class="kw">summarise</span>(<span class="dt">mutation_counts=</span><span class="kw">n</span>()) -&gt;<span class="st"> </span>mutation_counts</a>
+<a class="sourceLine" id="cb23-12" data-line-number="12">  <span class="co">##sampling mutation counts</span></a>
+<a class="sourceLine" id="cb23-13" data-line-number="13">  sample_mt &lt;-<span class="st"> </span><span class="kw">sample</span>(mutation_counts<span class="op">$</span>mutation_counts,<span class="dv">10000</span>,<span class="dt">replace =</span> T)</a>
+<a class="sourceLine" id="cb23-14" data-line-number="14">  </a>
+<a class="sourceLine" id="cb23-15" data-line-number="15">  sample &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="dt">length =</span> <span class="dv">10000</span>)</a>
+<a class="sourceLine" id="cb23-16" data-line-number="16">  <span class="kw">names</span>(sample) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10000</span>)</a>
+<a class="sourceLine" id="cb23-17" data-line-number="17">  sample &lt;-<span class="st"> </span><span class="kw">lapply</span>(sample_mt,</a>
+<a class="sourceLine" id="cb23-18" data-line-number="18">                    <span class="cf">function</span>(x){</a>
+<a class="sourceLine" id="cb23-19" data-line-number="19">                      tmp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">mutation_id=</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>x),</a>
+<a class="sourceLine" id="cb23-20" data-line-number="20">                                        <span class="dt">IC50=</span><span class="kw">sample</span>(cancer<span class="op">$</span>MT_mean,x),<span class="co">##sample IC50 for mutations</span></a>
+<a class="sourceLine" id="cb23-21" data-line-number="21">                                        <span class="dt">rank=</span><span class="kw">c</span>(x<span class="op">:</span><span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb23-22" data-line-number="22">                      a &lt;-<span class="st"> </span><span class="kw">nrow</span>(tmp)</a>
+<a class="sourceLine" id="cb23-23" data-line-number="23">                      tmp &lt;-<span class="st"> </span>tmp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-24" data-line-number="24"><span class="st">                        </span><span class="kw">mutate</span>(<span class="dt">rank=</span><span class="kw">abs</span>((a<span class="op">/</span><span class="dv">2</span>)<span class="op">-</span>rank)<span class="op">+</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb23-25" data-line-number="25">                      <span class="kw">return</span>(tmp)</a>
+<a class="sourceLine" id="cb23-26" data-line-number="26">                    })</a>
+<a class="sourceLine" id="cb23-27" data-line-number="27">  </a>
+<a class="sourceLine" id="cb23-28" data-line-number="28">  result &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="dt">length =</span> <span class="dv">10000</span>)</a>
+<a class="sourceLine" id="cb23-29" data-line-number="29">  <span class="kw">names</span>(result) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10000</span>)</a>
+<a class="sourceLine" id="cb23-30" data-line-number="30">  cl &lt;-<span class="st"> </span><span class="kw">makeCluster</span>(<span class="kw">getOption</span>(<span class="st">&quot;cl.cores&quot;</span>, <span class="dv">12</span>),<span class="dt">type=</span><span class="st">&quot;FORK&quot;</span>)</a>
+<a class="sourceLine" id="cb23-31" data-line-number="31">  result &lt;-<span class="st"> </span><span class="kw">parLapply</span>(<span class="dt">cl=</span>cl,sample,</a>
+<a class="sourceLine" id="cb23-32" data-line-number="32">                          <span class="cf">function</span>(x){</a>
+<a class="sourceLine" id="cb23-33" data-line-number="33">                            neoantigen_list &lt;-<span class="st"> </span>x <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-34" data-line-number="34"><span class="st">                              </span><span class="kw">filter</span>(IC50<span class="op">&lt;</span><span class="dv">500</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb23-35" data-line-number="35"><span class="st">                              </span><span class="kw">select</span>(mutation_id)</a>
+<a class="sourceLine" id="cb23-36" data-line-number="36">                            neoantigen_list &lt;-<span class="st"> </span>neoantigen_list[[<span class="dv">1</span>]]</a>
+<a class="sourceLine" id="cb23-37" data-line-number="37">                            <span class="cf">if</span>(<span class="kw">length</span>(neoantigen_list)<span class="op">==</span><span class="dv">0</span>){</a>
+<a class="sourceLine" id="cb23-38" data-line-number="38">                              <span class="kw">return</span>(<span class="ot">NA</span>)</a>
+<a class="sourceLine" id="cb23-39" data-line-number="39">                            }<span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb23-40" data-line-number="40">                              es &lt;-<span class="st"> </span>NeoEnrichment<span class="op">::</span><span class="kw">cales_simulation</span>(x,neoantigen_list)</a>
+<a class="sourceLine" id="cb23-41" data-line-number="41">                              nes &lt;-<span class="st"> </span>NeoEnrichment<span class="op">::</span><span class="kw">cal_nes_simulation</span>(es,neoantigen_list,x)</a>
+<a class="sourceLine" id="cb23-42" data-line-number="42">                              <span class="kw">return</span>(nes)</a>
+<a class="sourceLine" id="cb23-43" data-line-number="43">                            }</a>
+<a class="sourceLine" id="cb23-44" data-line-number="44">                          })</a>
+<a class="sourceLine" id="cb23-45" data-line-number="45">  <span class="kw">stopCluster</span>(cl)</a>
+<a class="sourceLine" id="cb23-46" data-line-number="46">  </a>
+<a class="sourceLine" id="cb23-47" data-line-number="47">  result &lt;-<span class="st"> </span><span class="kw">Filter</span>(<span class="cf">function</span>(x){<span class="kw">length</span>(x)<span class="op">&gt;</span><span class="dv">1</span>},result)</a>
+<a class="sourceLine" id="cb23-48" data-line-number="48">  result_sim &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(result)</a>
+<a class="sourceLine" id="cb23-49" data-line-number="49">  <span class="kw">saveRDS</span>(result_sim,</a>
+<a class="sourceLine" id="cb23-50" data-line-number="50">          <span class="dt">file =</span> <span class="kw">paste0</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>,cancer_type[i],<span class="st">&quot;_simulation.rds&quot;</span>))</a>
+<a class="sourceLine" id="cb23-51" data-line-number="51">}</a></code></pre></div>
 <p>Then we bind all cancer type simulation data:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">bind_all &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">list.files</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>),</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2">                   <span class="cf">function</span>(x){</a>
-<a class="sourceLine" id="cb21-3" data-line-number="3">                     re &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">paste0</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>,x)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="st">                       </span><span class="kw">mutate</span>(<span class="dt">cancer=</span><span class="kw">gsub</span>(<span class="st">&quot;_simulation.rds&quot;</span>,<span class="st">&quot;&quot;</span>,x))</a>
-<a class="sourceLine" id="cb21-5" data-line-number="5">                   })</a>
-<a class="sourceLine" id="cb21-6" data-line-number="6">pancancer_simulation_data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(bind_all)</a>
-<a class="sourceLine" id="cb21-7" data-line-number="7"><span class="kw">saveRDS</span>(pancancer_simulation_data,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">bind_all &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="kw">list.files</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>),</a>
+<a class="sourceLine" id="cb24-2" data-line-number="2">                   <span class="cf">function</span>(x){</a>
+<a class="sourceLine" id="cb24-3" data-line-number="3">                     re &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">paste0</span>(<span class="st">&quot;~/Immunoediting/data/simulation/&quot;</span>,x)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb24-4" data-line-number="4"><span class="st">                       </span><span class="kw">mutate</span>(<span class="dt">cancer=</span><span class="kw">gsub</span>(<span class="st">&quot;_simulation.rds&quot;</span>,<span class="st">&quot;&quot;</span>,x))</a>
+<a class="sourceLine" id="cb24-5" data-line-number="5">                   })</a>
+<a class="sourceLine" id="cb24-6" data-line-number="6">pancancer_simulation_data &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(bind_all)</a>
+<a class="sourceLine" id="cb24-7" data-line-number="7"><span class="kw">saveRDS</span>(pancancer_simulation_data,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a></code></pre></div>
 <p>This simulation can considered as neutral (or random) nes distribution, so we can compare our TCGA pancancer real nes distribution to this data. If the two distributions are significantly different, then we can conclude that the observed nes in TCGA real data is not random.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">pancancer_simulation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb22-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb22-3" data-line-number="3">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>)  </a>
-<a class="sourceLine" id="cb22-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb22-5" data-line-number="5">dt_ccf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">type=</span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;simulation&quot;</span>,<span class="kw">nrow</span>(pancancer_simulation)),</a>
-<a class="sourceLine" id="cb22-6" data-line-number="6">                        <span class="kw">rep</span>(<span class="st">&quot;TCGA pancancer&quot;</span>,<span class="kw">nrow</span>(pancancer_nes_ccf))),</a>
-<a class="sourceLine" id="cb22-7" data-line-number="7">                     <span class="dt">NES=</span><span class="kw">c</span>(pancancer_simulation<span class="op">$</span>nes,pancancer_nes_ccf<span class="op">$</span>nes))</a>
-<a class="sourceLine" id="cb22-8" data-line-number="8">dt_exp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">type=</span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;simulation&quot;</span>,<span class="kw">nrow</span>(pancancer_simulation)),</a>
-<a class="sourceLine" id="cb22-9" data-line-number="9">                            <span class="kw">rep</span>(<span class="st">&quot;TCGA pancancer&quot;</span>,<span class="kw">nrow</span>(pancancer_nes_exp))),</a>
-<a class="sourceLine" id="cb22-10" data-line-number="10">                     <span class="dt">NES=</span><span class="kw">c</span>(pancancer_simulation<span class="op">$</span>nes,pancancer_nes_exp<span class="op">$</span>nes))</a>
-<a class="sourceLine" id="cb22-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb22-12" data-line-number="12">p1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt_ccf, <span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES, <span class="dt">fill=</span>type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-13" data-line-number="13"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;#FC8D62&quot;</span>))<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-14" data-line-number="14"><span class="st">  </span><span class="kw">stat_compare_means</span>(<span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES))<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-15" data-line-number="15"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">width=</span><span class="fl">0.8</span>, <span class="dt">alpha=</span><span class="fl">0.2</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-17" data-line-number="17"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>())<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-18" data-line-number="18"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-19" data-line-number="19"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;CCF&quot;</span>)</a>
-<a class="sourceLine" id="cb22-20" data-line-number="20"></a>
-<a class="sourceLine" id="cb22-21" data-line-number="21">p2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt_exp, <span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES, <span class="dt">fill=</span>type)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-22" data-line-number="22"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;#FC8D62&quot;</span>))<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-23" data-line-number="23"><span class="st">  </span><span class="kw">stat_compare_means</span>(<span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES))<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-24" data-line-number="24"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">width=</span><span class="fl">0.8</span>, <span class="dt">alpha=</span><span class="fl">0.2</span>)<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-25" data-line-number="25"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb22-26" data-line-number="26"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>())<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-27" data-line-number="27"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
-<a class="sourceLine" id="cb22-28" data-line-number="28"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;EXP&quot;</span>)</a>
-<a class="sourceLine" id="cb22-29" data-line-number="29"></a>
-<a class="sourceLine" id="cb22-30" data-line-number="30"><span class="kw">plot_grid</span>(p1,p2)</a></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">pancancer_simulation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb25-3" data-line-number="3">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>)  </a>
+<a class="sourceLine" id="cb25-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb25-5" data-line-number="5">dt_ccf &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">type=</span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;simulation&quot;</span>,<span class="kw">nrow</span>(pancancer_simulation)),</a>
+<a class="sourceLine" id="cb25-6" data-line-number="6">                        <span class="kw">rep</span>(<span class="st">&quot;TCGA pancancer&quot;</span>,<span class="kw">nrow</span>(pancancer_nes_ccf))),</a>
+<a class="sourceLine" id="cb25-7" data-line-number="7">                     <span class="dt">NES=</span><span class="kw">c</span>(pancancer_simulation<span class="op">$</span>nes,pancancer_nes_ccf<span class="op">$</span>nes))</a>
+<a class="sourceLine" id="cb25-8" data-line-number="8">dt_exp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">type=</span><span class="kw">c</span>(<span class="kw">rep</span>(<span class="st">&quot;simulation&quot;</span>,<span class="kw">nrow</span>(pancancer_simulation)),</a>
+<a class="sourceLine" id="cb25-9" data-line-number="9">                            <span class="kw">rep</span>(<span class="st">&quot;TCGA pancancer&quot;</span>,<span class="kw">nrow</span>(pancancer_nes_exp))),</a>
+<a class="sourceLine" id="cb25-10" data-line-number="10">                     <span class="dt">NES=</span><span class="kw">c</span>(pancancer_simulation<span class="op">$</span>nes,pancancer_nes_exp<span class="op">$</span>nes))</a>
+<a class="sourceLine" id="cb25-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb25-12" data-line-number="12">p1 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt_ccf, <span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES, <span class="dt">fill=</span>type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-13" data-line-number="13"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;#FC8D62&quot;</span>))<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-14" data-line-number="14"><span class="st">  </span><span class="kw">stat_compare_means</span>(<span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES))<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-15" data-line-number="15"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">width=</span><span class="fl">0.8</span>, <span class="dt">alpha=</span><span class="fl">0.2</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-16" data-line-number="16"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-17" data-line-number="17"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>())<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-18" data-line-number="18"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-19" data-line-number="19"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;CCF&quot;</span>)</a>
+<a class="sourceLine" id="cb25-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb25-21" data-line-number="21">p2 &lt;-<span class="st"> </span><span class="kw">ggplot</span>(dt_exp, <span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES, <span class="dt">fill=</span>type)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-22" data-line-number="22"><span class="st">  </span><span class="kw">scale_fill_manual</span>(<span class="dt">values=</span><span class="kw">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;#FC8D62&quot;</span>))<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-23" data-line-number="23"><span class="st">  </span><span class="kw">stat_compare_means</span>(<span class="kw">aes</span>(<span class="dt">x=</span>type, <span class="dt">y=</span>NES))<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-24" data-line-number="24"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">width=</span><span class="fl">0.8</span>, <span class="dt">alpha=</span><span class="fl">0.2</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-25" data-line-number="25"><span class="st">  </span><span class="kw">geom_boxplot</span>(<span class="dt">width=</span><span class="fl">0.2</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb25-26" data-line-number="26"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>())<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-27" data-line-number="27"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
+<a class="sourceLine" id="cb25-28" data-line-number="28"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">title=</span><span class="st">&quot;EXP&quot;</span>)</a>
+<a class="sourceLine" id="cb25-29" data-line-number="29"></a>
+<a class="sourceLine" id="cb25-30" data-line-number="30"><span class="kw">plot_grid</span>(p1,p2)</a></code></pre></div>
 <p><img src="report_main_files/figure-html/compare_nes-1.png" width="2400" /></p>
 <p>From the pancancer overview, It has significant difference between neutral simulation and TCGA real data.</p>
 <p>Then we can check how many patients have significant neoantigen negative enrichment signal.</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1"><span class="co">###firstly, we adjust p value to FDR q values:</span></a>
-<a class="sourceLine" id="cb23-2" data-line-number="2">pancancer_nes_ccf<span class="op">$</span>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(pancancer_nes_ccf<span class="op">$</span>p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
-<a class="sourceLine" id="cb23-3" data-line-number="3">pancancer_nes_exp<span class="op">$</span>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(pancancer_nes_exp<span class="op">$</span>p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
-<a class="sourceLine" id="cb23-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb23-5" data-line-number="5">p1 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_ccf<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_ccf$fdr&lt;0.25 &amp; pancancer_nes_ccf$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;25% </span><span class="ch">\n</span><span class="st"> and NES(CCF) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="co">###firstly, we adjust p value to FDR q values:</span></a>
+<a class="sourceLine" id="cb26-2" data-line-number="2">pancancer_nes_ccf<span class="op">$</span>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(pancancer_nes_ccf<span class="op">$</span>p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3">pancancer_nes_exp<span class="op">$</span>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(pancancer_nes_exp<span class="op">$</span>p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
+<a class="sourceLine" id="cb26-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb26-5" data-line-number="5">p1 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_ccf<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_ccf$fdr&lt;0.25 &amp; pancancer_nes_ccf$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;25% </span><span class="ch">\n</span><span class="st"> and NES(CCF) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
 <p><img src="report_main_files/figure-html/p_distribution-1.png" width="2400" /></p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1">p2 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_exp<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_exp$fdr&lt;0.25 &amp; pancancer_nes_exp$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;25% </span><span class="ch">\n</span><span class="st"> and NES(EXP) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">p2 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_exp<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_exp$fdr&lt;0.25 &amp; pancancer_nes_exp$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;25% </span><span class="ch">\n</span><span class="st"> and NES(EXP) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
 <p><img src="report_main_files/figure-html/p_distribution-2.png" width="2400" /></p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="co">###FDR 5%</span></a>
-<a class="sourceLine" id="cb25-2" data-line-number="2">p3 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_ccf<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_ccf$fdr&lt;0.05 &amp; pancancer_nes_ccf$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;5% </span><span class="ch">\n</span><span class="st"> and NES(CCF) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="co">###FDR 5%</span></a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">p3 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_ccf<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_ccf$fdr&lt;0.05 &amp; pancancer_nes_ccf$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;5% </span><span class="ch">\n</span><span class="st"> and NES(CCF) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
 <p><img src="report_main_files/figure-html/p_distribution-3.png" width="2400" /></p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">p4 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_exp<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_exp$fdr&lt;0.05 &amp; pancancer_nes_exp$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;5% </span><span class="ch">\n</span><span class="st"> and NES(EXP) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">p4 &lt;-<span class="st"> </span><span class="kw">plot_pie</span>(pancancer_nes_exp<span class="op">$</span>fdr,<span class="dt">expression =</span> <span class="st">&quot;pancancer_nes_exp$fdr&lt;0.05 &amp; pancancer_nes_exp$nes&lt;0&quot;</span>,<span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;samples with FDR&lt;5% </span><span class="ch">\n</span><span class="st"> and NES(EXP) &lt; 0&quot;</span>,<span class="st">&quot;others&quot;</span>))</a></code></pre></div>
 <p><img src="report_main_files/figure-html/p_distribution-4.png" width="2400" /></p>
 <p>Thus we conclude that the immunoediting signal is undoubtedly exist, however in majority of cancer patient, this signal is undetectable, and only 2.5% (CCF FDR&lt;0.25) of patient show this significant immunoediting signal.</p>
 <p>Then we view the cancer type distribution of NES and compare with cancer type simulation:</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">pancancer_simulation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb27-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb27-3" data-line-number="3">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>) </a>
-<a class="sourceLine" id="cb27-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb27-5" data-line-number="5"><span class="co">##load function</span></a>
-<a class="sourceLine" id="cb27-6" data-line-number="6"><span class="kw">source</span>(<span class="st">&quot;~/Immunoediting/code/R/plot_pancancer_nes_distribution.R&quot;</span>)</a>
-<a class="sourceLine" id="cb27-7" data-line-number="7">pancancer_simulation<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,pancancer_simulation<span class="op">$</span>cancer)</a>
-<a class="sourceLine" id="cb27-8" data-line-number="8">pancancer_nes_ccf<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_nes_ccf<span class="op">$</span>sample))</a>
-<a class="sourceLine" id="cb27-9" data-line-number="9">pancancer_nes_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_nes_exp<span class="op">$</span>sample))</a>
-<a class="sourceLine" id="cb27-10" data-line-number="10"><span class="kw">plot_pancancer</span>(pancancer_nes_ccf,pancancer_simulation,<span class="dt">text_position =</span> <span class="dv">4</span>,<span class="dt">size=</span><span class="dv">3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1">pancancer_simulation &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/simulation/pancancer_simulation.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>) </a>
+<a class="sourceLine" id="cb30-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb30-5" data-line-number="5"><span class="co">##load function</span></a>
+<a class="sourceLine" id="cb30-6" data-line-number="6"><span class="kw">source</span>(<span class="st">&quot;~/Immunoediting/code/R/plot_pancancer_nes_distribution.R&quot;</span>)</a>
+<a class="sourceLine" id="cb30-7" data-line-number="7">pancancer_simulation<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,pancancer_simulation<span class="op">$</span>cancer)</a>
+<a class="sourceLine" id="cb30-8" data-line-number="8">pancancer_nes_ccf<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_nes_ccf<span class="op">$</span>sample))</a>
+<a class="sourceLine" id="cb30-9" data-line-number="9">pancancer_nes_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_nes_exp<span class="op">$</span>sample))</a>
+<a class="sourceLine" id="cb30-10" data-line-number="10"><span class="kw">plot_pancancer</span>(pancancer_nes_ccf,pancancer_simulation,<span class="dt">text_position =</span> <span class="dv">4</span>,<span class="dt">size=</span><span class="dv">3</span>)</a></code></pre></div>
 <p><img src="report_main_files/figure-html/view_cancer_type_nes-1.png" width="2400" /></p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">plot_pancancer</span>(pancancer_nes_exp,pancancer_simulation,<span class="dt">text_position =</span> <span class="dv">-6</span>,<span class="dt">size=</span><span class="dv">3</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1"><span class="kw">plot_pancancer</span>(pancancer_nes_exp,pancancer_simulation,<span class="dt">text_position =</span> <span class="dv">-6</span>,<span class="dt">size=</span><span class="dv">3</span>)</a></code></pre></div>
 <p><img src="report_main_files/figure-html/view_cancer_type_nes-2.png" width="2400" /></p>
 </div>
 <div id="neoantigen-enrichment-score-is-associated-with-immune-cell-infiltration" class="section level2">
 <h2>Neoantigen enrichment score is associated with immune cell infiltration</h2>
 <p>NES reflects neoantigen-mediated immune selection, thus we want to check relation between the immune cell infiltration level and our NES score.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb29-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb29-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb29-4" data-line-number="4"><span class="co">###load all immune data</span></a>
-<a class="sourceLine" id="cb29-5" data-line-number="5">cibersort_immune &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immue_estimate.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb29-6" data-line-number="6">lf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immune_landscape.rds&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb29-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(<span class="st">`</span><span class="dt">TCGA Participant Barcode</span><span class="st">`</span>,<span class="st">`</span><span class="dt">Leukocyte Fraction</span><span class="st">`</span>,</a>
-<a class="sourceLine" id="cb29-8" data-line-number="8">         <span class="st">`</span><span class="dt">Stromal Fraction</span><span class="st">`</span>,<span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb29-9" data-line-number="9"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">sample=</span><span class="st">`</span><span class="dt">TCGA Participant Barcode</span><span class="st">`</span>)</a>
-<a class="sourceLine" id="cb29-10" data-line-number="10">elife &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/wang_2019_elife.rds&quot;</span>)</a>
-<a class="sourceLine" id="cb29-11" data-line-number="11">cyt &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_cyt.rds&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb32-2" data-line-number="2">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb32-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb32-4" data-line-number="4"><span class="co">###load all immune data</span></a>
+<a class="sourceLine" id="cb32-5" data-line-number="5">cibersort_immune &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immue_estimate.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb32-6" data-line-number="6">lf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immune_landscape.rds&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb32-7" data-line-number="7"><span class="st">  </span><span class="kw">select</span>(<span class="st">`</span><span class="dt">TCGA Participant Barcode</span><span class="st">`</span>,<span class="st">`</span><span class="dt">Leukocyte Fraction</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb32-8" data-line-number="8">         <span class="st">`</span><span class="dt">Stromal Fraction</span><span class="st">`</span>,<span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb32-9" data-line-number="9"><span class="st">  </span><span class="kw">rename</span>(<span class="dt">sample=</span><span class="st">`</span><span class="dt">TCGA Participant Barcode</span><span class="st">`</span>)</a>
+<a class="sourceLine" id="cb32-10" data-line-number="10">elife &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/wang_2019_elife.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb32-11" data-line-number="11">cyt &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_cyt.rds&quot;</span>)</a></code></pre></div>
 <p>Firstly, we calculate correlation using spearman method by cancer types</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="co">##bind all data</span></a>
-<a class="sourceLine" id="cb30-2" data-line-number="2">all_immune &lt;-<span class="st"> </span><span class="kw">left_join</span>(elife <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-3" data-line-number="3"><span class="st">                          </span><span class="kw">rename</span>(<span class="dt">sample=</span>Tumor_Sample_Barcode),</a>
-<a class="sourceLine" id="cb30-4" data-line-number="4">                        cibersort_immune,</a>
-<a class="sourceLine" id="cb30-5" data-line-number="5">                        <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-6" data-line-number="6"><span class="st">  </span><span class="kw">left_join</span>(.,cyt <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-7" data-line-number="7"><span class="st">              </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">15</span>)),</a>
-<a class="sourceLine" id="cb30-8" data-line-number="8">            <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-10" data-line-number="10"><span class="st">  </span><span class="kw">left_join</span>(.,lf,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-11" data-line-number="11"><span class="st">  </span><span class="kw">distinct</span>(sample,<span class="dt">.keep_all =</span> T)</a>
-<a class="sourceLine" id="cb30-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb30-13" data-line-number="13">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_nes_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-14" data-line-number="14"><span class="st">                                 </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
-<a class="sourceLine" id="cb30-15" data-line-number="15">                               all_immune,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>)</a>
-<a class="sourceLine" id="cb30-16" data-line-number="16">pancancer_nes_ccf<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">getcancer_type</span>(pancancer_nes_ccf<span class="op">$</span>sample)</a>
-<a class="sourceLine" id="cb30-17" data-line-number="17">pancancer_nes_ccf &lt;-<span class="st"> </span>pancancer_nes_ccf <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-18" data-line-number="18"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(sample, es, p_value, Project)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-19" data-line-number="19"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(nes)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-20" data-line-number="20"><span class="st">  </span><span class="kw">select</span>(cancer, nes, <span class="kw">everything</span>())</a>
-<a class="sourceLine" id="cb30-21" data-line-number="21"></a>
-<a class="sourceLine" id="cb30-22" data-line-number="22"></a>
-<a class="sourceLine" id="cb30-23" data-line-number="23">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_nes_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-24" data-line-number="24"><span class="st">                                 </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
-<a class="sourceLine" id="cb30-25" data-line-number="25">                               all_immune,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>)</a>
-<a class="sourceLine" id="cb30-26" data-line-number="26">pancancer_nes_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">getcancer_type</span>(pancancer_nes_exp<span class="op">$</span>sample)</a>
-<a class="sourceLine" id="cb30-27" data-line-number="27">pancancer_nes_exp &lt;-<span class="st"> </span>pancancer_nes_exp <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-28" data-line-number="28"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(sample, es, p_value, Project)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-29" data-line-number="29"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(nes)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-30" data-line-number="30"><span class="st">  </span><span class="kw">select</span>(cancer, nes, <span class="kw">everything</span>())</a>
-<a class="sourceLine" id="cb30-31" data-line-number="31"></a>
-<a class="sourceLine" id="cb30-32" data-line-number="32"></a>
-<a class="sourceLine" id="cb30-33" data-line-number="33">summ_ccf &lt;-<span class="st"> </span>pancancer_nes_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb30-34" data-line-number="34"><span class="st">  </span><span class="kw">group_by</span>(cancer) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb30-35" data-line-number="35"><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">across</span>(nes<span class="op">:</span><span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>,<span class="op">~</span><span class="kw">median</span>(.x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a></code></pre></div>
-<pre><code>#&gt; `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" data-line-number="1">summ_exp &lt;-<span class="st"> </span>pancancer_nes_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb32-2" data-line-number="2"><span class="st">  </span><span class="kw">group_by</span>(cancer) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb32-3" data-line-number="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">across</span>(nes<span class="op">:</span><span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>,<span class="op">~</span><span class="kw">median</span>(.x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a></code></pre></div>
-<pre><code>#&gt; `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">cor_mat1 &lt;-<span class="st"> </span><span class="kw">cor</span>(summ_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>cancer), </a>
-<a class="sourceLine" id="cb34-2" data-line-number="2">                <span class="dt">method =</span> <span class="st">&quot;spearman&quot;</span>, <span class="dt">use =</span> <span class="st">&quot;pairwise.complete.obs&quot;</span>)</a>
-<a class="sourceLine" id="cb34-3" data-line-number="3">cor_mat1 &lt;-<span class="st"> </span>cor_mat1[,<span class="dv">1</span>]  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()</a>
-<a class="sourceLine" id="cb34-4" data-line-number="4"><span class="kw">colnames</span>(cor_mat1) &lt;-<span class="st"> &quot;NES(CCF)&quot;</span></a>
-<a class="sourceLine" id="cb34-5" data-line-number="5">cor_mat2 &lt;-<span class="st"> </span><span class="kw">cor</span>(summ_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>cancer), </a>
-<a class="sourceLine" id="cb34-6" data-line-number="6">                <span class="dt">method =</span> <span class="st">&quot;spearman&quot;</span>, <span class="dt">use =</span> <span class="st">&quot;pairwise.complete.obs&quot;</span>)</a>
-<a class="sourceLine" id="cb34-7" data-line-number="7">cor_mat2 &lt;-<span class="st"> </span>cor_mat2[,<span class="dv">1</span>]  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()</a>
-<a class="sourceLine" id="cb34-8" data-line-number="8"><span class="kw">colnames</span>(cor_mat2) &lt;-<span class="st"> &quot;NES(EXP)&quot;</span></a>
-<a class="sourceLine" id="cb34-9" data-line-number="9"></a>
-<a class="sourceLine" id="cb34-10" data-line-number="10">ccf_exp_cor &lt;-<span class="st"> </span><span class="kw">cbind</span>(cor_mat1,cor_mat2)</a>
-<a class="sourceLine" id="cb34-11" data-line-number="11">ccf_exp_cor &lt;-<span class="st"> </span>ccf_exp_cor[<span class="op">-</span><span class="dv">1</span>,]</a>
-<a class="sourceLine" id="cb34-12" data-line-number="12">ggcorrplot<span class="op">::</span><span class="kw">ggcorrplot</span>(<span class="kw">t</span>(ccf_exp_cor))</a></code></pre></div>
-<p><img src="report_main_files/figure-html/cal_cor_cancertype-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1"><span class="co">##bind all data</span></a>
+<a class="sourceLine" id="cb33-2" data-line-number="2">all_immune &lt;-<span class="st"> </span><span class="kw">left_join</span>(elife <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3"><span class="st">                          </span><span class="kw">rename</span>(<span class="dt">sample=</span>Tumor_Sample_Barcode),</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">                        cibersort_immune,</a>
+<a class="sourceLine" id="cb33-5" data-line-number="5">                        <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-6" data-line-number="6"><span class="st">  </span><span class="kw">left_join</span>(.,cyt <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-7" data-line-number="7"><span class="st">              </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">15</span>)),</a>
+<a class="sourceLine" id="cb33-8" data-line-number="8">            <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-10" data-line-number="10"><span class="st">  </span><span class="kw">left_join</span>(.,lf,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-11" data-line-number="11"><span class="st">  </span><span class="kw">distinct</span>(sample,<span class="dt">.keep_all =</span> T)</a>
+<a class="sourceLine" id="cb33-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb33-13" data-line-number="13">pancancer_nes_ccf &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_nes_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-14" data-line-number="14"><span class="st">                                 </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb33-15" data-line-number="15">                               all_immune,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>)</a>
+<a class="sourceLine" id="cb33-16" data-line-number="16">pancancer_nes_ccf<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">getcancer_type</span>(pancancer_nes_ccf<span class="op">$</span>sample)</a>
+<a class="sourceLine" id="cb33-17" data-line-number="17">pancancer_nes_ccf &lt;-<span class="st"> </span>pancancer_nes_ccf <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-18" data-line-number="18"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(sample, es, p_value, Project)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-19" data-line-number="19"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(nes)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-20" data-line-number="20"><span class="st">  </span><span class="kw">select</span>(cancer, nes, <span class="kw">everything</span>())</a>
+<a class="sourceLine" id="cb33-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb33-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb33-23" data-line-number="23">pancancer_nes_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_nes_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-24" data-line-number="24"><span class="st">                                 </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb33-25" data-line-number="25">                               all_immune,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>)</a>
+<a class="sourceLine" id="cb33-26" data-line-number="26">pancancer_nes_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">getcancer_type</span>(pancancer_nes_exp<span class="op">$</span>sample)</a>
+<a class="sourceLine" id="cb33-27" data-line-number="27">pancancer_nes_exp &lt;-<span class="st"> </span>pancancer_nes_exp <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-28" data-line-number="28"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(sample, es, p_value, Project)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-29" data-line-number="29"><span class="st">  </span><span class="kw">filter</span>(<span class="op">!</span><span class="kw">is.na</span>(nes)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-30" data-line-number="30"><span class="st">  </span><span class="kw">select</span>(cancer, nes, <span class="kw">everything</span>())</a>
+<a class="sourceLine" id="cb33-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb33-32" data-line-number="32"></a>
+<a class="sourceLine" id="cb33-33" data-line-number="33">summ_ccf &lt;-<span class="st"> </span>pancancer_nes_ccf <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-34" data-line-number="34"><span class="st">  </span><span class="kw">group_by</span>(cancer) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-35" data-line-number="35"><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">across</span>(nes<span class="op">:</span><span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>,<span class="op">~</span><span class="kw">median</span>(.x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
+<a class="sourceLine" id="cb33-36" data-line-number="36">summ_exp &lt;-<span class="st"> </span>pancancer_nes_exp <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-37" data-line-number="37"><span class="st">  </span><span class="kw">select</span>(<span class="op">-</span><span class="kw">c</span>(<span class="dv">3</span><span class="op">:</span><span class="dv">6</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb33-38" data-line-number="38"><span class="st">  </span><span class="kw">group_by</span>(cancer) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb33-39" data-line-number="39"><span class="st">  </span><span class="kw">summarise</span>(<span class="kw">across</span>(nes<span class="op">:</span><span class="st">`</span><span class="dt">Intratumor Heterogeneity</span><span class="st">`</span>,<span class="op">~</span><span class="kw">median</span>(.x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)))</a>
+<a class="sourceLine" id="cb33-40" data-line-number="40"></a>
+<a class="sourceLine" id="cb33-41" data-line-number="41">cor_mat1 &lt;-<span class="st"> </span><span class="kw">cor</span>(summ_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>cancer), </a>
+<a class="sourceLine" id="cb33-42" data-line-number="42">                <span class="dt">method =</span> <span class="st">&quot;spearman&quot;</span>, <span class="dt">use =</span> <span class="st">&quot;pairwise.complete.obs&quot;</span>)</a>
+<a class="sourceLine" id="cb33-43" data-line-number="43">cor_mat1 &lt;-<span class="st"> </span>cor_mat1[,<span class="dv">1</span>]  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()</a>
+<a class="sourceLine" id="cb33-44" data-line-number="44"><span class="kw">colnames</span>(cor_mat1) &lt;-<span class="st"> &quot;NES(CCF)&quot;</span></a>
+<a class="sourceLine" id="cb33-45" data-line-number="45">cor_mat2 &lt;-<span class="st"> </span><span class="kw">cor</span>(summ_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(<span class="op">-</span>cancer), </a>
+<a class="sourceLine" id="cb33-46" data-line-number="46">                <span class="dt">method =</span> <span class="st">&quot;spearman&quot;</span>, <span class="dt">use =</span> <span class="st">&quot;pairwise.complete.obs&quot;</span>)</a>
+<a class="sourceLine" id="cb33-47" data-line-number="47">cor_mat2 &lt;-<span class="st"> </span>cor_mat2[,<span class="dv">1</span>]  <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">as.data.frame</span>()</a>
+<a class="sourceLine" id="cb33-48" data-line-number="48"><span class="kw">colnames</span>(cor_mat2) &lt;-<span class="st"> &quot;NES(EXP)&quot;</span></a>
+<a class="sourceLine" id="cb33-49" data-line-number="49"></a>
+<a class="sourceLine" id="cb33-50" data-line-number="50">ccf_exp_cor &lt;-<span class="st"> </span><span class="kw">bind_cols</span>(cor_mat1,cor_mat2)</a>
+<a class="sourceLine" id="cb33-51" data-line-number="51">ccf_exp_cor &lt;-<span class="st"> </span>ccf_exp_cor[<span class="op">-</span><span class="dv">1</span>,]</a>
+<a class="sourceLine" id="cb33-52" data-line-number="52"></a>
+<a class="sourceLine" id="cb33-53" data-line-number="53"><span class="kw">saveRDS</span>(ccf_exp_cor,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/ccf_exp_immune_cor.rds&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">ccf_exp_cor &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/ccf_exp_immune_cor.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">ggcorrplot<span class="op">::</span><span class="kw">ggcorrplot</span>(<span class="kw">t</span>(ccf_exp_cor))</a></code></pre></div>
+<p><img src="report_main_files/figure-html/plot_ccf_exp_immune_cor-1.png" width="2400" /></p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb35-1" data-line-number="1"><span class="co">##view data</span></a>
 <a class="sourceLine" id="cb35-2" data-line-number="2">DT<span class="op">::</span><span class="kw">datatable</span>(ccf_exp_cor,</a>
 <a class="sourceLine" id="cb35-3" data-line-number="3">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">TRUE</span></a>
 <a class="sourceLine" id="cb35-4" data-line-number="4">)</a></code></pre></div>
-<p><div id="htmlwidget-0c089839ee1305baa7c3" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-0c089839ee1305baa7c3">{"x":{"filter":"none","data":[["APM","TIS","IIS","Macrophage","Dendritic_cell","Mast_cell","Neutrophils","Eosinophils","T_cells_CD8","T_cells_CD4","B_cells","NK_cells","Supress_cell","cyt","Leukocyte Fraction","Stromal Fraction","Intratumor Heterogeneity"],[-0.375,-0.382258064516129,-0.343548387096774,-0.606048387096774,-0.226862480372318,0.183064516129032,null,-0.19964222645027,-0.275806451612903,0.16008064516129,-0.0592741935483871,0.352016129032258,0.459274193548387,-0.348387096774194,-0.514285714285714,-0.288019386079811,-0.740307912742158],[-0.297005748056413,-0.343986290688554,-0.284101221324837,-0.426857548292889,-0.132727052488007,0.0935578188039209,null,-0.252092582626129,-0.133682831609913,0.204052828943034,-0.155660853699627,0.167557214280298,0.321403368908297,-0.279060390570316,-0.250523465380986,-0.179122549802942,-0.414984259518169]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>NES(CCF)<\/th>\n      <th>NES(EXP)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script> We can see the negative corrlation between nes and most immune score. Plot LF:</p>
+<div id="htmlwidget-6721dca64ea09be527ce" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6721dca64ea09be527ce">{"x":{"filter":"none","data":[["APM","TIS","IIS","Macrophage","Dendritic_cell","Mast_cell","Neutrophils","Eosinophils","T_cells_CD8","T_cells_CD4","B_cells","NK_cells","Supress_cell","cyt","Leukocyte Fraction","Stromal Fraction","Intratumor Heterogeneity"],[-0.375,-0.382258064516129,-0.343548387096774,-0.606048387096774,-0.226862480372318,0.183064516129032,null,-0.19964222645027,-0.275806451612903,0.16008064516129,-0.0592741935483871,0.352016129032258,0.459274193548387,-0.348387096774194,-0.514285714285714,-0.288019386079811,-0.740307912742158],[-0.26837382937073,-0.310515174478531,-0.270188528442358,-0.39217663270178,-0.121926102989766,0.0733944957858345,null,-0.245303056710014,-0.107672144916581,0.179050308400607,-0.18671237114748,0.150418389714925,0.293577983143338,-0.24962193896391,-0.219485159935554,-0.166212816483811,-0.383217646514113]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>NES(CCF)<\/th>\n      <th>NES(EXP)<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>We can see the negative corrlation between nes and most immune score. Plot LF:</p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1"><span class="co">##this code is modified from wang et.al 2019 elife </span></a>
 <a class="sourceLine" id="cb36-2" data-line-number="2"><span class="co">###https://xsliulab.github.io/tumor-immunogenicity-score/#strong-association-between-aps-and-immune-cell-infiltration-level</span></a>
 <a class="sourceLine" id="cb36-3" data-line-number="3"><span class="kw">library</span>(ggpubr)</a>
@@ -799,14 +931,230 @@ CCF = \frac{VAF*CN}{purity}
 <p><img src="report_main_files/figure-html/diff_nes-6.png" width="2400" /></p>
 <p>In the categorical aspect, negative and positive show significant difference in those immune scores.</p>
 </div>
-<div id="neoantigen-enrichment-score-and-immune-negative-selection-selection" class="section level2">
-<h2>Neoantigen enrichment score and immune negative selection selection</h2>
+<div id="neoantigen-enrichment-score-and-immune-negative-selection" class="section level2">
+<h2>Neoantigen enrichment score and immune negative selection</h2>
 <p>We use a stochastic branching process model (2020 Nature genetics, Eszter Lakatos et.al) to model tumor growth integrating neoantigen-mediated negative selection. The detailed method please see our paper or the <a href="https://doi.org/10.1038/s41588-020-0687-1">origin NG paper</a></p>
 <p>The Julia scripts used in this simulation can be found in <code>code/julia</code>.</p>
+<p>The R scripts used to calculate NES of simulation data can be found in <code>code/R/cal_simulate_es.R</code></p>
+<p>We can check the relationship between selection coefficient with NES:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1"><span class="co">###bind all data</span></a>
+<a class="sourceLine" id="cb44-2" data-line-number="2">dt &lt;-<span class="st"> </span><span class="kw">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="dv">51</span>)</a>
+<a class="sourceLine" id="cb44-3" data-line-number="3"><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">51</span>){</a>
+<a class="sourceLine" id="cb44-4" data-line-number="4">  df &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">paste</span>(<span class="st">&quot;~/neo_dep/ssNEA/data/publish/simulation_tumor_growth/s_01_05/&quot;</span>,file[i],<span class="dt">sep =</span> <span class="st">&quot;&quot;</span>))</a>
+<a class="sourceLine" id="cb44-5" data-line-number="5">  df<span class="op">$</span>selection_strength &lt;-<span class="st"> </span>(i<span class="dv">-1</span>)<span class="op">*</span>(<span class="op">-</span><span class="fl">0.01</span>)</a>
+<a class="sourceLine" id="cb44-6" data-line-number="6">  df<span class="op">$</span>fdr &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(df<span class="op">$</span>p,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)</a>
+<a class="sourceLine" id="cb44-7" data-line-number="7">  dt[[i]] &lt;-<span class="st"> </span>df</a>
+<a class="sourceLine" id="cb44-8" data-line-number="8">}</a>
+<a class="sourceLine" id="cb44-9" data-line-number="9">all_s &lt;-<span class="st"> </span><span class="kw">bind_rows</span>(dt)</a>
+<a class="sourceLine" id="cb44-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb44-11" data-line-number="11">all_s &lt;-<span class="st"> </span>all_s <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb44-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>=<span class="kw">as.character</span>(selection_strength))</a>
+<a class="sourceLine" id="cb44-13" data-line-number="13">all_s<span class="op">$</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">factor</span>(all_s<span class="op">$</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>,<span class="dt">levels =</span> <span class="kw">unique</span>(all_s<span class="op">$</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>))</a>
+<a class="sourceLine" id="cb44-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb44-15" data-line-number="15">all_s &lt;-<span class="st"> </span>all_s <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb44-16" data-line-number="16"><span class="st">  </span><span class="kw">filter</span>(selection_strength <span class="op">&gt;=</span>(<span class="op">-</span><span class="fl">0.25</span>))</a>
+<a class="sourceLine" id="cb44-17" data-line-number="17"><span class="kw">saveRDS</span>(all_s,<span class="dt">file =</span> <span class="st">&quot;~/Immunoediting/data/all_s.rds&quot;</span>)</a></code></pre></div>
+<p>Plot</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">all_s &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/all_s.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="kw">ggplot</span>(<span class="dt">data=</span>all_s,<span class="kw">aes</span>(<span class="dt">x=</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>,<span class="dt">y=</span>nes))<span class="op">+</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_violin</span>(<span class="dt">mapping =</span><span class="kw">aes</span>(<span class="dt">x=</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>,<span class="dt">y=</span>nes,<span class="dt">fill=</span><span class="st">`</span><span class="dt">Selection strength</span><span class="st">`</span>))<span class="op">+</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">  </span><span class="kw">stat_summary</span>(<span class="dt">fun=</span>median, <span class="dt">geom=</span><span class="st">&quot;point&quot;</span>, <span class="dt">size=</span><span class="dv">1</span>, <span class="dt">color=</span><span class="st">&quot;#F9E91E&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb45-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_classic</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
+<a class="sourceLine" id="cb45-7" data-line-number="7"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>, <span class="dt">vjust =</span> <span class="dv">1</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))</a></code></pre></div>
+<p><img src="report_main_files/figure-html/plot_s_nes-1.png" width="2400" /> For each fixed selection coefficient, the normalized neoantigen enrichment score was calculated, and the resulting the resulting neoantigen enrichment score show near linear correlation with s values. This analysis suggests neoantigen enrichment score can be used to infer the immune selection strength in patient.</p>
 </div>
+<div id="tcga-pancancer-survial-analysis" class="section level2">
+<h2>TCGA Pancancer survial analysis</h2>
+<p>The enrichment score for CCF distribution reflect the status of immune-elimination step. In cancer patient with strong immune-elimination, good prognosis should be expected. Thus we devided patients into two groups based on NES values, and compare their survial probability.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1"><span class="kw">library</span>(survival)</a>
+<a class="sourceLine" id="cb46-2" data-line-number="2"><span class="kw">library</span>(survminer)</a>
+<a class="sourceLine" id="cb46-3" data-line-number="3"><span class="co">###ccf</span></a>
+<a class="sourceLine" id="cb46-4" data-line-number="4">pancancer_ccf &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_ccf.rds&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-5" data-line-number="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">p_adj=</span><span class="kw">p.adjust</span>(p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-6" data-line-number="6"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">es_type=</span><span class="kw">case_when</span>(</a>
+<a class="sourceLine" id="cb46-7" data-line-number="7">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;sig_negative&quot;</span>,</a>
+<a class="sourceLine" id="cb46-8" data-line-number="8">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;negative but not sig&quot;</span>,</a>
+<a class="sourceLine" id="cb46-9" data-line-number="9">    nes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">0</span> <span class="op">~</span><span class="st"> &quot;positive&quot;</span></a>
+<a class="sourceLine" id="cb46-10" data-line-number="10">  ))</a>
+<a class="sourceLine" id="cb46-11" data-line-number="11">pancancer_survial &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_survial.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb46-12" data-line-number="12">pancancer_ccf &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_ccf <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb46-13" data-line-number="13"><span class="st">                                      </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb46-14" data-line-number="14">                                    pancancer_survial,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(OS.time<span class="op">&lt;</span><span class="dv">5000</span>)</a>
+<a class="sourceLine" id="cb46-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb46-16" data-line-number="16"><span class="co">##plot</span></a>
+<a class="sourceLine" id="cb46-17" data-line-number="17">fit0 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> pancancer_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb46-18" data-line-number="18">p1 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit0,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> pancancer_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb46-19" data-line-number="19">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb46-20" data-line-number="20">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb46-21" data-line-number="21">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;CCF&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Warning: Vectorized input to `element_text()` is not officially supported.
+#&gt; Results may be unexpected or may change in future versions of ggplot2.</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1">p1</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_ccf-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" data-line-number="1"><span class="co">###exp</span></a>
+<a class="sourceLine" id="cb49-2" data-line-number="2">pancancer_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">p_adj=</span><span class="kw">p.adjust</span>(p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-4" data-line-number="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">es_type=</span><span class="kw">case_when</span>(</a>
+<a class="sourceLine" id="cb49-5" data-line-number="5">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;sig_negative&quot;</span>,</a>
+<a class="sourceLine" id="cb49-6" data-line-number="6">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;negative but not sig&quot;</span>,</a>
+<a class="sourceLine" id="cb49-7" data-line-number="7">    nes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">0</span> <span class="op">~</span><span class="st"> &quot;positive&quot;</span></a>
+<a class="sourceLine" id="cb49-8" data-line-number="8">  ))</a>
+<a class="sourceLine" id="cb49-9" data-line-number="9">pancancer_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_exp <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb49-10" data-line-number="10"><span class="st">                                      </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb49-11" data-line-number="11">                                    pancancer_survial,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(OS.time<span class="op">&lt;</span><span class="dv">5000</span>)</a>
+<a class="sourceLine" id="cb49-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb49-13" data-line-number="13"><span class="co">##plot</span></a>
+<a class="sourceLine" id="cb49-14" data-line-number="14">fit1 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb49-15" data-line-number="15">p2 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit1,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb49-16" data-line-number="16">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb49-17" data-line-number="17">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb49-18" data-line-number="18">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;EXP&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Warning: Vectorized input to `element_text()` is not officially supported.
+#&gt; Results may be unexpected or may change in future versions of ggplot2.</code></pre>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb51-1" data-line-number="1">p2</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_exp-1.png" width="2400" /> We can see patients with ESccf values (NES&lt;0; FDR&lt;0.25) show improved prognosis compared to remain patients, while expression not.</p>
+<p>The patients with NES&lt;0 and FDR&lt;0.25 is small cohort (209 patients), so we could ask this difference is actually caused by NES(ccf) difference or by cancer type difference? (ie. those 209 patients are mainly several cancertype, and those cancer type has better survial than others). Then we do cox multivariate analysis that take cancer type and immune infiltration into account:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">library</span>(ezcox)</a>
+<a class="sourceLine" id="cb52-2" data-line-number="2">immue_estimate &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/immue_estimate.rds&quot;</span>)</a>
+<a class="sourceLine" id="cb52-3" data-line-number="3">pancancer_ccf<span class="op">$</span><span class="st">`</span><span class="dt">cancer type</span><span class="st">`</span> &lt;-<span class="st"> </span><span class="kw">getcancer_type</span>(pancancer_ccf<span class="op">$</span>sample)</a>
+<a class="sourceLine" id="cb52-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb52-5" data-line-number="5">pancancer_ccf &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_ccf,</a>
+<a class="sourceLine" id="cb52-6" data-line-number="6">                           immue_estimate <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb52-7" data-line-number="7">                           <span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">distinct</span>(sample,<span class="dt">.keep_all =</span> T)</a>
+<a class="sourceLine" id="cb52-8" data-line-number="8"><span class="kw">show_forest</span>(pancancer_ccf,<span class="dt">covariates =</span> <span class="kw">c</span>(<span class="st">&quot;nes&quot;</span>),<span class="dt">controls =</span> <span class="kw">c</span>(<span class="st">&quot;cancer type&quot;</span>,<span class="st">&quot;T_cells_CD8&quot;</span>),</a>
+<a class="sourceLine" id="cb52-9" data-line-number="9">            <span class="dt">time =</span> <span class="st">&quot;OS.time&quot;</span>,<span class="dt">status =</span> <span class="st">&quot;OS&quot;</span>,<span class="dt">vars_to_show=</span><span class="st">&quot;nes&quot;</span>,<span class="dt">point_size =</span> <span class="dv">8</span>)</a></code></pre></div>
+<p><img src="report_main_files/figure-html/cox-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb53-1" data-line-number="1"><span class="co">###consider only sig-negative+positive</span></a>
+<a class="sourceLine" id="cb53-2" data-line-number="2">pancancer_ccf1 &lt;-<span class="st"> </span>pancancer_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>)</a>
+<a class="sourceLine" id="cb53-3" data-line-number="3"><span class="kw">show_forest</span>(pancancer_ccf1,<span class="dt">covariates =</span> <span class="kw">c</span>(<span class="st">&quot;nes&quot;</span>),<span class="dt">controls =</span> <span class="kw">c</span>(<span class="st">&quot;cancer type&quot;</span>,<span class="st">&quot;T_cells_CD8&quot;</span>),</a>
+<a class="sourceLine" id="cb53-4" data-line-number="4">            <span class="dt">time =</span> <span class="st">&quot;OS.time&quot;</span>,<span class="dt">status =</span> <span class="st">&quot;OS&quot;</span>,<span class="dt">vars_to_show=</span><span class="st">&quot;nes&quot;</span>,<span class="dt">point_size =</span> <span class="dv">8</span>)</a></code></pre></div>
+<p><img src="report_main_files/figure-html/cox-2.png" width="2400" /> So, when we consider cancer type and immune infiltration, the HR is still more than 1 significantly.</p>
+<p>In the <code>Neoantigen ebrichment score is associated with immune cell infiltration</code> part, we show that NES(ccf) is corrlated with some immune scores. So we want to explore whether prognosis is different between immune hot and cold tumors or not.</p>
+<p>We foucs on CD8 T cells. Let’s look at the distribution of CD8 T cells between cancer types:</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">immue_estimate<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(immue_estimate<span class="op">$</span>sample))</a>
+<a class="sourceLine" id="cb54-2" data-line-number="2">immue_estimate <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb54-3" data-line-number="3"><span class="st">  </span><span class="kw">group_by</span>(cancer) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb54-4" data-line-number="4"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">median_immune=</span><span class="kw">median</span>(T_cells_CD8)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb54-5" data-line-number="5"><span class="st">  </span><span class="kw">arrange</span>(median_immune) -&gt;<span class="st"> </span>immune_pancancer</a></code></pre></div>
+<pre><code>#&gt; `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">immue_estimate<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">factor</span>(immue_estimate<span class="op">$</span>cancer,<span class="dt">levels =</span> immune_pancancer<span class="op">$</span>cancer)</a>
+<a class="sourceLine" id="cb56-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb56-3" data-line-number="3"><span class="kw">ggplot</span>(<span class="dt">data =</span> immue_estimate,<span class="dt">mapping =</span> <span class="kw">aes</span>(<span class="dt">x=</span>cancer,<span class="dt">y=</span>T_cells_CD8,<span class="dt">fill=</span>cancer))<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_boxplot</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-5" data-line-number="5"><span class="st">  </span><span class="kw">theme_classic</span>()<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-6" data-line-number="6"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">45</span>,<span class="dt">vjust =</span> <span class="dv">1</span>, <span class="dt">hjust =</span> <span class="dv">1</span>))<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-7" data-line-number="7"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title.x=</span><span class="kw">element_blank</span>())<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-8" data-line-number="8"><span class="st">  </span><span class="kw">guides</span>(<span class="dt">fill=</span>F)<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-9" data-line-number="9"><span class="st">  </span><span class="kw">scale_color_distiller</span>(<span class="dt">palette =</span> <span class="st">&quot;Set3&quot;</span>)<span class="op">+</span></a>
+<a class="sourceLine" id="cb56-10" data-line-number="10"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">y=</span><span class="st">&quot;CD8 cells&quot;</span>)</a></code></pre></div>
+<p><img src="report_main_files/figure-html/dis_cd8-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1">hot_cancer &lt;-<span class="st"> </span>immune_pancancer<span class="op">$</span>cancer[<span class="dv">18</span><span class="op">:</span><span class="dv">33</span>] </a>
+<a class="sourceLine" id="cb57-2" data-line-number="2">cold_cancer &lt;-<span class="st"> </span>immune_pancancer<span class="op">$</span>cancer[<span class="dv">1</span><span class="op">:</span><span class="dv">16</span>]</a>
+<a class="sourceLine" id="cb57-3" data-line-number="3">dt &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">hot_cancer=</span>hot_cancer,<span class="dt">cold_cancer=</span>cold_cancer)</a>
+<a class="sourceLine" id="cb57-4" data-line-number="4">DT<span class="op">::</span><span class="kw">datatable</span>(dt,</a>
+<a class="sourceLine" id="cb57-5" data-line-number="5">  <span class="dt">options =</span> <span class="kw">list</span>(<span class="dt">scrollX =</span> <span class="ot">TRUE</span>, <span class="dt">keys =</span> <span class="ot">TRUE</span>), <span class="dt">rownames =</span> <span class="ot">FALSE</span></a>
+<a class="sourceLine" id="cb57-6" data-line-number="6">)</a></code></pre></div>
+<div id="htmlwidget-432b06c2adbd55bc931d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-432b06c2adbd55bc931d">{"x":{"filter":"none","data":[["LUAD","LUSC","CHOL","LIHC","MESO","STAD","BLCA","PRAD","THCA","TGCT","UCEC","DLBC","SKCM","KIRC","CESC","THYM"],["LGG","GBM","LAML","KICH","ESCA","OV","UVM","SARC","ACC","UCS","PCPG","KIRP","READ","BRCA","HNSC","PAAD"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>hot_cancer<\/th>\n      <th>cold_cancer<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<p>Then we do survial analysis for hot tumor and cold tumor.</p>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" data-line-number="1"><span class="co">###ccf</span></a>
+<a class="sourceLine" id="cb58-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb58-3" data-line-number="3">hot &lt;-<span class="st"> </span>pancancer_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">`</span><span class="dt">cancer type</span><span class="st">`</span>) <span class="op">%in%</span><span class="st"> </span>hot_cancer)</a>
+<a class="sourceLine" id="cb58-4" data-line-number="4">fit2 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> hot <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb58-5" data-line-number="5">p3 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit2,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> hot <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb58-6" data-line-number="6">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb58-7" data-line-number="7">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb58-8" data-line-number="8">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;CCF hot&quot;</span>)</a>
+<a class="sourceLine" id="cb58-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb58-10" data-line-number="10">cold &lt;-<span class="st"> </span>pancancer_ccf <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="st">`</span><span class="dt">cancer type</span><span class="st">`</span>) <span class="op">%in%</span><span class="st"> </span>cold_cancer)</a>
+<a class="sourceLine" id="cb58-11" data-line-number="11">fit3 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> cold <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb58-12" data-line-number="12">p4 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit3,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> cold <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb58-13" data-line-number="13">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb58-14" data-line-number="14">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb58-15" data-line-number="15">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;CCF cold&quot;</span>)</a>
+<a class="sourceLine" id="cb58-16" data-line-number="16">p3</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_hot_cold-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">p4</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_hot_cold-2.png" width="2400" /></p>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb60-1" data-line-number="1"><span class="co">###exp</span></a>
+<a class="sourceLine" id="cb60-2" data-line-number="2">pancancer_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_exp<span class="op">$</span>sample))</a>
+<a class="sourceLine" id="cb60-3" data-line-number="3">hot1 &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(cancer <span class="op">%in%</span><span class="st"> </span>hot_cancer)</a>
+<a class="sourceLine" id="cb60-4" data-line-number="4">fit4 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> hot1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb60-5" data-line-number="5">p5 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit4,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> hot1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb60-6" data-line-number="6">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb60-7" data-line-number="7">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb60-8" data-line-number="8">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;EXP hot&quot;</span>)</a>
+<a class="sourceLine" id="cb60-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb60-10" data-line-number="10">cold1 &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(cancer <span class="op">%in%</span><span class="st"> </span>cold_cancer)</a>
+<a class="sourceLine" id="cb60-11" data-line-number="11">fit5 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>es_type,<span class="dt">data =</span> cold1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>))</a>
+<a class="sourceLine" id="cb60-12" data-line-number="12">p6 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit5,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> cold1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(es_type<span class="op">!=</span><span class="st">&quot;negative but not sig&quot;</span>),</a>
+<a class="sourceLine" id="cb60-13" data-line-number="13">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb60-14" data-line-number="14">                  <span class="dt">palette =</span><span class="kw">c</span>( <span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb60-15" data-line-number="15">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;EXP cold&quot;</span>)</a>
+<a class="sourceLine" id="cb60-16" data-line-number="16">p5</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_hot_cold-3.png" width="2400" /></p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">p6</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_hot_cold-4.png" width="2400" /> This analysis show that both hot and cold cancer has significantly different prognosis, while both of exp shows no difference. This is because the enrichment score for mRNA expression distribution partially reflect the status of immune-escape, thus we explore other escape mechanisms, including:</p>
+<ul>
+<li>Suppress the transcription/expression of genome alterations encoding high antigenicity (quantified by NES(EXP))</li>
+<li>Antigen presentation pathway gene mutation</li>
+<li>Up-regulate the expression of immune suppressive signaling, like PD-L1, CTLA-4</li>
+</ul>
+<p>In the <code>Process immune escape sample</code> part, we has already find escape samples. Then we can look at the prognosis of escape samples VS no escape samples:</p>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb62-1" data-line-number="1">pancancer_exp &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;~/Immunoediting/data/pancancer_nes_exp.rds&quot;</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb62-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">p_adj=</span><span class="kw">p.adjust</span>(p_value,<span class="dt">method =</span> <span class="st">&quot;fdr&quot;</span>)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb62-3" data-line-number="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">es_type=</span><span class="kw">case_when</span>(</a>
+<a class="sourceLine" id="cb62-4" data-line-number="4">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;sig_negative&quot;</span>,</a>
+<a class="sourceLine" id="cb62-5" data-line-number="5">    nes <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>p_adj <span class="op">&gt;=</span><span class="st"> </span><span class="fl">0.25</span> <span class="op">~</span><span class="st"> &quot;negative but not sig&quot;</span>,</a>
+<a class="sourceLine" id="cb62-6" data-line-number="6">    nes <span class="op">&gt;=</span><span class="st"> </span><span class="dv">0</span> <span class="op">~</span><span class="st"> &quot;positive&quot;</span></a>
+<a class="sourceLine" id="cb62-7" data-line-number="7">  ))</a>
+<a class="sourceLine" id="cb62-8" data-line-number="8">pancancer_exp &lt;-<span class="st"> </span><span class="kw">left_join</span>(pancancer_exp <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb62-9" data-line-number="9"><span class="st">                                      </span><span class="kw">mutate</span>(<span class="dt">sample=</span><span class="kw">substr</span>(sample,<span class="dv">1</span>,<span class="dv">12</span>)),</a>
+<a class="sourceLine" id="cb62-10" data-line-number="10">                                    pancancer_survial,<span class="dt">by=</span><span class="st">&quot;sample&quot;</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb62-11" data-line-number="11"><span class="st">  </span><span class="kw">filter</span>(OS.time<span class="op">&lt;</span><span class="dv">4700</span>)</a>
+<a class="sourceLine" id="cb62-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb62-13" data-line-number="13">pancancer_exp &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span>(<span class="kw">is.na</span>(apm_mut) </a>
+<a class="sourceLine" id="cb62-14" data-line-number="14">                                            <span class="op">|</span><span class="st"> </span><span class="kw">is.na</span>(exp_escape) </a>
+<a class="sourceLine" id="cb62-15" data-line-number="15">                                            <span class="op">|</span><span class="st"> </span><span class="kw">is.na</span>(checkpoint_overexpression)))</a>
+<a class="sourceLine" id="cb62-16" data-line-number="16">pancancer_exp<span class="op">$</span>escape &lt;-<span class="st"> </span><span class="kw">mapply</span>(<span class="cf">function</span>(x,y,z)</a>
+<a class="sourceLine" id="cb62-17" data-line-number="17">  {<span class="kw">ifelse</span>(<span class="kw">any</span>(<span class="kw">c</span>(x,y,z)<span class="op">==</span><span class="st">&quot;yes&quot;</span>,<span class="dt">na.rm =</span> T),<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>)},</a>
+<a class="sourceLine" id="cb62-18" data-line-number="18">  pancancer_exp<span class="op">$</span>apm_mut,</a>
+<a class="sourceLine" id="cb62-19" data-line-number="19">  pancancer_exp<span class="op">$</span>checkpoint_overexpression,</a>
+<a class="sourceLine" id="cb62-20" data-line-number="20">  pancancer_exp<span class="op">$</span>exp_escape)</a>
+<a class="sourceLine" id="cb62-21" data-line-number="21"></a>
+<a class="sourceLine" id="cb62-22" data-line-number="22">pancancer_exp<span class="op">$</span>cancer &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;TCGA-&quot;</span>,<span class="st">&quot;&quot;</span>,<span class="kw">getcancer_type</span>(pancancer_exp<span class="op">$</span>sample))</a>
+<a class="sourceLine" id="cb62-23" data-line-number="23">fit6 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>escape,<span class="dt">data =</span> pancancer_exp)</a>
+<a class="sourceLine" id="cb62-24" data-line-number="24">p7 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit6,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> pancancer_exp,</a>
+<a class="sourceLine" id="cb62-25" data-line-number="25">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb62-26" data-line-number="26">                  <span class="dt">palette =</span><span class="kw">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb62-27" data-line-number="27">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;Escape of all samples&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Warning: Vectorized input to `element_text()` is not officially supported.
+#&gt; Results may be unexpected or may change in future versions of ggplot2.</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb64-1" data-line-number="1">hot &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(cancer <span class="op">%in%</span><span class="st"> </span>hot_cancer)</a>
+<a class="sourceLine" id="cb64-2" data-line-number="2">fit7 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>escape,<span class="dt">data =</span> hot)</a>
+<a class="sourceLine" id="cb64-3" data-line-number="3">p8 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit7,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> hot,</a>
+<a class="sourceLine" id="cb64-4" data-line-number="4">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb64-5" data-line-number="5">                  <span class="dt">palette =</span><span class="kw">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb64-6" data-line-number="6">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;Escape of hot cancers&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Warning: Vectorized input to `element_text()` is not officially supported.
+#&gt; Results may be unexpected or may change in future versions of ggplot2.</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb66-1" data-line-number="1">cold &lt;-<span class="st"> </span>pancancer_exp <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(cancer <span class="op">%in%</span><span class="st"> </span>cold_cancer)</a>
+<a class="sourceLine" id="cb66-2" data-line-number="2">fit8 &lt;-<span class="st"> </span><span class="kw">survfit</span>(<span class="kw">Surv</span>(OS.time,OS)<span class="op">~</span>escape,<span class="dt">data =</span> cold)</a>
+<a class="sourceLine" id="cb66-3" data-line-number="3">p9 &lt;-<span class="st"> </span><span class="kw">ggsurvplot</span>(fit8,<span class="dt">pval =</span> T,<span class="dt">risk.table =</span> T,<span class="dt">data =</span> cold,</a>
+<a class="sourceLine" id="cb66-4" data-line-number="4">                  <span class="dt">tables.theme =</span> <span class="kw">theme_cleantable</span>(),  <span class="co"># Clean risk table</span></a>
+<a class="sourceLine" id="cb66-5" data-line-number="5">                  <span class="dt">palette =</span><span class="kw">c</span>(<span class="st">&quot;black&quot;</span>,<span class="st">&quot;red&quot;</span>),</a>
+<a class="sourceLine" id="cb66-6" data-line-number="6">                  <span class="dt">size=</span><span class="dv">2</span>,<span class="dt">title=</span><span class="st">&quot;Escape of cold cancers&quot;</span>)</a></code></pre></div>
+<pre><code>#&gt; Warning: Vectorized input to `element_text()` is not officially supported.
+#&gt; Results may be unexpected or may change in future versions of ggplot2.</code></pre>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb68-1" data-line-number="1">p7</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_escape-1.png" width="2400" /></p>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" data-line-number="1">p8</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_escape-2.png" width="2400" /></p>
+<div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb70-1" data-line-number="1">p9</a></code></pre></div>
+<p><img src="report_main_files/figure-html/survial_escape-3.png" width="2400" /></p>
+<p>We can see, in the hot cancers, no escape samples have a better prognosis while in the cold cancers, there are no difference.</p>
 </div>
-<div id="simulation-analysis" class="section level1">
-<h1>Simulation analysis</h1>
 </div>
 <div id="supplementary-analysis" class="section level1">
 <h1>Supplementary analysis</h1>

@@ -1,6 +1,6 @@
 ---
 title: "Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution"
-author: ["Tao Wu", "Xue-Song Liu (Corresponding author)"]
+author: ["Tao Wu", "Xuan Wang","Huimin Li","Xue-Song Liu (Corresponding author)"]
 date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -45,10 +45,10 @@ This project is depended on R software, R packages, shell bash, Julia software a
 ```
 
 # TCGA pancancer analysis
+
 ```{r child = 'tcga_pancancer_analysis.Rmd'}
 ```
 
-# Simulation analysis
 
 # Supplementary analysis
 

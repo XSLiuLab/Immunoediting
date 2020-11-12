@@ -15,6 +15,7 @@ options(max.print = "75")
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
 knitr::opts_knit$set(width = 75)
 ```
+
 ```{r lib1,echo=TRUE,eval=TRUE,include=FALSE}
 library(tidyverse)
 library(ggpubr)
@@ -184,7 +185,7 @@ cyt <- readRDS("~/Immunoediting/data/pancancer_cyt.rds")
 
 Firstly, we calculate correlation using spearman method by cancer types
 
-```{r cal_cor_cancertype,eval=TRUE,warning = FALSE}
+```{r cal_cor_cancertype,eval=FALSE,warning = FALSE}
 ##bind all data
 all_immune <- left_join(elife %>% 
                           rename(sample=Tumor_Sample_Barcode),
@@ -221,6 +222,7 @@ summ_ccf <- pancancer_nes_ccf %>%
   group_by(cancer) %>%
   summarise(across(nes:`Intratumor Heterogeneity`,~median(.x, na.rm = TRUE)))
 summ_exp <- pancancer_nes_exp %>% 
+  select(-c(3:6)) %>% 
   group_by(cancer) %>%
   summarise(across(nes:`Intratumor Heterogeneity`,~median(.x, na.rm = TRUE)))
 
@@ -233,8 +235,14 @@ cor_mat2 <- cor(summ_exp %>% select(-cancer),
 cor_mat2 <- cor_mat2[,1]  %>% as.data.frame()
 colnames(cor_mat2) <- "NES(EXP)"
 
-ccf_exp_cor <- cbind(cor_mat1,cor_mat2)
+ccf_exp_cor <- bind_cols(cor_mat1,cor_mat2)
 ccf_exp_cor <- ccf_exp_cor[-1,]
+
+saveRDS(ccf_exp_cor,file = "~/Immunoediting/data/ccf_exp_immune_cor.rds")
+```
+
+```{r plot_ccf_exp_immune_cor,eval=TRUE}
+ccf_exp_cor <- readRDS("~/Immunoediting/data/ccf_exp_immune_cor.rds")
 ggcorrplot::ggcorrplot(t(ccf_exp_cor))
 
 ##view data
@@ -242,6 +250,7 @@ DT::datatable(ccf_exp_cor,
   options = list(scrollX = TRUE, keys = TRUE), rownames = TRUE
 )
 ```
+
 We can see the negative corrlation between nes and most immune score.
 Plot LF:
 
@@ -326,13 +335,240 @@ ggplot(pancancer_nes_exp, aes(x=type, y=log(cyt+1), fill=type)) +
 
 In the categorical aspect, negative and positive show significant difference in those immune scores.
 
-
-## Neoantigen enrichment score and immune negative selection selection
+## Neoantigen enrichment score and immune negative selection 
 We use a stochastic branching process model (2020 Nature genetics, Eszter Lakatos et.al) to model tumor growth integrating neoantigen-mediated negative selection. The detailed method please see our paper or the [origin NG paper](https://doi.org/10.1038/s41588-020-0687-1)
 
 The Julia scripts used in this simulation can be found in `code/julia`.
 
+The R scripts used to calculate NES of simulation data can be found in `code/R/cal_simulate_es.R`
+
+We can check the relationship between selection coefficient with NES:
+
+```{r cor_s_nes,eval=FALSE}
+###bind all data
+dt <- vector("list",51)
+for (i in 1:51){
+  df <- readRDS(paste("~/neo_dep/ssNEA/data/publish/simulation_tumor_growth/s_01_05/",file[i],sep = ""))
+  df$selection_strength <- (i-1)*(-0.01)
+  df$fdr <- p.adjust(df$p,method = "fdr")
+  dt[[i]] <- df
+}
+all_s <- bind_rows(dt)
+
+all_s <- all_s %>%
+  mutate(`Selection strength`=as.character(selection_strength))
+all_s$`Selection strength` <- factor(all_s$`Selection strength`,levels = unique(all_s$`Selection strength`))
+
+all_s <- all_s %>%
+  filter(selection_strength >=(-0.25))
+saveRDS(all_s,file = "~/Immunoediting/data/all_s.rds")
+```
+Plot
+
+```{r plot_s_nes,eval=TRUE}
+all_s <- readRDS("~/Immunoediting/data/all_s.rds")
+ggplot(data=all_s,aes(x=`Selection strength`,y=nes))+
+  geom_violin(mapping =aes(x=`Selection strength`,y=nes,fill=`Selection strength`))+
+  stat_summary(fun=median, geom="point", size=1, color="#F9E91E")+
+  theme_classic()+
+  guides(fill=F)+
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+```
+For each fixed selection coefficient, the normalized neoantigen enrichment score was calculated, and the resulting the resulting neoantigen enrichment score show near linear correlation with s values. This analysis suggests neoantigen enrichment score can be used to infer the immune selection strength in patient.
+
+## TCGA Pancancer survial analysis
+The enrichment score for CCF distribution reflect the status of immune-elimination step. In cancer patient with strong immune-elimination, good prognosis should be expected. Thus we devided patients into two groups based on NES values, and compare their survial probability.
+```{r survial_ccf,eval=TRUE,message=FALSE}
+library(survival)
+library(survminer)
+###ccf
+pancancer_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes < 0 & p_adj < 0.25 ~ "sig_negative",
+    nes < 0 & p_adj >= 0.25 ~ "negative but not sig",
+    nes >= 0 ~ "positive"
+  ))
+pancancer_survial <- readRDS("~/Immunoediting/data/pancancer_survial.rds")
+pancancer_ccf <- left_join(pancancer_ccf %>%
+                                      mutate(sample=substr(sample,1,12)),
+                                    pancancer_survial,by="sample") %>% filter(OS.time<5000)
+
+##plot
+fit0 <- survfit(Surv(OS.time,OS)~es_type,data = pancancer_ccf %>% filter(es_type!="negative but not sig"))
+p1 <- ggsurvplot(fit0,pval = T,risk.table = T,data = pancancer_ccf %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="CCF")
+p1
+```
+
+```{r survial_exp,eval=TRUE,message=FALSE}
+###exp
+pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes < 0 & p_adj < 0.25 ~ "sig_negative",
+    nes < 0 & p_adj >= 0.25 ~ "negative but not sig",
+    nes >= 0 ~ "positive"
+  ))
+pancancer_exp <- left_join(pancancer_exp %>%
+                                      mutate(sample=substr(sample,1,12)),
+                                    pancancer_survial,by="sample") %>% filter(OS.time<5000)
+
+##plot
+fit1 <- survfit(Surv(OS.time,OS)~es_type,data = pancancer_exp %>% filter(es_type!="negative but not sig"))
+p2 <- ggsurvplot(fit1,pval = T,risk.table = T,data = pancancer_exp %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="EXP")
+p2
+```
+We can see patients with ESccf values (NES<0; FDR<0.25) show improved prognosis compared to remain patients, while expression not.
+
+The patients with NES<0 and FDR<0.25 is small cohort (209 patients), so we could ask this difference is actually caused by NES(ccf) difference or by cancer type difference? (ie. those 209 patients are mainly several cancertype, and those cancer type has better survial than others). Then we do cox multivariate analysis that take cancer type and immune infiltration into account:
+
+```{r cox,eval=TRUE,message=FALSE,warning=FALSE}
+library(ezcox)
+immue_estimate <- readRDS("~/Immunoediting/data/immue_estimate.rds")
+pancancer_ccf$`cancer type` <- getcancer_type(pancancer_ccf$sample)
+
+pancancer_ccf <- left_join(pancancer_ccf,
+                           immue_estimate %>% mutate(sample=substr(sample,1,12)),
+                           by="sample") %>% distinct(sample,.keep_all = T)
+show_forest(pancancer_ccf,covariates = c("nes"),controls = c("cancer type","T_cells_CD8"),
+            time = "OS.time",status = "OS",vars_to_show="nes",point_size = 8)
+
+###consider only sig-negative+positive
+pancancer_ccf1 <- pancancer_ccf %>% filter(es_type!="negative but not sig")
+show_forest(pancancer_ccf1,covariates = c("nes"),controls = c("cancer type","T_cells_CD8"),
+            time = "OS.time",status = "OS",vars_to_show="nes",point_size = 8)
+
+```
+So, when we consider cancer type and immune infiltration, the HR is still more than 1 significantly.
+
+In the `Neoantigen ebrichment score is associated with immune cell infiltration` part, we show that NES(ccf) is corrlated with some immune scores. So we want to explore whether prognosis  is different between immune hot and cold tumors or not.
+
+We foucs on CD8 T cells. Let's look at the distribution of CD8 T cells between cancer types:
+```{r dis_cd8,eval=TRUE}
+immue_estimate$cancer <- gsub("TCGA-","",getcancer_type(immue_estimate$sample))
+immue_estimate %>%
+  group_by(cancer) %>%
+  summarise(median_immune=median(T_cells_CD8)) %>%
+  arrange(median_immune) -> immune_pancancer
+immue_estimate$cancer <- factor(immue_estimate$cancer,levels = immune_pancancer$cancer)
+
+ggplot(data = immue_estimate,mapping = aes(x=cancer,y=T_cells_CD8,fill=cancer))+
+  geom_boxplot()+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+  theme(axis.title.x=element_blank())+
+  guides(fill=F)+
+  scale_color_distiller(palette = "Set3")+
+  labs(y="CD8 cells")
 
 
+hot_cancer <- immune_pancancer$cancer[18:33] 
+cold_cancer <- immune_pancancer$cancer[1:16]
+dt <- data.frame(hot_cancer=hot_cancer,cold_cancer=cold_cancer)
+DT::datatable(dt,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
 
+Then we do survial analysis for hot tumor and cold tumor.
 
+```{r survial_hot_cold,eval=TRUE,message=FALSE,warning=FALSE}
+###ccf
+
+hot <- pancancer_ccf %>% filter(gsub("TCGA-","",`cancer type`) %in% hot_cancer)
+fit2 <- survfit(Surv(OS.time,OS)~es_type,data = hot %>% filter(es_type!="negative but not sig"))
+p3 <- ggsurvplot(fit2,pval = T,risk.table = T,data = hot %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="CCF hot")
+
+cold <- pancancer_ccf %>% filter(gsub("TCGA-","",`cancer type`) %in% cold_cancer)
+fit3 <- survfit(Surv(OS.time,OS)~es_type,data = cold %>% filter(es_type!="negative but not sig"))
+p4 <- ggsurvplot(fit3,pval = T,risk.table = T,data = cold %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="CCF cold")
+p3
+p4
+
+###exp
+pancancer_exp$cancer <- gsub("TCGA-","",getcancer_type(pancancer_exp$sample))
+hot1 <- pancancer_exp %>% filter(cancer %in% hot_cancer)
+fit4 <- survfit(Surv(OS.time,OS)~es_type,data = hot1 %>% filter(es_type!="negative but not sig"))
+p5 <- ggsurvplot(fit4,pval = T,risk.table = T,data = hot1 %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="EXP hot")
+
+cold1 <- pancancer_exp %>% filter(cancer %in% cold_cancer)
+fit5 <- survfit(Surv(OS.time,OS)~es_type,data = cold1 %>% filter(es_type!="negative but not sig"))
+p6 <- ggsurvplot(fit5,pval = T,risk.table = T,data = cold1 %>% filter(es_type!="negative but not sig"),
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c( "black","red"),
+                  size=2,title="EXP cold")
+p5
+p6
+```
+This analysis show that both hot and cold cancer has significantly different prognosis, while both of exp shows no difference. This is because the enrichment score for mRNA expression distribution partially reflect the status of immune-escape, thus we explore other escape mechanisms, including:
+
+- Suppress the transcription/expression of genome alterations encoding high antigenicity (quantified by NES(EXP))
+- Antigen presentation pathway gene mutation
+- Up-regulate the expression of immune suppressive signaling, like PD-L1, CTLA-4
+ 
+In the `Process immune escape sample` part, we has already find escape samples. Then we can look at the prognosis of escape samples VS no escape samples:
+
+```{r survial_escape,eval=TRUE}
+pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes < 0 & p_adj < 0.25 ~ "sig_negative",
+    nes < 0 & p_adj >= 0.25 ~ "negative but not sig",
+    nes >= 0 ~ "positive"
+  ))
+pancancer_exp <- left_join(pancancer_exp %>%
+                                      mutate(sample=substr(sample,1,12)),
+                                    pancancer_survial,by="sample") %>% 
+  filter(OS.time<4700)
+
+pancancer_exp <- pancancer_exp %>% filter(!(is.na(apm_mut) 
+                                            | is.na(exp_escape) 
+                                            | is.na(checkpoint_overexpression)))
+pancancer_exp$escape <- mapply(function(x,y,z)
+  {ifelse(any(c(x,y,z)=="yes",na.rm = T),"yes","no")},
+  pancancer_exp$apm_mut,
+  pancancer_exp$checkpoint_overexpression,
+  pancancer_exp$exp_escape)
+
+pancancer_exp$cancer <- gsub("TCGA-","",getcancer_type(pancancer_exp$sample))
+fit6 <- survfit(Surv(OS.time,OS)~escape,data = pancancer_exp)
+p7 <- ggsurvplot(fit6,pval = T,risk.table = T,data = pancancer_exp,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("black","red"),
+                  size=2,title="Escape of all samples")
+
+hot <- pancancer_exp %>% filter(cancer %in% hot_cancer)
+fit7 <- survfit(Surv(OS.time,OS)~escape,data = hot)
+p8 <- ggsurvplot(fit7,pval = T,risk.table = T,data = hot,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("black","red"),
+                  size=2,title="Escape of hot cancers")
+
+cold <- pancancer_exp %>% filter(cancer %in% cold_cancer)
+fit8 <- survfit(Surv(OS.time,OS)~escape,data = cold)
+p9 <- ggsurvplot(fit8,pval = T,risk.table = T,data = cold,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("black","red"),
+                  size=2,title="Escape of cold cancers")
+
+p7
+p8
+p9
+```
+ 
+We can see, in the hot cancers, no escape samples have a better prognosis while in the cold cancers, there are no difference.
