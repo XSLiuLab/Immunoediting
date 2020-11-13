@@ -51,4 +51,5 @@ This project is depended on R software, R packages, shell bash, Julia software a
 
 # Immunotherapy dataset analysis
 
-
+```{r child = 'immunotherapy_analysis.Rmd'}
+```

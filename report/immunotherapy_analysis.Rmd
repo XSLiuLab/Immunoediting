@@ -1,0 +1,17 @@
+---
+title: "immunotherapy_analysis"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r tcga_pancancer_analysis-setup, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
+knitr::opts_knit$set(width = 75)
+```

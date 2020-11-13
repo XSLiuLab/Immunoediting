@@ -12,7 +12,7 @@ output:
 
 ```{r pre-process-setup, include=FALSE}
 options(max.print = "75")
-knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
 knitr::opts_knit$set(width = 75)
 ```
 
@@ -22,6 +22,7 @@ library(ggpubr)
 library(cowplot)
 library(viridis)
 library(NeoEnrichment)
+library(parallel)
 ```
 This part will describe how and where the data that this project used is downloaded and pre-processed.
 
@@ -558,10 +559,51 @@ We collected three cohorts of immunotherapy datasets for our analysis. `The Hugo
 
 Immune therapy response for patients was defined by RECIST v1.1(CR/PR/SD/PD), responding tumors were derived from patients who have complete or partial responses or stable disease (CR/PR) in response to anti-PD-1 therapy; non-responding tumors were derived from patients who had progressive disease (PD/SD)
 
-The details of mutation calling, neoantigen prediction, copy number analysis can be found in Methods.  
+The details of mutation calling, neoantigen prediction, copy number analysis and RNA_seq process can be found in Methods. Code can be found in `code/shell/ICI_*` 
 
 ## Immunotherapy data pre-process
 
+Caculate NES(ccf) and NES(exp) for immunotherapy dataset:
 
+```{r cal_es_immune,eval=FALSE}
+all_sample_exp_ccf <- readRDS("~/Immunoediting/data/Immunotherapy/all_sample_exp_ccf.rds")
 
+###ccf
+all_sample_exp_ccf1 <- all_sample_exp_ccf %>% 
+  filter(!is.na(ccf_cn_assume))
+results_ccf <- vector("list",length = length(unique(all_sample_exp_ccf1$sample)))
+names(results_ccf) <- unique(all_sample_exp_ccf1$sample)
 
+cl <- makeCluster(getOption("cl.cores", 10),type="FORK")
+set.seed(202011131)
+results_ccf <- parSapply(cl=cl,names(results_ccf),
+                         function(x){
+                           NeoEnrichment::cales_t(all_sample_exp_ccf1,x,
+                                                  calp=TRUE,cal_type="ccf",mhc_type="I")
+                         })
+stopCluster(cl)
+
+results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+all_sample_nes_ccf <- bind_rows(results_ccf,.id = "sample")
+saveRDS(all_sample_nes_ccf,file = "~/Immunoediting/data/Immunotherapy/all_sample_nes_ccf.rds")
+
+###exp
+all_sample_exp_ccf2 <- all_sample_exp_ccf %>% 
+  filter(!is.na(exp))
+results_exp <- vector("list",length = length(unique(all_sample_exp_ccf2$sample)))
+names(results_exp) <- unique(all_sample_exp_ccf2$sample)
+
+cl <- makeCluster(getOption("cl.cores", 10),type="FORK")
+set.seed(202011132)
+results_exp <- parSapply(cl=cl,names(results_exp),
+                         function(x){
+                           NeoEnrichment::cales_t(all_sample_exp_ccf2,x,
+                                                  calp=TRUE,cal_type="exp",mhc_type="I")
+                         })
+stopCluster(cl)
+
+results_exp <- Filter(function(x){length(x)>1},results_exp)
+all_sample_nes_exp <- bind_rows(results_exp,.id = "sample")
+saveRDS(all_sample_nes_exp,file = "~/Immunoediting/data/Immunotherapy/all_sample_nes_exp.rds")
+
+```
