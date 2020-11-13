@@ -23,6 +23,8 @@ library(cowplot)
 library(viridis)
 library(NeoEnrichment)
 library(gridGraphics)
+library(survminer)
+library(survival)
 ```
 
 ##  The existence of significant immunoediting signal
@@ -147,16 +149,11 @@ pancancer_nes_ccf$fdr <- p.adjust(pancancer_nes_ccf$p_value,method = "fdr")
 pancancer_nes_exp$fdr <- p.adjust(pancancer_nes_exp$p_value,method = "fdr")
 
 p1 <- plot_pie(pancancer_nes_ccf$fdr,expression = "pancancer_nes_ccf$fdr<0.25 & pancancer_nes_ccf$nes<0",label = c("samples with FDR<25% \n and NES(CCF) < 0","others"))
-p2 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.25 & pancancer_nes_exp$nes<0",label = c("samples with FDR<25% \n and NES(EXP) < 0","others"))
-
+p2 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.25 & pancancer_nes_exp$nes<0",label = c("samples with FDR<25% \n and NES(EXP) < 0","others")
+)
 ###FDR 5%
 p3 <- plot_pie(pancancer_nes_ccf$fdr,expression = "pancancer_nes_ccf$fdr<0.05 & pancancer_nes_ccf$nes<0",label = c("samples with FDR<5% \n and NES(CCF) < 0","others"))
 p4 <- plot_pie(pancancer_nes_exp$fdr,expression = "pancancer_nes_exp$fdr<0.05 & pancancer_nes_exp$nes<0",label = c("samples with FDR<5% \n and NES(EXP) < 0","others"))
-
-plot_grid(p1)
-plot_grid(p2)
-plot_grid(p3)
-plot_grid(p4)
 ```
 
 Thus we conclude that the immunoediting signal is undoubtedly exist, however in majority of cancer patient, this signal is undetectable, and only 2.5% (CCF FDR<0.25) of patient show this significant immunoediting signal.
@@ -604,15 +601,35 @@ pancancer_exp <- left_join(pancancer_exp %>%
                                     pancancer_survial,by="sample") %>% 
   filter(OS.time<4700)
 
-pancancer_exp <- pancancer_exp %>% filter(!(is.na(apm_mut) 
-                                            | is.na(exp_escape) 
-                                            | is.na(checkpoint_overexpression)))
+# pancancer_exp <- pancancer_exp %>% filter(!(is.na(apm_mut) 
+#                                             | is.na(exp_escape) 
+#                                             | is.na(checkpoint_overexpression)))
 pancancer_exp$escape <- mapply(function(x,y,z)
-  {ifelse(any(c(x,y,z)=="yes",na.rm = T),"yes","no")},
+  {case_when(
+    NA %in% c(x,y,z) & any(c(x,y,z)=="yes",na.rm = T) ~ "yes",
+    NA %in% c(x,y,z) & all(c(x,y,z)=="no",na.rm = T) ~ "NA",
+    !(NA %in% c(x,y,z)) & any(c(x,y,z)=="yes",na.rm = T) ~ "yes",
+    !(NA %in% c(x,y,z)) & all(c(x,y,z)=="no",na.rm = T) ~ "no"
+  )},
   pancancer_exp$apm_mut,
   pancancer_exp$checkpoint_overexpression,
   pancancer_exp$exp_escape)
+pancancer_exp <- pancancer_exp %>% 
+  filter(escape!="NA")
+```
 
+View the escape samples:
+
+```{r view_escape,eval=TRUE}
+a <- table(pancancer_exp$escape) %>% enframe() %>% 
+  rename(escape_status=name,sample_counts=value)
+DT::datatable(a,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
+Do survial analysis:
+```{r escape_survial,eval=TRUE}
 pancancer_exp$cancer <- gsub("TCGA-","",getcancer_type(pancancer_exp$sample))
 fit6 <- survfit(Surv(OS.time,OS)~escape,data = pancancer_exp)
 p7 <- ggsurvplot(fit6,pval = T,risk.table = T,data = pancancer_exp,

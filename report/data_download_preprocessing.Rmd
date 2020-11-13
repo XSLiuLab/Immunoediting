@@ -534,6 +534,34 @@ saveRDS(pancancer_exp,file = "~/Immunoediting/data/pancancer_nes_exp.rds")
 
 ## Immunotherapy data download and clean
 
+For pan-cancer ICI objective response rates (ORR), we obtained data from wang et.al elife (2019).
 
+```{r orr_ob,eval=FALSE}
+ORR <- read.csv("~/neo_dep/ssNEA/data/orr.csv")
+## transform cancer names to TCGA projects
+ORR$cancer <- c("TCGA-ACC",NA,"TCGA-BRCA",
+                "TCGA-CESC",NA,"TCGA-UCEC",
+                "TCGA-STAD;TCGA-ESCA",
+                "TCGA-TGCT","TCGA-GBM",
+                "TCGA-HNSC","TCGA-LIHC",
+                "TCGA-SKCM",NA,"TCGA-MESO",
+                NA,"TCGA-LUAD;TCGA-LUSC",
+                "TCGA-LUAD","TCGA-LUSC",
+                "TCGA-OV","TCGA-PAAD",
+                "TCGA-PRAD","TCGA-KIRC;TCGA-KIRP",
+                "TCGA-SARC",NA,"TCGA-BLCA",
+                "TCGA-UVM","TCGA-THYM")
+saveRDS(ORR,file = "~/Immunoediting/data/Immunotherapy/ORR.rds")
+```
+
+We collected three cohorts of immunotherapy datasets for our analysis. `The Hugo et al. (2016) dataset` was related to anti-PD-1 therapy in metastatic melanoma. This dataset has 37 samples with WES data, 26 were also analyzed by RNA sequencing (RNA-seq). `The Riaz et al. (2017) dataset` was related to anti-PD-1 therapy in metastatic melanoma. This dataset has 56 samples with WES data, 40 with RNA-seq. `The David Liu et.al (2019) cohort` has patients with melanoma treated with anti-PD1 ICB, which 119 samples has WES data, 112 with RNA-seq.
+
+Immune therapy response for patients was defined by RECIST v1.1(CR/PR/SD/PD), responding tumors were derived from patients who have complete or partial responses or stable disease (CR/PR) in response to anti-PD-1 therapy; non-responding tumors were derived from patients who had progressive disease (PD/SD)
+
+The details of mutation calling, neoantigen prediction, copy number analysis can be found in Methods.  
 
 ## Immunotherapy data pre-process
+
+
+
+
