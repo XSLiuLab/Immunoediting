@@ -257,7 +257,7 @@ The code used to calculate CYT can be found in `code/R/cal_CYT`
 
 ## TCGA pancancer data pre-process
 
-This part describes 
+This part describes how to calculate CCF, NES (based on CCF and copynumber) and find escape samples based on several immune escape mechanisms.
 
 ### Calculate ccf and add expression
 

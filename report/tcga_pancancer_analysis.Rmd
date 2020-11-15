@@ -174,7 +174,7 @@ p2 <- plot_pancancer(pancancer_nes_exp,pancancer_simulation,text_position = -6,s
 
 # plot_res <- plot_grid(p1,p2,nrow = 2)
 # save_plot("~/Immunoediting/results/compare_nes_cancer_type.pdf", plot_res, nrow = 2, ncol = 1,
-#           base_height = 8,base_width = 15,limitsize = FALSE)
+#           base_height = 15,base_width = 15,limitsize = FALSE)
 p1
 p2
 ```
@@ -442,11 +442,15 @@ pancancer_ccf <- left_join(pancancer_ccf %>%
 
 ##plot
 fit0 <- survfit(Surv(OS.time,OS)~es_type,data = pancancer_ccf %>% filter(es_type!="negative but not sig"))
-p1 <- ggsurvplot(fit0,pval = T,risk.table = T,data = pancancer_ccf %>% filter(es_type!="negative but not sig"),
-                  tables.theme = theme_cleantable(),  # Clean risk table
-                  palette =c( "black","red"),
-                  size=2,title="CCF", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+p1 <- ggsurvplot(fit0,pval = T,risk.table = T,
+                 data = pancancer_ccf %>% filter(es_type!="negative but not sig"),
+                 tables.theme = theme_cleantable(),  # Clean risk table
+                 palette =c( "black","red"),
+                 size=2,title="CCF", fun = "pct",
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
+p1$plot <- p1$plot+
+  theme(legend.text = element_text(size = 10, color = "black"))
 p1
 ```
 
@@ -469,7 +473,10 @@ p2 <- ggsurvplot(fit1,pval = T,risk.table = T,data = pancancer_exp %>% filter(es
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c( "black","red"),
                   size=2,title="EXP", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
+p2$plot <- p2$plot+
+  theme(legend.text = element_text(size = 10, color = "black"))
 p2
 ```
 We can see patients with ESccf values (NES<0; FDR<0.25) show improved prognosis compared to remain patients, while expression not.
@@ -539,7 +546,10 @@ p3 <- ggsurvplot(fit2,pval = T,risk.table = T,data = hot %>% filter(es_type!="ne
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c( "black","red"),
                   size=2,title="CCF hot", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
+p3$plot <- p3$plot+
+  theme(legend.text = element_text(size = 10, color = "black"))
 
 cold <- pancancer_ccf %>% filter(gsub("TCGA-","",`cancer type`) %in% cold_cancer)
 fit3 <- survfit(Surv(OS.time,OS)~es_type,data = cold %>% filter(es_type!="negative but not sig"))
@@ -548,7 +558,10 @@ p4 <- ggsurvplot(fit3,pval = T,risk.table = T,
                  tables.theme = theme_cleantable(),  # Clean risk table
                  palette =c( "black","red"),
                  size=2,title="CCF cold", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
+p4$plot <- p4$plot+
+  theme(legend.text = element_text(size = 10, color = "black"))
 p3
 p4
 #plot_res <- arrange_ggsurvplots(list(p1,p3,p4),nrow = 2,2)
@@ -563,7 +576,8 @@ p5 <- ggsurvplot(fit4,pval = T,risk.table = T,data = hot1 %>% filter(es_type!="n
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c( "black","red"),
                   size=2,title="EXP hot", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
 
 cold1 <- pancancer_exp %>% filter(cancer %in% cold_cancer)
 fit5 <- survfit(Surv(OS.time,OS)~es_type,data = cold1 %>% filter(es_type!="negative but not sig"))
@@ -571,7 +585,8 @@ p6 <- ggsurvplot(fit5,pval = T,risk.table = T,data = cold1 %>% filter(es_type!="
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c( "black","red"),
                   size=2,title="EXP cold", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES > 0", "NES < 0 & FDR < 25% "))
 p5
 p6
 
@@ -636,7 +651,8 @@ p7 <- ggsurvplot(fit6,pval = T,risk.table = T,data = pancancer_exp,
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c("black","red"),
                   size=2,title="Escape of all samples", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NO escape", "Escape"))
 
 hot <- pancancer_exp %>% filter(cancer %in% hot_cancer)
 fit7 <- survfit(Surv(OS.time,OS)~escape,data = hot)
@@ -644,7 +660,8 @@ p8 <- ggsurvplot(fit7,pval = T,risk.table = T,data = hot,
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c("black","red"),
                   size=2,title="Escape of hot cancers", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NO escape", "Escape"))
 
 cold <- pancancer_exp %>% filter(cancer %in% cold_cancer)
 fit8 <- survfit(Surv(OS.time,OS)~escape,data = cold)
@@ -652,15 +669,64 @@ p9 <- ggsurvplot(fit8,pval = T,risk.table = T,data = cold,
                   tables.theme = theme_cleantable(),  # Clean risk table
                   palette =c("black","red"),
                   size=2,title="Escape of cold cancers", fun = "pct",
-                 legend = c(0.8, 0.9), legend.title = element_blank())
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NO escape", "Escape"))
 
 p7
 p8
 p9
 
-#plot_res <- arrange_ggsurvplots(list(p7,p8,p9),nrow = 2,2)
+#plot_res <- arrange_ggsurvplots(list(p7,p8,p9),nrow = 2)
 
 #save_plot("~/Immunoediting/results/survial_escape.pdf", plot_res, nrow = 2,ncol = 2,base_width = 12,base_height = 8)
 ```
  
 We can see, in the hot cancers, no escape samples have a better prognosis while in the cold cancers, there are no difference.
+
+We further investigate whether immune hot and no escape samples have a better survial:
+
+```{r two,eval=TRUE}
+pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes < 0 & p_adj < 0.25 ~ "sig_negative",
+    nes < 0 & p_adj >= 0.25 ~ "negative but not sig",
+    nes >= 0 ~ "positive"
+  ))
+pancancer_exp <- left_join(pancancer_exp %>%
+                                      mutate(sample=substr(sample,1,12)),
+                                    pancancer_survial,by="sample") %>% 
+  left_join(.,immue_estimate %>% 
+              mutate(sample=substr(sample,1,12)),
+            by="sample") %>% 
+  filter(OS.time<4700) %>% filter(!is.na(T_cells_CD8))
+
+pancancer_exp$escape <- mapply(function(x,y,z)
+  {case_when(
+    NA %in% c(x,y,z) & any(c(x,y,z)=="yes",na.rm = T) ~ "yes",
+    NA %in% c(x,y,z) & all(c(x,y,z)=="no",na.rm = T) ~ "NA",
+    !(NA %in% c(x,y,z)) & any(c(x,y,z)=="yes",na.rm = T) ~ "yes",
+    !(NA %in% c(x,y,z)) & all(c(x,y,z)=="no",na.rm = T) ~ "no"
+  )},
+  pancancer_exp$apm_mut,
+  pancancer_exp$checkpoint_overexpression,
+  pancancer_exp$exp_escape)
+pancancer_exp <- pancancer_exp %>% 
+  filter(escape!="NA")
+
+pancancer_exp <- pancancer_exp %>% 
+  mutate(immune_type=ifelse(T_cells_CD8<median(T_cells_CD8),"low","high")) %>% 
+  mutate(type=ifelse(immune_type=="high" & escape=="no","immune hot and no escape","others"))
+
+fit9 <- survfit(Surv(OS.time,OS)~type,data = pancancer_exp)
+p10 <- ggsurvplot(fit9,pval = T,risk.table = T,data = pancancer_exp,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("red","black"),
+                  size=2,title="Escape of cold cancers", fun = "pct",
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("immune hot and no escape ", "others"))
+#plot_res <- arrange_ggsurvplots(list(p10,p10,p10),nrow = 2)
+
+#save_plot("~/Immunoediting/results/survial_no_escape_immune_hot.pdf", plot_res, nrow = 2,ncol = 2,base_width = 12,base_height = 8)
+p10
+```

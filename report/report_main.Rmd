@@ -1,6 +1,6 @@
 ---
 title: "Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution"
-author: ["Tao Wu", "Xuan Wang","Huimin Li","Xue-Song Liu (Corresponding author)"]
+author: ["Tao Wu","Xue-Song Liu (Corresponding author)"]
 date: "`r Sys.Date()`"
 output:
   rmdformats::readthedown:
@@ -18,7 +18,8 @@ options(max.print = "75")
 opts_chunk$set(
   echo = TRUE,
   comment = "#>",
-  cache = TRUE, dpi = 300
+  dpi = 300,
+  cache = FALSE
 )
 opts_knit$set(width = 75)
 Sys.setenv("LANGUAGE"="EN")
@@ -34,10 +35,22 @@ This project is depended on R software, R packages, shell bash, Julia software a
 - [survival](https://github.com/therneau/survival) - survival analysis 
 - [survminer](https://github.com/kassambara/survminer) - plot survival fit
 - [DT](https://cran.r-project.org/web/packages/DT/index.html) - show data table as a table in html
-- [ggstatsplot](https://github.com/IndrajeetPatil/ggstatsplot) - plot scatter with linear fit
+- [KEGGREST](https://bioconductor.org/packages/release/bioc/html/KEGGREST.html) - get genes from specific KEGG pathway
 - [corrplot](https://cran.r-project.org/web/packages/corrplot/) - plot correlation
 - [Julia](https://julialang.org/) - do simulation
 - knitr, rmdformats - used to compile this file
+
+```{r lib3,echo=TRUE,eval=FALSE}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(viridis)
+library(NeoEnrichment)
+library(parallel)
+library(survminer)
+library(survival)
+library(KEGGREST)
+```
 
 # Data download and preprocessing
 

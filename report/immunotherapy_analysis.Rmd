@@ -10,8 +10,241 @@ output:
     mathjax: true
 ---
 
-```{r tcga_pancancer_analysis-setup, include=FALSE}
+```{r immunotherapy_analysis, include=FALSE}
 options(max.print = "75")
 knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
 knitr::opts_knit$set(width = 75)
 ```
+
+```{r lib2,echo=TRUE,eval=TRUE,include=FALSE}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(viridis)
+library(NeoEnrichment)
+library(parallel)
+library(survival)
+library(survminer)
+```
+
+## Significant correlation between NES and ORR
+
+We further investigate the relevance of neoantigen enrichment score in cancer immune therapy response prediction.
+
+Load the pancancer ORR and view it:
+
+```{r view_orr,eval=TRUE}
+ORR <- readRDS("~/Immunoediting/data/Immunotherapy/ORR.rds") %>% 
+  select(-c(4:7))
+
+##view data
+DT::datatable(ORR,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+```
+
+Then we add cancer type median NES(ccf) and NES(exp) based on TCGA data to this dataset, and calculate correlation between NES and ORR:
+```{r liner_nes_orr,eval=TRUE,warning=FALSE}
+pancancer_nes_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds")
+pancancer_nes_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds")
+
+pancancer_nes_ccf$cancer <- NeoEnrichment::getcancer_type(pancancer_nes_ccf$sample,cores = 2,par = TRUE)
+pancancer_nes_ccf$cancer <- ifelse(pancancer_nes_ccf$cancer %in% c("TCGA-STAD","TCGA-ESCA"),
+                                                   "TCGA-STAD;TCGA-ESCA",
+                                                   ifelse(pancancer_nes_ccf$cancer %in% c("TCGA-KIRC","TCGA-KIRP"),
+                                                          "TCGA-KIRC;TCGA-KIRP",pancancer_nes_ccf$cancer))
+luad_lusc <- pancancer_nes_ccf %>% filter(cancer %in% c("TCGA-LUAD","TCGA-LUSC")) %>%
+  mutate(cancer="TCGA-LUAD;TCGA-LUSC")
+
+pancancer_nes_ccf <- rbind(pancancer_nes_ccf,luad_lusc)
+
+pancancer_nes_ccf %>% group_by(cancer) %>%
+  summarise(median_es=median(nes),samples=n()) -> ccf_median_es
+
+ORR_ccf <- left_join(ORR,ccf_median_es,by="cancer") %>% filter(!is.na(median_es))
+
+cor.test(ORR_ccf$Pooled_ORR,ORR_ccf$median_es)
+```
+The Pearson's correlation coefficient is -0.58 and p value is 0.00428, showing that the NES(CCF) has a significant correlation with ORR.
+
+Then we can plot this correlation:
+
+```{r plot_cor,eval=TRUE}
+require(ggrepel)
+require(scales)
+
+p1 <- ggplot(ORR_ccf, aes(x = median_es, y = Pooled_ORR)) +
+  geom_point(aes(color = samples, size = PatientsNumber_ORR)) +
+  geom_smooth(method = "lm", se = T) +
+  geom_text_repel(aes(label = Cancer_Type), size = 3) +
+  labs(
+    x = "Median NES(ccf) ", y = "Objective Response Rate (%)",
+    size = "Objective Response Rate\n(no. of patients evaluated)",
+    color = "NES(ccf)\n(no. of tumor analyzed)"
+  ) +
+  scale_size_continuous(breaks = c(50, 100, 500, 1000)) +
+  scale_color_gradientn(
+    colours = RColorBrewer::brewer.pal(5, name = "OrRd")[-1],
+    breaks = c(50, 200, 500, 1000)
+  ) +
+  theme_bw()
+p1
+
+#save_plot("~/Immunoediting/results/cor_nes_ccf_ORR.pdf", p1,base_height =6)
+```
+The same code can apply to NES(EXP):
+
+```{r liner_nes_orr_exp,eval=TRUE,warning=FALSE}
+pancancer_nes_exp$cancer <- NeoEnrichment::getcancer_type(pancancer_nes_exp$sample,cores = 2,par = TRUE)
+pancancer_nes_exp$cancer <- ifelse(pancancer_nes_exp$cancer %in% c("TCGA-STAD","TCGA-ESCA"),
+                                                   "TCGA-STAD;TCGA-ESCA",
+                                                   ifelse(pancancer_nes_exp$cancer %in% c("TCGA-KIRC","TCGA-KIRP"),
+                                                          "TCGA-KIRC;TCGA-KIRP",pancancer_nes_exp$cancer))
+luad_lusc <- pancancer_nes_exp %>% filter(cancer %in% c("TCGA-LUAD","TCGA-LUSC")) %>%
+  mutate(cancer="TCGA-LUAD;TCGA-LUSC")
+
+pancancer_nes_exp <- rbind(pancancer_nes_exp,luad_lusc)
+
+pancancer_nes_exp %>% group_by(cancer) %>%
+  summarise(median_es=median(nes),samples=n()) -> exp_median_es
+
+ORR_exp <- left_join(ORR,exp_median_es,by="cancer") %>% filter(!is.na(median_es))
+
+cor.test(ORR_exp$Pooled_ORR,ORR_exp$median_es)
+```
+
+The Pearson's correlation coefficient is -0.33 but p value is 0.13, so the NES(CCF) doesn't show a significant correlation with ORR.
+
+```{r plot_cor_exp,eval=TRUE}
+require(ggrepel)
+require(scales)
+
+p2 <- ggplot(ORR_exp, aes(x = median_es, y = Pooled_ORR)) +
+  geom_point(aes(color = samples, size = PatientsNumber_ORR)) +
+  geom_smooth(method = "lm", se = T) +
+  geom_text_repel(aes(label = Cancer_Type), size = 3) +
+  labs(
+    x = "Median NES(exp) ", y = "Objective Response Rate (%)",
+    size = "Objective Response Rate\n(no. of patients evaluated)",
+    color = "NES(exp)\n(no. of tumor analyzed)"
+  ) +
+  scale_size_continuous(breaks = c(50, 100, 500, 1000)) +
+  scale_color_gradientn(
+    colours = RColorBrewer::brewer.pal(5, name = "OrRd")[-1],
+    breaks = c(50, 200, 500, 1000)
+  ) +
+  theme_bw()
+p2 
+#save_plot("~/Immunoediting/results/cor_nes_exp_ORR.pdf", p2,base_height =6)
+```
+
+In cancer types level significant associations between ES(ccf) and pan-cancer ORR has been observed. Suggesting neoantigen enrichment score could have predictive value in ICI response prediction
+
+## Neoantigen enrichment score predict the clinical response of cancer immunotherapy
+
+In public ICI datasets with available raw WES data and RNA-seq data, we calculate the neoantigen enrichment score for each patient and investigate diferent ICI response between NES negative and positive patients.
+
+We firstly look at the survial of different group patients:
+
+```{r survial_imm,eval=TRUE,message=FALSE}
+all_clinical <- readRDS("~/Immunoediting/data/Immunotherapy/all_clinical.rds")
+all_sample_nes_exp <- readRDS("~/Immunoediting/data/Immunotherapy/all_sample_nes_exp.rds") 
+all_sample_nes_ccf <- readRDS("~/Immunoediting/data/Immunotherapy/all_sample_nes_ccf.rds")
+
+all_sample_nes_ccf <- left_join(all_sample_nes_ccf,all_clinical,by="sample") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes<0 & p_adj<0.25 ~ "sig_negative",
+    nes<0 & p_adj>0.25 ~ "negative but non-sig",
+    nes>=0 ~"positive"
+  ))%>% 
+  filter(!is.na(OS))
+all_sample_nes_ccf <- all_sample_nes_ccf %>%
+  mutate(es_type2=ifelse(nes<0 & p_adj<0.25,"sig_negative","others"),
+         es_type3=ifelse(nes<0,"negative","positive"),
+         es_type4=ifelse(nes<0 & p_value<0.1,"sig_negative","others"))
+
+fit1 <- survfit(Surv(OS.time,OS)~es_type2,data = all_sample_nes_ccf)
+p1 <- ggsurvplot(fit1,pval = T,risk.table = T,data = all_sample_nes_ccf,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("black","red"),
+                  size=2,title="CCF", fun = "pct",
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("others", "NES < 0 & FDR < 25% "))
+fit2 <- survfit(Surv(OS.time,OS)~es_type3,data = all_sample_nes_ccf)
+p2 <- ggsurvplot(fit2,pval = T,risk.table = T,data = all_sample_nes_ccf,
+                  tables.theme = theme_cleantable(),  # Clean risk table
+                  palette =c("red","black"),
+                  size=2,title="CCF", fun = "pct",
+                 legend = c(0.8, 0.9), legend.title = element_blank(),
+                 legend.labs = c("NES<0", "NES>0"))
+
+p1
+p2
+
+#plot_res <- arrange_ggsurvplots(list(p1,p2),ncol=2)
+
+#save_plot("~/Immunoediting/results/survial_immunotherapy_ccf.pdf", plot_res,
+#          base_height = 7,base_width = 8,nrow = 1,ncol = 2)
+```
+
+This result shows that the group of NES < 0 has a better survial but is not significant.
+
+Then we could use fisher test to exam the different ICI response of NES groups:
+
+```{r fisher_test,eval=TRUE,message=FALSE}
+##function to view fisher test results
+plot_fisher <- function(dt,OR,P){
+  a <- ggplot(data=dt,mapping = aes(x=response2,y=value,fill=type))+
+    geom_bar(stat = "identity",position="dodge")+
+    theme(panel.grid =element_blank(),
+          panel.border = element_blank(),
+          axis.ticks = element_blank(),
+          axis.title=element_blank(),
+          axis.text.y= element_blank(),
+          panel.background = element_blank()) +
+    geom_text(aes(label=value), 
+              stat = "identity",position=position_dodge(width=0.9), vjust=-0.25)+
+    scale_x_discrete(labels=c(paste("No Response\n","(n=",
+                   sum(dt[dt$response2=="no_response","value"]),")"),
+             paste("Response\n","(n=",
+                   sum(dt[dt$response2=="response","value"]),")")))+
+    labs(title = paste0("Fisher's Exact Test: OR = ",OR,", P = ",P))
+  return(a)
+}
+
+all_sample_nes_ccf %>%
+  group_by(response2) %>%
+  summarise(negative=sum(es_type3=="negative"),
+            positive=sum(es_type3=="positive"))-> c
+##view 
+DT::datatable(c,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+##do fisher
+fisher.test(cbind(c(87,42),c(62,14)))
+
+c <- c %>%
+  pivot_longer(cols = c("negative","positive"),names_to="type",values_to="value")
+c$type <- factor(c$type,levels = c("positive","negative"))
+p_fisher <- plot_fisher(c,OR = 0.47,P=0.03)
+p_fisher
+
+all_sample_nes_ccf %>%
+  group_by(response2) %>%
+  summarise(sig_negative=sum(es_type2=="sig_negative"),
+            others=sum(es_type2=="others"))-> c1
+
+DT::datatable(c1,
+  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+)
+
+fisher.test(cbind(c(1,128),c(5,71)))
+c1 <- c1 %>%
+  pivot_longer(cols = c("sig_negative","others"),names_to="type",values_to="value")
+p_fisher1 <- plot_fisher(c1,OR=0.11,P=0.027)
+p_fisher1
+```
+
+From the fisher test, we can see the group of NES<0 (significant or not significant) is enrich in Response group.
+
