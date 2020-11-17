@@ -37,6 +37,8 @@ This project is depended on R software, R packages, shell bash, Julia software a
 - [DT](https://cran.r-project.org/web/packages/DT/index.html) - show data table as a table in html
 - [KEGGREST](https://bioconductor.org/packages/release/bioc/html/KEGGREST.html) - get genes from specific KEGG pathway
 - [corrplot](https://cran.r-project.org/web/packages/corrplot/) - plot correlation
+- [cowplot](https://github.com/wilkelab/cowplot) - arrange figures into complex compound figures
+- parallel - Parallel Computing
 - [Julia](https://julialang.org/) - do simulation
 - knitr, rmdformats - used to compile this file
 
@@ -44,12 +46,13 @@ This project is depended on R software, R packages, shell bash, Julia software a
 library(tidyverse)
 library(ggpubr)
 library(cowplot)
-library(viridis)
 library(NeoEnrichment)
 library(parallel)
 library(survminer)
 library(survival)
 library(KEGGREST)
+library(DT)
+library(data.table)
 ```
 
 # Data download and preprocessing
@@ -66,3 +69,10 @@ library(KEGGREST)
 
 ```{r child = 'immunotherapy_analysis.Rmd'}
 ```
+
+# Supplementary analyses
+```{r child= 'Supplementary_analyses.Rmd'}
+```
+
+
+

@@ -27,7 +27,6 @@ library(parallel)
 This part will describe how and where the data that this project used is downloaded and pre-processed.
 
 ## TCGA pancancer data download and clean
-This part describes how and where to download raw data and clean them for following analysis.
 
 ### Mutation data
 Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from [Xena](https://xenabrowser.net/datapages/?dataset=GDC-PANCAN.mutect2_snv.tsv&host=https%3A%2F%2Fgdc.xenahubs.net&removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443) and only keep missense variants for following analysis
@@ -76,8 +75,6 @@ DT::datatable(head(pancancer_copy_number),
 )
 
 ```
-
-And we also download Gistic copynumber data from [The Immune Landscape of Cancer](https://gdc.cancer.gov/about-data/publications/panimmune#:~:text=Across%20cancer%20types%2C%20we%20identified%20six%20immune%20subtypes%3A,aneuploidy%2C%20extent%20of%20neoantigen%20load%2C%20overall%20cell%20)(GISTIC2.0 all_thresholded.by_genes file)
 
 ### Clinical and purity data
 Clinical and tumor purity data was obtained from [TCGA PanCanAtlas Publications](https://gdc.cancer.gov/about-data/publications/pancanatlas)
@@ -412,7 +409,7 @@ We consider following immune escape mechanisms:
 - Antigen presentation pathway gene mutation
 - Up-regulate the expression of immune suppressive signaling, like PD-L1, CTLA-4
 
-As for antigen presentation pathway gene, we use KEGG Antigen processing and presentation pathway: [hsa04612](https://www.kegg.jp/dbget-bin/www_bget?path:hsa04612):
+As for antigen presentation pathway gene, we use KEGG Antigen processing and presentation pathway: [hsa04612](https://www.kegg.jp/dbget-bin/www_bget?path:hsa04612). In addition, we included APM genes used in Rosenthal et.al and wang et.al. We then classified samples into “escape” if there was a non-slient mutation in one of these escape genes
 
 ```{r process_escape_TPM,eval=FALSE}
 library("KEGGREST")

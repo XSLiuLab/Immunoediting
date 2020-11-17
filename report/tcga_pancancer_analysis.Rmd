@@ -12,7 +12,7 @@ output:
 
 ```{r tcga_pancancer_analysis-setup, include=FALSE}
 options(max.print = "75")
-knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE)
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
 knitr::opts_knit$set(width = 75)
 ```
 
@@ -380,7 +380,7 @@ In the categorical aspect, negative and positive show significant difference in 
 ## Neoantigen enrichment score and immune negative selection 
 We use a stochastic branching process model (2020 Nature genetics, Eszter Lakatos et.al) to model tumor growth integrating neoantigen-mediated negative selection. The detailed method please see our paper or the [origin NG paper](https://doi.org/10.1038/s41588-020-0687-1)
 
-The Julia scripts used in this simulation can be found in `code/julia`.
+The Julia scripts used in this simulation (modified from NG paper) can be found in `code/julia`.
 
 The R scripts used to calculate NES of simulation data can be found in `code/R/cal_simulate_es.R`
 
@@ -438,7 +438,7 @@ pancancer_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds") %>%
 pancancer_survial <- readRDS("~/Immunoediting/data/pancancer_survial.rds")
 pancancer_ccf <- left_join(pancancer_ccf %>%
                                       mutate(sample=substr(sample,1,12)),
-                                    pancancer_survial,by="sample") %>% filter(OS.time<5000)
+                                    pancancer_survial,by="sample") %>% filter(OS.time<3300)
 
 ##plot
 fit0 <- survfit(Surv(OS.time,OS)~es_type,data = pancancer_ccf %>% filter(es_type!="negative but not sig"))
@@ -465,7 +465,7 @@ pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds") %>%
   ))
 pancancer_exp <- left_join(pancancer_exp %>%
                                       mutate(sample=substr(sample,1,12)),
-                                    pancancer_survial,by="sample") %>% filter(OS.time<5000)
+                                    pancancer_survial,by="sample") %>% filter(OS.time<3300)
 
 ##plot
 fit1 <- survfit(Surv(OS.time,OS)~es_type,data = pancancer_exp %>% filter(es_type!="negative but not sig"))
@@ -539,6 +539,18 @@ Then we do survial analysis for hot tumor and cold tumor.
 
 ```{r survial_hot_cold,eval=TRUE,message=FALSE,warning=FALSE}
 ###ccf
+pancancer_ccf <- readRDS("~/Immunoediting/data/pancancer_nes_ccf.rds") %>%
+  mutate(p_adj=p.adjust(p_value,method = "fdr")) %>%
+  mutate(es_type=case_when(
+    nes < 0 & p_adj < 0.25 ~ "sig_negative",
+    nes < 0 & p_adj >= 0.25 ~ "negative but not sig",
+    nes >= 0 ~ "positive"
+  ))
+pancancer_survial <- readRDS("~/Immunoediting/data/pancancer_survial.rds")
+pancancer_ccf <- left_join(pancancer_ccf %>%
+                                      mutate(sample=substr(sample,1,12)),
+                                    pancancer_survial,by="sample") %>% filter(OS.time<3300)
+pancancer_ccf$`cancer type` <- getcancer_type(pancancer_ccf$sample)
 
 hot <- pancancer_ccf %>% filter(gsub("TCGA-","",`cancer type`) %in% hot_cancer)
 fit2 <- survfit(Surv(OS.time,OS)~es_type,data = hot %>% filter(es_type!="negative but not sig"))
@@ -614,11 +626,9 @@ pancancer_exp <- readRDS("~/Immunoediting/data/pancancer_nes_exp.rds") %>%
 pancancer_exp <- left_join(pancancer_exp %>%
                                       mutate(sample=substr(sample,1,12)),
                                     pancancer_survial,by="sample") %>% 
-  filter(OS.time<4700)
+  filter(OS.time<3300)
 
-# pancancer_exp <- pancancer_exp %>% filter(!(is.na(apm_mut) 
-#                                             | is.na(exp_escape) 
-#                                             | is.na(checkpoint_overexpression)))
+
 pancancer_exp$escape <- mapply(function(x,y,z)
   {case_when(
     NA %in% c(x,y,z) & any(c(x,y,z)=="yes",na.rm = T) ~ "yes",
@@ -631,6 +641,7 @@ pancancer_exp$escape <- mapply(function(x,y,z)
   pancancer_exp$exp_escape)
 pancancer_exp <- pancancer_exp %>% 
   filter(escape!="NA")
+#saveRDS(pancancer_exp,file = "~/Immunoediting/data/tmp_exp.rds")
 ```
 
 View the escape samples:
@@ -699,7 +710,7 @@ pancancer_exp <- left_join(pancancer_exp %>%
   left_join(.,immue_estimate %>% 
               mutate(sample=substr(sample,1,12)),
             by="sample") %>% 
-  filter(OS.time<4700) %>% filter(!is.na(T_cells_CD8))
+  filter(OS.time<3300) %>% filter(!is.na(T_cells_CD8))
 
 pancancer_exp$escape <- mapply(function(x,y,z)
   {case_when(
