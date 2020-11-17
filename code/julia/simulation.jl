@@ -1,3 +1,5 @@
+##the following code is modified from the paper provided : https://doi.org/10.1038/s41588-020-0687-1
+
 using Distributions, StatsBase, DataFrames, GLM, CSV, DelimitedFiles
 
 function getFitness(n)
