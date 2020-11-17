@@ -227,7 +227,7 @@ p1
 
 ```{r view_3,eval=TRUE,warning=FALSE}
 
-knitr::include_graphics("pancancer_compare.png")
+knitr::include_graphics("pancancer_compare.png",dpi = 300)
 knitr::include_graphics("cox_cancertype_ccf.png")
 ```
 
