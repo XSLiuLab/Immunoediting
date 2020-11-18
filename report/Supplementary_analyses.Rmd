@@ -225,11 +225,15 @@ p1 <- plot_pancancer(pancancer_nes_ccf,pancancer_simulation,text_position = 4,si
 p1
 ```
 
-```{r view_3,eval=TRUE,warning=FALSE}
+```{r view_3,eval=TRUE,warning=FALSE,out.width=400}
 
 knitr::include_graphics("pancancer_compare.png",dpi = 800)
+```
+
+```{r view_4,eval=TRUE}
 knitr::include_graphics("cox_cancertype_ccf.png")
 ```
+
 
 From cancer type, we can know that there are 9 cancer types have no significant p value, including : DLBC,CHOL,KIRC,PAAD,PRAD,MESO,PCPG,UVM,KICH. And HR of most of those cancer type (8/9) in the multivariate cox analysis plot are less than 1 (bottom of the plot).
 
