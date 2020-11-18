@@ -10,7 +10,6 @@
 ## Table of content
    * [Overview](#Overview)
    * [Contents](#Contents)
-   * [Test Environment](#Test-Environment)
    * [Citation](#Citation)
    * [Acknowledgement](#Acknowledgement)
    * [LICENSE](#License)
@@ -20,10 +19,20 @@
 ----
 
 ## Overview
-
+ 
+This repository provides the analysis reports, code and data for readers who are insterest in this project and make it easier to reproduce the whole analysis procedure.
+ 
 ## Contents
-
-## Test Environment
+ 
+* [code](./code) 
+  * [R](./code/R/) : R functions and scripts that do not include in the analysis report.
+  * [Julia](./code/julia) : Julia scripts for simulating tumor growth, modified from Eszter [Lakatos et.al](https://www.nature.com/articles/s41588-020-0687-1)
+  * [Python](./code/python) : Snakemake scripts to do HLA typing.
+  * [Shell](./code/shell) : Shell scripts to do mutation calling, RNA-seq quantification, Neoantigen prediction.
+* [data](./data) The data used and produced by analysis report.
+* [docs](./docs) Website pages and figures used for showing analysis reports.
+* [report](./report) Rmarkdown files of analysis report and related html web page files.
+* [results](./results) Figures producing by analysis report.
 
 ## Citation
 
