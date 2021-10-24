@@ -1,0 +1,829 @@
+---
+title: "tcga_pancancer_analysis"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r tcga_pancancer_analysis-setup, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
+knitr::opts_knit$set(width = 75)
+```
+
+```{r lib1,echo=TRUE,eval=TRUE,include=FALSE,message=FALSE}
+library(dplyr)
+library(parallel)
+library(NeoEnrichment)
+library(ggplot2)
+library(ggpubr)
+library(ggprism)
+library(patchwork)
+library(cowplot)
+library(ComplexHeatmap)
+library(tidyr)
+library(RColorBrewer)
+```
+
+## The existence of significant immunoediting signal
+
+We investigate the status of this immunoediting signal with the new method developed in this study using TCGA pan-cancer dataset. The method detail showed in Method part of manuscript, and implemented in the package `NeoEnrichment` which can be found in [Github](https://github.com/wt12318/NeoEnrichment) 
+
+We filterd samples with at least 1 neoantigenic and 1 subclonal mutation (CCF<0.6) and calculated CCF-NES value:
+
+```{r cal_ccf1,eval=FALSE}
+all_mut_ccf <- readRDS("../data/all_mut_ccf_tpm.rds")
+all_mut_ccf <- all_mut_ccf %>%
+  rename(ccf=ccf_hat) %>%
+  mutate(neo=ifelse(neo=="neo","yes","no"))
+samples_has_subclonal <- all_mut_ccf %>% filter(ccf<0.6) %>% select(sample) %>%
+  distinct(sample)
+all_mut_ccf  %>% filter(sample %in% samples_has_subclonal$sample) %>%
+  group_by(sample) %>%
+  summarise(c_n=sum(neo=="yes"),c_m=sum(neo=="no")) %>% filter(c_n>=1 & c_m >=1) -> summ
+neo_missense <- all_mut_ccf %>% filter(sample %in% summ$sample)
+cal_nes_warp <- function(dt){
+  results_ccf <- vector("list",length = length(unique(dt$sample)))
+  names(results_ccf) <- unique(dt$sample)
+
+  cl <- makeCluster(getOption("cl.cores", 16),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             data <- dt %>% filter(sample == x)
+                             a <- NeoEnrichment::cal_nes_new_test(dt = data,
+                                                                  sample_counts = 1000,
+                                                                  need_p = FALSE)
+                             return(a)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+  pancancer_nes_ccf <- bind_rows(results_ccf)
+  return(pancancer_nes_ccf)
+}
+neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
+neo_nes <- cal_nes_warp(neo_missense)
+saveRDS(neo_nes,file = "data/neo_nes_ccf06_1.rds")
+```
+
+For each sample, we permutate the neoantigen labeling (ie. randomly select the same number of mutations as the actual neoantigen number in the selected sample and label them as neoantigenic mutations) and calculate ES value. For pan-cancer or cancer type dataset, we can obtain the same number of simulated samples and corresponding ES values, then calculate the median ES of these simulated samples. This process was repeated many times (usually 2000 times) to get the simulated distribution of median ES. The actual pan-cancer or cancer type median ES values are compared with this simulated ES distribution, and p values are then reported:
+
+```{r sim1,eval=FALSE}
+neo_nes <- readRDS("/public/slst/home/wutao2/cal_nes/ccf/neo_nes_ccf06_1.rds")
+all_mut_ccf <- readRDS("/public/slst/home/wutao2/cal_nes/ccf/all_mut_ccf_tpm.rds")
+all_mut_ccf <- all_mut_ccf %>%
+  rename(ccf=ccf_hat) %>%
+  mutate(neo=ifelse(neo=="neo","yes","no"))
+neo_missense <- all_mut_ccf %>% filter(sample %in% neo_nes$sample)
+neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
+
+cal_nes_warp <- function(dt){
+  results_ccf <- vector("list",length = length(unique(dt$sample)))
+  names(results_ccf) <- unique(dt$sample)
+
+  cl <- makeCluster(getOption("cl.cores", 23),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             data <- dt %>% filter(sample == x)
+                             a <- NeoEnrichment::cal_nes_new_test(dt = data,
+                                                                  sample_counts = 1000,
+                                                                  need_p = FALSE)
+                             return(a)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+  pancancer_nes_ccf <- bind_rows(results_ccf)
+  return(pancancer_nes_ccf)
+}
+res <- vector("list",2000)
+for (i in 1:2000){
+  neo_missense_sim <- neo_missense %>%
+    group_by(sample) %>%
+    mutate(neo_sim=sample(neo,length(neo)))
+  neo_missense_sim <- neo_missense_sim %>%
+    select(-neo) %>%
+    rename(neo=neo_sim)
+  neo_nes_sim <- cal_nes_warp(neo_missense_sim)
+  neo_nes_sim$sim_num <- i
+  res[[i]] <- neo_nes_sim
+  print(paste0("Complete ",i," sim. "))
+}
+saveRDS(res,file = "/public/slst/home/wutao2/cal_nes/ccf/sim_2000_not_filter_driver.rds")
+sim_2000_not_filter <- readRDS("~/test/data/2021_09_26/sim_2000_not_filter.rds")
+sim_2000_not_filter <- bind_rows(sim_2000_not_filter)
+sim_2000_not_filter$cancer <- get_cancer_type(sim_2000_not_filter$sample,
+                                              parallel = T,cores = 20)
+saveRDS(sim_2000_not_filter,file = "../data/sim_2000_not_filter_all_ccf.rds")
+```
+
+We can visualize the simulation using `WVPlots` package :
+
+```{r via1,eval=TRUE}
+neo_nes <- readRDS("../data/neo_nes_ccf06_1.rds")
+sim_all <- readRDS("../data/sim_2000_not_filter_all_ccf.rds")
+sim_all %>%
+  group_by(cancer,sim_num) %>%
+  summarise(median_es=median(es)) -> summ2
+neo_nes$cancer <- get_cancer_type(neo_nes$sample)
+neo_nes_summ <- neo_nes %>% 
+  group_by(cancer) %>% summarise(median_es=median(es))
+
+#The following code can be used to plot cancer type simulation which showd in FigS3
+#res <- vector("list",30)
+# for (i in 1:30){
+#   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])
+#   dt_summ <- dt %>% 
+#     group_by(sim_num) %>%
+#     summarise(median_es=median(es))
+#   p <- WVPlots::ShadedDensity(frame = dt_summ, 
+#                               xvar = "median_es",
+#                               threshold = neo_nes_summ$median_es[i],
+#                               title = neo_nes_summ$cancer[i],
+#                               tail = "left")
+#   p$layers[[1]]$aes_params$colour <- "red"
+#   p$layers[[1]]$aes_params$size <- 1
+#   p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+#   p$layers[[3]]$aes_params$colour <- "black" 
+#   p$layers[[3]]$aes_params$size <- 1
+#   p1 <- p + labs(x="Simulation median es")+
+#     theme_prism()
+#   res[[i]] <- p1
+# }
+# 
+# plot_grid(plotlist = res)
+
+sim_all %>%
+  group_by(sim_num) %>%
+  summarise(median_es=median(es)) -> summ
+p <- WVPlots::ShadedDensity(frame = summ, 
+                            xvar = "median_es",
+                            threshold = median(neo_nes$es),
+                            title = "",
+                            tail = "left")
+
+p$layers[[1]]$aes_params$colour <- "red"
+p$layers[[1]]$aes_params$size <- 1
+p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+p$layers[[3]]$aes_params$colour <- "black" 
+p$layers[[3]]$aes_params$size <- 1
+#p$layers[[4]]$aes_params$label <- "Actual median ES" #geom_text
+p1 <- p + labs(x="Simulation median es")+
+  theme_prism()
+p1
+##save
+# neo_nes_summ <- neo_nes_summ %>% 
+#   rowwise() %>% 
+#   mutate(p=mean(summ2$median_es[summ2$cancer==cancer] <= median_es))
+# saveRDS(neo_nes_summ,file = "neo_nes_summ_ccf_061_not_filter.rds")
+```
+
+
+Then we can compare the median actual CCF-ES with median simulation CCF-ES in pan-cancer and cancer-type:
+
+```{r}
+get_f1 <- function(dt,pancancer_p,dt2,median_es){
+  p1 <- ggplot(data=dt,aes(x=1,y=es))+
+    geom_violin(alpha=0.7,width=0.5)+
+    geom_boxplot(width=0.2)+
+    theme_prism()+
+    labs(x=paste0("median es = ",round(median_es,digits = 3),"\n n = ",nrow(dt)),size=1)+
+    theme(axis.ticks.x = element_blank(),
+          axis.text.x = element_blank())+
+    theme(text = element_text(size = 7))+
+    annotate(geom="text", x=1, y=1.1, label=paste0("p = ",pancancer_p),
+             color="red",size=4)
+  dt$cancer <- get_cancer_type(dt$sample)
+  dt %>% group_by(cancer) %>%
+    summarise(median_est=median(es),c=n()) %>%
+    arrange(median_est) %>%
+    mutate(label=paste0(cancer,"\n(n=",c,")"))-> summ1
+  summ1 <- left_join(summ1,dt2 %>% select(cancer,p))
+  summ1 <- summ1 %>%
+    mutate(sig=case_when(
+      p < 0.05 & p > 0.01 ~ "*",
+      p < 0.01 ~ "**",
+      TRUE ~ "ns"
+    ))
+  dt <- left_join(dt,summ1)
+  dt$label <- factor(dt$label,levels = summ1$label)
+  df2 <- data.frame(x = 1:nrow(summ1), y = 1.1, family = summ1$sig)
+  p2 <- ggplot(data=dt,aes(x=label,y=es))+
+    geom_boxplot()+
+    theme_prism()+
+    theme(axis.title.x = element_blank())+
+    theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+    theme(text = element_text(size = 6))+
+    geom_text(data=df2,aes(x=x,y=y,label = family))+
+    geom_hline(yintercept=0,
+               color = "red", size=1)
+  p3 <- p1 + p2 + plot_layout(widths = c(1, 8))
+}
+
+
+neo_nes4 <- readRDS("../data/neo_nes_ccf06_1.rds")
+neo_nes_summ <- readRDS("../data/neo_nes_summ_ccf_061_not_filter.rds")
+p3 <- get_f1(neo_nes4,pancancer_p = 0.051,dt2 = neo_nes_summ,median_es = median(neo_nes4$es))
+p3
+```
+
+The observed ESCCF is -0.017 (p=0.051). In PAAD and LUAD, the observed ESCCF values are significant lower compared with the random simulations, suggesting the existence of immunoediting-elimination signal (Fig. 3a and Extended Data Fig.3). Since some neoantigenic mutations can be cancer drivers, which are known to undergo positive selection during the evolution of cancer. Neoantigens that happens to be cancer drivers are not undergoing immune based negative selection, probably because the driving force could override the negative selection, so we compared ES between the samples which neoantigenic and driver lie in the same gene with other samples:
+
+```{r eval=FALSE}
+all_mut_ccf <- all_mut_ccf %>%
+  mutate(gene_protein_change=paste(Hugo_Symbol,Protein_Change,sep = "-"))
+driver_mutations <- driver_mutations %>%
+  mutate(gene_protein_change=paste(gene,protein_change,sep = "-"))
+
+all_mut_ccf <- all_mut_ccf %>%
+  mutate(is_driver=ifelse(gene_protein_change %in% driver_mutations$gene_protein_change,"yes","no"))
+sum(all_mut_ccf$is_driver=="yes" & all_mut_ccf$neo=="yes") / sum(all_mut_ccf$neo=="yes")
+all_mut_ccf %>% group_by(sample) %>%
+  summarise(inter_gene=intersect(Hugo_Symbol[neo=="yes"],
+                                 Hugo_Symbol[is_driver=="yes"])) -> aaa
+all_mut_ccf <- all_mut_ccf %>%
+  mutate(sample_neo_index=paste(sample,neo,Hugo_Symbol,sep = ","))
+aaa <- aaa %>% mutate(sample_neo_index=paste(sample,"yes",inter_gene,sep = ","))
+
+all_mut_ccf %>%
+  mutate(in_aaa = ifelse(sample_neo_index %in% aaa$sample_neo_index,"yes","no")) %>%
+  group_by(sample) %>%
+  summarise(need_sample=ifelse(any(in_aaa=="yes"),"no","yes")) %>%
+  filter(need_sample=="yes") -> summ2
+need_samples <- intersect(samples_has_subclonal$sample,summ2$sample)
+all_mut_ccf  %>%
+  filter(sample %in% need_samples) %>%
+  group_by(sample) %>%
+  summarise(c_n=sum(neo=="yes"),c_m=sum(neo=="no")) %>% filter(c_n>=1 & c_m >=1) -> summ
+neo_missense <- all_mut_ccf %>% filter(sample %in% summ$sample)
+neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
+neo_nes <- cal_nes_warp(neo_missense)
+median(neo_nes$es)
+saveRDS(neo_nes,file = "data/neo_nes_ccf06_1_remove_driver_samples.rds")
+```
+
+
+```{r }
+neo_nes <- readRDS("../data/neo_nes_ccf06_1.rds")
+neo_nes_remove_drivers <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples.rds")
+neo_nes2 <- neo_nes %>%
+  filter(!(sample %in% neo_nes_remove_drivers$sample))
+dt <- data.frame(es=c(neo_nes_remove_drivers$es,neo_nes2$es),
+                 type=c(rep("neo not in driver",nrow(neo_nes_remove_drivers)),
+                        rep("neo in driver",nrow(neo_nes2))))
+dt$type <- factor(dt$type,levels = c("neo not in driver","neo in driver"))
+ggplot(data = dt,aes(x=type,y=es))+
+  geom_boxplot()+
+  stat_compare_means()+
+  theme_prism()+
+  theme(axis.title.x = element_blank())
+```
+
+We can see that samples which neoantigenic and driver mutation lie in the same gene have the higher ES than other samples. So we filtered these sample to remove the effect that driver mutation cound couse.
+
+When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5420, P=0.006) (the simulation procedure is the same as above):
+
+```{r}
+sim_all <- readRDS("../data/sim_2000_all_ccf.rds")
+sim_all %>%
+  group_by(cancer,sim_num) %>%
+  summarise(median_es=median(es)) -> summ2
+neo_nes_remove_drivers$cancer <- get_cancer_type(neo_nes_remove_drivers$sample)
+neo_nes_summ <- neo_nes_remove_drivers %>% 
+  group_by(cancer) %>% summarise(median_es=median(es))
+
+#The following code can be used to plot cancer type simulation which showd in FigS5 
+#res <- vector("list",30)
+# for (i in 1:30){
+#   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])
+#   dt_summ <- dt %>% 
+#     group_by(sim_num) %>%
+#     summarise(median_es=median(es))
+#   p <- WVPlots::ShadedDensity(frame = dt_summ, 
+#                               xvar = "median_es",
+#                               threshold = neo_nes_summ$median_es[i],
+#                               title = neo_nes_summ$cancer[i],
+#                               tail = "left")
+#   p$layers[[1]]$aes_params$colour <- "red"
+#   p$layers[[1]]$aes_params$size <- 1
+#   p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+#   p$layers[[3]]$aes_params$colour <- "black" 
+#   p$layers[[3]]$aes_params$size <- 1
+#   p1 <- p + labs(x="Simulation median es")+
+#     theme_prism()
+#   res[[i]] <- p1
+# }
+# 
+# plot_grid(plotlist = res)
+
+sim_all %>%
+  group_by(sim_num) %>%
+  summarise(median_es=median(es)) -> summ
+p <- WVPlots::ShadedDensity(frame = summ, 
+                            xvar = "median_es",
+                            threshold = median(neo_nes_remove_drivers$es),
+                            title = "",
+                            tail = "left")
+
+p$layers[[1]]$aes_params$colour <- "red"
+p$layers[[1]]$aes_params$size <- 1
+p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+p$layers[[3]]$aes_params$colour <- "black" 
+p$layers[[3]]$aes_params$size <- 1
+#p$layers[[4]]$aes_params$label <- "Actual median ES" #geom_text
+p1 <- p + labs(x="Simulation median es")+
+  theme_prism()
+p1
+##save
+# neo_nes_summ <- neo_nes_summ %>% 
+#   rowwise() %>% 
+#   mutate(p=mean(summ2$median_es[summ2$cancer==cancer] <= median_es))
+# saveRDS(neo_nes_summ,file = "neo_nes_summ_ccf_061.rds")
+
+neo_nes3 <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples.rds")
+neo_nes_summ <- readRDS("../data/neo_nes_summ_ccf_061.rds")
+p3 <- get_f1(neo_nes3,pancancer_p = 0.006,dt2 = neo_nes_summ,median_es = median(neo_nes3$es))
+p3
+```
+
+Several cancer types including ACC, CHOL, UCEC, LUAD show significant low ESCCF values. This data demonstrates the existence of immunoediting-elimination signal in TCGA dataset.
+
+We then calculated the EXP-ES and corresponding simulation median ES distribution:
+
+```{r eval=FALSE}
+all_mut_exp <- readRDS("../data/all_mut_tpm_not_filter.rds")
+all_mut_exp <- all_mut_exp %>% select(sample,tpm_exp,neo) %>% rename(exp=tpm_exp)
+all_mut_exp %>%
+  group_by(sample) %>%
+  summarise(n_a=sum(neo=="not_neo"),n_c=sum(neo=="neo")) %>%
+  filter(n_a>=1,n_c>=1) -> summ
+neo_exp <- all_mut_exp %>% filter(sample %in% summ$sample) %>%
+  filter(!(sample %in% summ2$sample))
+cal_nes_warp <- function(dt){
+  results_ccf <- vector("list",length = length(unique(dt$sample)))
+  names(results_ccf) <- unique(dt$sample)
+
+  cl <- makeCluster(getOption("cl.cores", 18),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             a <- NeoEnrichment::cales_t(data = dt,barcode = x,type = "II",
+                                                         calp = TRUE,sample_counts = 1000,
+                                                         cal_type = "exp")
+                             #df <- data.frame(sample=x,es=a)
+                             return(a)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+  pancancer_nes_ccf <- bind_rows(results_ccf)
+  return(pancancer_nes_ccf)
+}
+nes_exp <- cal_nes_warp(neo_exp)
+saveRDS(nes_exp,file = "../data/nes_exp.rds")
+```
+
+```{r}
+sim_all <- readRDS("../data/sim_2000_all_exp.rds")
+nes_exp <- readRDS("../data/nes_exp.rds")
+sim_all %>%
+  group_by(cancer,sim_num) %>%
+  summarise(median_es=median(es)) -> summ2
+nes_exp$cancer <- get_cancer_type(nes_exp$sample)
+neo_nes_summ <- nes_exp %>% 
+  group_by(cancer) %>% summarise(median_es=median(es))
+
+#The following code can be used to plot cancer type simulation which showd in FigS6 
+#res <- vector("list",30)
+# for (i in 1:30){
+#   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])
+#   dt_summ <- dt %>% 
+#     group_by(sim_num) %>%
+#     summarise(median_es=median(es))
+#   p <- WVPlots::ShadedDensity(frame = dt_summ, 
+#                               xvar = "median_es",
+#                               threshold = neo_nes_summ$median_es[i],
+#                               title = neo_nes_summ$cancer[i],
+#                               tail = "left")
+#   p$layers[[1]]$aes_params$colour <- "red"
+#   p$layers[[1]]$aes_params$size <- 1
+#   p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+#   p$layers[[3]]$aes_params$colour <- "black" 
+#   p$layers[[3]]$aes_params$size <- 1
+#   p1 <- p + labs(x="Simulation median es")+
+#     theme_prism()
+#   res[[i]] <- p1
+# }
+# 
+# plot_grid(plotlist = res)
+
+sim_all %>%
+  group_by(sim_num) %>%
+  summarise(median_es=median(es)) -> summ
+p <- WVPlots::ShadedDensity(frame = summ, 
+                            xvar = "median_es",
+                            threshold = median(nes_exp$es),
+                            title = "",
+                            tail = "left")
+
+p$layers[[1]]$aes_params$colour <- "red"
+p$layers[[1]]$aes_params$size <- 1
+p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+p$layers[[3]]$aes_params$colour <- "black" 
+p$layers[[3]]$aes_params$size <- 1
+#p$layers[[4]]$aes_params$label <- "Actual median ES" #geom_text
+p1 <- p + labs(x="Simulation median es")+
+  theme_prism()
+p1
+##save
+# neo_nes_summ <- neo_nes_summ %>% 
+#   rowwise() %>% 
+#   mutate(p=mean(summ2$median_es[summ2$cancer==cancer] <= median_es))
+# saveRDS(neo_nes_summ,file = "neo_nes_summ_exp.rds")
+
+neo_nes_summ <- readRDS("../data/neo_nes_summ_exp.rds")
+p3 <- get_f1(nes_exp,pancancer_p = "< 0.0005",dt2 = neo_nes_summ,median_es = median(nes_exp$es))
+p3
+```
+
+In majority of cancer types (including KICH, DLBC, CHOL, SARC, LUAD, PAAD, UCS, STAD, LGG, LUSC, HNSC, OV, UCEC, BRCA, LIHC, COAD), a significant low ESRNA values are observed . This study demonstrates that the immunoediting escape through down-regulating the expression of neoantigenic alteration is prevalent in human cancer.
+
+When we compared the median cancer type CCF-ES and EXP-ES, we found the significant negative corrlation between this two type ES value:
+
+```{r}
+##these add p data can be calculated by change the parameter of need_p to TRUE
+nes_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
+nes_exp <- readRDS("../data/nes_exp_addp.rds")
+
+nes_ccf_exp <- inner_join(
+  nes_ccf %>% rename(ccf_es=es),
+  nes_exp %>% rename(exp_es=es)
+)
+nes_ccf_exp$cancer <- get_cancer_type(nes_ccf_exp$sample)
+nes_ccf_exp %>%
+  group_by(cancer) %>%
+  summarise(median_ccf_es=median(ccf_es),
+            median_exp_es=median(exp_es)) -> summ_ccf_exp
+cor.test(summ_ccf_exp$median_ccf_es,summ_ccf_exp$median_exp_es)
+ggplot(data = summ_ccf_exp,aes(x=median_ccf_es,y=median_exp_es))+
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+  geom_point()+
+  stat_cor(label.y = 0.3,
+           aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")),
+           size=4)+
+  theme_prism()+
+  labs(x="Median CCF ES",y="Median EXP ES")
+
+
+nes_ccf_exp %>%
+  group_by(cancer) %>%
+  summarise(per_escape=mean(exp_es<0 & p_value<0.05),
+            median_es=median(ccf_es)) -> summ
+cor.test(summ$per_escape,summ$median_es)
+ggplot(data = summ,aes(x=median_es,y=per_escape))+
+  geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
+  geom_point()+
+  stat_cor(label.y = 0.2,
+           aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")),
+           size=4)+
+  theme_prism()+
+  labs(x="Median CCF ES",y="Escape sample percent")
+```
+
+## Neoantigen enrichment score and immune negative selection strength quantification
+
+Here we investigate the connections between neoantigen enrichment score (ESCCF) and immune negative selection strength s using a stochastic branching cancer evolution model as previously described (Lakatos et al., 2020). The detail of simulation process was described in the Method part and code can be found in `code/julia/simulation.jl`.
+
+Mutations harbored in at least 5 cells out of 105 were collected at the end of each simulation and the CCF was calculated. To account for imperfect sequencing measurements, CCF values were computed via a simulated sequencing step introducing noise to these frequencies with the indicated read depth (see method):
+
+
+```{r eval=FALSE}
+cal_ccf <- function(depth){
+  function(ccf){
+    map_dbl(ccf,function(x,y){rbinom(1,y,x)/y},depth)
+  }
+}
+dep_ccf <- cal_ccf(depth = 200)
+files <- list.files("data/merge/")
+res <- vector("list",length = 50)
+for (i in 1:50){
+  s <- readRDS(paste0("~/test/data/merge/",files[i]))
+  s <- s %>%
+    mutate(mut_neo=ifelse(mut_neo=="false","no","yes")) %>%
+    rename(neo=mut_neo)
+  s$ccf_noise <- dep_ccf(s$ccf)
+  s <- s %>%
+    filter(ccf_noise>0)
+  s <- s %>% select(-ccf) %>% rename(ccf=ccf_noise)
+  tt <- cal_nes_warp(s)##calculate ES
+  res[[i]] <- tt
+  print(paste0("complete ",i))
+}
+nes_sim <- bind_rows(res)
+nes_sim <- nes_sim %>%
+  mutate(selection = substr(sample,3,6))
+
+saveRDS(nes_sim,file = "../data/nes_sim_growth_200_addp.rds")
+```
+
+We can plot the distribution of ES of 100 simulated tumors (read depth 200×) across different selection strength and the precent of significant tumors (FDR adjust p value <0.1):
+
+```{r}
+nes_sim <- readRDS("../data/nes_sim_growth_200_addp.rds")
+nes_sim$s <- as.numeric(nes_sim$selection)
+need_s <- seq(0,0.24,0.02)
+nes_sim_s <- nes_sim %>% filter(s %in% need_s)
+ggplot(data=nes_sim_s,aes(x=paste0("-",selection),y=es,fill=selection))+
+  geom_violin()+
+  theme_prism()+
+  theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+  geom_hline(yintercept=(-0.023),
+             color = "red", size=1,linetype = "dashed")+
+  labs(x="Selection",y="ES")+
+  guides(fill=F)+
+  stat_summary(fun="median", geom="point",color="yellow",size=1)
+
+nes_sim_s %>%
+  group_by(selection) %>%
+  summarise(adj_p=p.adjust(p,method = "fdr"),sig_per=mean(adj_p<0.1)) -> summ
+summ <- summ %>% group_by(selection) %>% summarise(per=unique(sig_per))
+
+ggplot(data=summ,aes(x=selection,y=per*100))+
+  geom_bar(stat = "identity")+
+  theme_prism()+
+  theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+  labs(x="Selection",y="Percent of significant samples (%)")
+```
+
+ES-CCF show near linear correlation with s values. This analysis suggests that the quantified ES-CCF can be used to infer the immune selection strength in patient. The median ES-CCF in TCGA datasets is -0.023, suggesting a median immune negative selection strength s=-0.08.
+
+Using this simulated data, we can also compare our method with other method. To compare the power of our method with method used in this study (Lakatos et al., 2020), we used two side K-S test to detect the difference between the VAF distribution of all mutations and neoantigen-associated mutations and reported K-S D statistic and corresponding p value:
+
+```{r eval=FALSE}
+files <- list.files("data/merge/")
+res <- vector("list",length = 50)
+
+for (i in 1:50){
+  s <- readRDS(paste0("~/test/data/merge/",files[i]))
+  s <- s %>%
+    mutate(mut_neo=ifelse(mut_neo=="false","no","yes")) %>%
+    rename(neo=mut_neo)
+  s$ccf_noise <- dep_ccf(s$ccf)
+  s <- s %>%
+    filter(ccf_noise>0)
+  s <- s %>% select(-ccf) %>% rename(ccf=ccf_noise)
+
+  results_ccf <- vector("list",length = length(unique(s$sample)))
+  names(results_ccf) <- unique(s$sample)
+
+  cl <- makeCluster(getOption("cl.cores", 20),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             data <- s %>% filter(sample == x)
+                             neo <- data %>% filter(neo=="yes")
+                             ks_t <- ks.test(neo$ccf,data$ccf)
+                             ttt <- data.frame(D=ks_t$statistic,p=ks_t$p.value,sample=x)
+                             return(ttt)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  res_ones <- bind_rows(results_ccf)
+  res[[i]] <- res_ones
+  print(paste0("complete ",i))
+}
+res_ks <- bind_rows(res)
+res_ks$selection <- substr(res_ks$sample,3,6)
+saveRDS(res_ks,file = "../data/ks_sim_depth200.rds")
+```
+
+Plot the distribution of KS D statics of 100 simulated tumors (read depth 200×) across different selection strength and the precent of significant tumors (FDR adjust p value <0.1)
+
+```{r}
+res_ks <- readRDS("../data/ks_sim_depth200.rds")
+res_ks$s <- as.numeric(res_ks$selection)
+need_s <- seq(0,0.24,0.02)
+res_ks_s <- res_ks %>% filter(s %in% need_s)
+ggplot(data=res_ks_s,aes(x=paste0("-",selection),y=D,fill=selection))+
+  geom_violin()+
+  theme_prism()+
+  theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+  labs(x="Selection",y="K-S statistic")+
+  guides(fill=F)+
+  stat_summary(fun="median", geom="point",color="yellow",size=1)
+res_ks_s %>%
+  group_by(selection) %>%
+  summarise(adj_p=p.adjust(p,method = "fdr"),sig_per=mean(adj_p<0.1)) -> summ
+
+ggplot(data=summ,aes(x=selection,y=sig_per))+
+  geom_bar(stat = "identity")+
+  theme_prism()+
+  theme(axis.text.x = element_text(angle = 45,vjust = 1, hjust = 1))+
+  labs(x="Selection",y="Percent of significant samples")
+```
+Of note, no tumors show significant signal under the same simulated conditions.
+
+To futher compare the power of methods, in addition to sequencing limitations, we also added different proportions of false positive neoantigen: we randomly sampled nonantigenic mutations of simulated tumors (varied between 5 and 500% of the number of true neoantigen) that were falsely labeled as neoantigen. Then we calculated the number of significant samples in each read depth and proportions of false positive neoantigen combination as the power of method to detect selection strength:
+
+
+```{r eval=FALSE}
+###power analysis
+##es
+cal_ccf <- function(depth){
+  function(ccf){
+    map_dbl(ccf,function(x,y){rbinom(1,y,x)/y},depth)
+  }
+}
+
+neo_per <- c(0,5,20,50,100,200,500)*0.01
+depth <- c(50,100,200,500,800,1000,2000,5000,10000)
+re <- vector("list",63)
+
+com <- expand.grid(neo_per,depth)
+com$lable <- paste(com$Var1,com$Var2,sep = "_")
+
+names(re) <- com$lable
+
+
+s <- readRDS(paste0("~/test/data/merge/0.24.rds"))
+s <- s %>%
+  mutate(mut_neo=ifelse(mut_neo=="false","no","yes")) %>%
+  rename(neo=mut_neo) %>%
+  mutate(mut_sample_id=paste(sample,mut,sep = "-"))
+set.seed(20211024)
+for (i in neo_per){
+  for (j in depth){
+    dep_ccf <- cal_ccf(depth = j)
+    neo <- s %>% filter(neo =="yes")
+    neo_summ <- neo %>% group_by(sample) %>% summarise(neo_c=n())
+    not_neo <- s %>% filter(neo != "yes")
+    not_neo <- left_join(not_neo,neo_summ)
+
+    false_neo <- not_neo %>%
+      group_by(sample) %>%
+      summarise(sample_id=sample(mut_sample_id,unique(neo_c)*i,replace = F))
+    not_neo <- not_neo %>%
+      mutate(neo = ifelse(mut_sample_id %in% false_neo$sample_id,"yes",neo))
+
+    s_new <- rbind(neo,not_neo %>% select(-neo_c))
+
+    s_new$ccf_noise <- dep_ccf(s_new$ccf)
+    s_new <- s_new %>%
+      filter(ccf_noise>0)
+    s_new <- s_new %>% select(-ccf) %>% rename(ccf=ccf_noise)
+    a <- cal_nes_warp(s_new)
+    re[[paste(i,j,sep = "_")]] <- a
+    cat(paste0("FP ",i," & depth ",j," complted \n"))
+  }
+}
+saveRDS(re,file = "../data/sim_growth_power_alt.rds")
+
+##KS
+for (i in neo_per){
+  for (j in depth){
+    dep_ccf <- cal_ccf(depth = j)
+    neo <- s %>% filter(neo =="yes")
+    neo_summ <- neo %>% group_by(sample) %>% summarise(neo_c=n())
+    not_neo <- s %>% filter(neo != "yes")
+    not_neo <- left_join(not_neo,neo_summ)
+
+    #false_neo <- sample(not_neo$mut,nrow(neo)*i,replace = F)
+    false_neo <- not_neo %>%
+      group_by(sample) %>%
+      summarise(sample_id=sample(mut_sample_id,unique(neo_c)*i,replace = F))
+    not_neo <- not_neo %>%
+      mutate(neo = ifelse(mut_sample_id %in% false_neo$sample_id,"yes",neo))
+
+    s_new <- rbind(neo,not_neo %>% select(-neo_c))
+
+    s_new$ccf_noise <- dep_ccf(s_new$ccf)
+    s_new <- s_new %>%
+      filter(ccf_noise>0)
+    s_new <- s_new %>% select(-ccf) %>% rename(ccf=ccf_noise)
+    results_ccf <- vector("list",length = length(unique(s_new$sample)))
+    names(results_ccf) <- unique(s_new$sample)
+
+    cl <- makeCluster(getOption("cl.cores", 20),type="FORK")
+    results_ccf <- parSapply(cl=cl,names(results_ccf),
+                             function(x){
+                               data <- s_new %>% filter(sample == x)
+                               neo <- data %>% filter(neo=="yes")
+                               ks_t <- ks.test(neo$ccf,data$ccf)
+                               ttt <- data.frame(D=ks_t$statistic,p=ks_t$p.value,sample=x)
+                               return(ttt)
+                             },simplify = FALSE)
+    stopCluster(cl)
+    res_ones <- bind_rows(results_ccf)
+    re[[paste(i,j,sep = "_")]] <- res_ones
+    cat(paste0("FP ",i," & depth ",j," complted \n"))
+  }
+}
+saveRDS(re,file = "../data/sim_growth_power_alt_ks.rds")
+```
+
+We used heatmap to display the power:
+
+```{r}
+##es
+re <- readRDS("../data/sim_growth_power_alt.rds")
+results <- data.frame(neo_depth=names(re),fre=NA)
+for (i in 1:nrow(results)){
+  dt <- re[[i]]
+  dt$padj <- p.adjust(dt$p,method = "fdr")
+  print(paste0(names(re)[i]," ",sum(dt$padj < 0.1)))
+  results$fre[i] <- sum(dt$padj < 0.1)
+}
+results <- results %>%
+  separate(col = neo_depth,into = c("neo_per","depth"),sep = "_")
+results %>%
+  mutate(depth=paste0("depth",depth)) %>%
+  pivot_wider(names_from = depth,values_from = fre) %>% as.data.frame() -> mat
+rownames(mat) <- mat$neo_per
+mat <- mat %>% select(-neo_per)
+cols <-c("#551A8B", "#8B3A62", "#FFFF00")
+
+colnames(mat) <- gsub("depth","",colnames(mat))
+rownames(mat) <- as.character(100*as.numeric(rownames(mat)))
+Heatmap(mat,cluster_columns = F,cluster_rows = F,row_names_side = "left",
+        name = "Power(%)",col = cols,
+        row_title = "Ratio of false positive \n neoantigens added (%)",
+        column_title = "Read depth",column_names_rot = 0,column_title_side = "bottom")
+
+##ks
+re <- readRDS("../data/sim_growth_power_alt_ks.rds")
+results <- data.frame(neo_depth=names(re),fre=NA)
+for (i in 1:nrow(results)){
+  dt <- re[[i]]
+  dt$padj <- p.adjust(dt$p,method = "fdr")
+  print(paste0(names(re)[i]," ",sum(dt$padj < 0.1)))
+  results$fre[i] <- sum(dt$padj < 0.1)
+}
+results <- results %>%
+  separate(col = neo_depth,into = c("neo_per","depth"),sep = "_")
+results %>%
+  mutate(depth=paste0("depth",depth)) %>%
+  pivot_wider(names_from = depth,values_from = fre) %>% as.data.frame() -> mat
+rownames(mat) <- mat$neo_per
+mat <- mat %>% select(-neo_per)
+cols <-c("#551A8B", "#8B3A62", "#FFFF00")
+
+colnames(mat) <- gsub("depth","",colnames(mat))
+rownames(mat) <- as.character(100*as.numeric(rownames(mat)))
+Heatmap(mat,cluster_columns = F,cluster_rows = F,row_names_side = "left",
+        name = "Power(%)",col = cols,
+        row_title = "Ratio of false positive \n neoantigens added (%)",
+        column_title = "Read depth",column_names_rot = 0,column_title_side = "bottom")
+
+```
+
+
+## Pan-cancer features and correlations of immunoediting signal 
+
+Then we compared the immune cell infiltration level between tumors with detectable immunoediting-elimination signal (ESCCF<0, P<0.05) or immunoediting-escape signal (ESRNA<0, P<0.05) and other samples:
+
+```{r}
+pancancer_subtcells <- readRDS("../data/pancancer_subtcells.rds")
+nes_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
+nes_exp <- readRDS("../data/nes_exp_addp.rds")
+
+ccf_immune <- left_join(
+  nes_ccf,
+  pancancer_subtcells
+) %>%
+  mutate(es_type=ifelse(es<0 & p <0.05,"yes","no"))
+
+exp_immune <- left_join(
+  nes_exp ,
+  pancancer_subtcells
+) %>%
+  mutate(es_type=ifelse(es<0 & p_value <0.05,"yes","no"))
+
+p1 <- ggplot(data=ccf_immune,aes(x=es_type,y=CD8_T+NK))+
+  geom_boxplot()+
+  stat_compare_means()+
+  theme_prism()+
+  labs(x="Elimination",y="CD8 T + NK")
+p2 <- ggplot(data=ccf_immune,aes(x=es_type,y=iTreg+nTreg))+
+  geom_boxplot()+
+  stat_compare_means()+
+  theme_prism()+
+  labs(x="Elimination",y="iTreg + nTreg")
+p1 + p2
+
+p3 <- ggplot(data=exp_immune,aes(x=es_type,y=CD8_T+NK))+
+  geom_boxplot()+
+  stat_compare_means()+
+  theme_prism()+
+  labs(x="Escape",y="CD8 T + NK")
+p4 <- ggplot(data=exp_immune,aes(x=es_type,y=iTreg+nTreg))+
+  geom_boxplot()+
+  stat_compare_means()+
+  theme_prism()+
+  labs(x="Escape",y="iTreg + nTreg")
+p3 + p4
+```
+
+In tumors with detectable immunoediting-elimination signal, a slightly increased CD8+ T cell infiltration status compared with the remaining samples were observed, but the difference does not reach statistical significance (P=0.2). This data suggests that historically happened immunoediting-elimination process may not be reflected in the current immune cell infiltration status.
+
+The immunoediting-escape signal quantified as ES-RNA also do not show statistically significant difference between samples with detectable immunoediting-escape signal and the remaining samples in CD8+ T cell infiltration. However we observe a significant up-regulated regulatory T cell (Treg) percentage in samples with detectable immunoediting-escape signal, and up-regulated Treg has been reported to stimulate tumor immune escape.
+
+

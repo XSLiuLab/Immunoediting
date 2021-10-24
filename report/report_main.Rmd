@@ -1,0 +1,76 @@
+---
+title: "Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution"
+author: ["Tao Wu","Xue-Song Liu (Corresponding author)"]
+date: "`r Sys.Date()`"
+output:
+  rmdformats::readthedown:
+    highlight: kate
+    toc_depth: 3
+    self_contained: false
+---
+
+
+```{r knitr_init, echo=FALSE,warning=FALSE}
+library(knitr)
+library(rmdformats)
+## Global options
+options(max.print = "75")
+opts_chunk$set(
+  echo = TRUE,
+  comment = "#>",
+  dpi = 300,
+  cache = FALSE
+)
+opts_knit$set(width = 75)
+Sys.setenv("LANGUAGE"="EN")
+```
+
+# Dependencies
+
+This project is depended on R software, R packages, shell bash, Julia software and some Julia packages :
+
+- [NeoEnrichment](https://github.com/wt12318/NeoEnrichment) - do neoantigen enrichment for this project.
+- [tidyverse](https://www.tidyverse.org/) - tidy data
+- [data.table](https://github.com/Rdatatable/data.table) - read and tidy data
+- [survival](https://github.com/therneau/survival) - survival analysis 
+- [survminer](https://github.com/kassambara/survminer) - plot survival fit
+- [DT](https://cran.r-project.org/web/packages/DT/index.html) - show data table as a table in html
+- [patchwork](https://github.com/thomasp85/patchwork) - arrange figures into complex compound figures
+- [maftools](https://github.com/PoisonAlien/maftools) - summarize, Analyze and Visualize MAF files
+- [ComplexHeatmap](https://github.com/jokergoo/ComplexHeatmap) - make heatmap
+- parallel - Parallel Computing
+- [Julia](https://julialang.org/) - do simulation
+- knitr, rmdformats - used to compile this file
+
+```{r lib3,echo=TRUE,eval=FALSE}
+library(tidyverse)
+library(ggpubr)
+library(cowplot)
+library(NeoEnrichment)
+library(parallel)
+library(survminer)
+library(survival)
+library(data.table)
+library(patchwork)
+library(ComplexHeatmap)
+library(maftools)
+```
+
+# Data download and preprocessing
+
+```{r child = 'data_download_preprocessing.Rmd'}
+```
+
+# TCGA pancancer analysis
+
+```{r child = 'tcga_pancancer_analysis.Rmd'}
+```
+
+# Immunotherapy dataset analysis
+
+```{r child = 'immunotherapy_analysis.Rmd'}
+```
+
+# Supplementary analyses
+```{r child= 'Supplementary_analysis.Rmd'}
+```
