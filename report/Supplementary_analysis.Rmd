@@ -135,12 +135,12 @@ ccf_es1 <- pancancer_ccf$es_type2
 par(mfrow=c(4,1))
 op <- par(mar = rep(0, 4))
 plot_pie(ccf_es,expression = "ccf_es<0",c("ES (CCF) < 0","ES (CCF) >= 0"))
-plot_pie(ccf_es1,expression = "ccf_es1=='ES (CCF) < 0 & P < 0.05'",c("ES (CCF) < 0 & P < 0.05","Others"))
+plot_pie(ccf_es1,expression = "ccf_es1=='ES < 0 & P < 0.05'",c("ES (CCF) < 0 & P < 0.05","Others"))
 
 exp_es <- pancancer_exp$es
 exp_es1 <- pancancer_exp$es_type2
 plot_pie(exp_es,expression = "exp_es<0",c("ES (EXP) < 0","ES (EXP) >= 0"))
-plot_pie(exp_es1,expression = "exp_es1=='ES (EXP) < 0 & P < 0.05'",c("ES (EXP) < 0 & P < 0.05","Others"))
+plot_pie(exp_es1,expression = "exp_es1=='ES < 0 & P < 0.05'",c("ES (EXP) < 0 & P < 0.05","Others"))
 ```
 
 The immune-thearpy dataset sample distribution and clinical parameters:
