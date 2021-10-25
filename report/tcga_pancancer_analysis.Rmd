@@ -67,7 +67,7 @@ cal_nes_warp <- function(dt){
 }
 neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
 neo_nes <- cal_nes_warp(neo_missense)
-saveRDS(neo_nes,file = "data/neo_nes_ccf06_1.rds")
+saveRDS(neo_nes,file = "../data/neo_nes_ccf06_1.rds")
 ```
 
 For each sample, we permutate the neoantigen labeling (ie. randomly select the same number of mutations as the actual neoantigen number in the selected sample and label them as neoantigenic mutations) and calculate ES value. For pan-cancer or cancer type dataset, we can obtain the same number of simulated samples and corresponding ES values, then calculate the median ES of these simulated samples. This process was repeated many times (usually 2000 times) to get the simulated distribution of median ES. The actual pan-cancer or cancer type median ES values are compared with this simulated ES distribution, and p values are then reported:
@@ -117,14 +117,14 @@ sim_2000_not_filter <- readRDS("~/test/data/2021_09_26/sim_2000_not_filter.rds")
 sim_2000_not_filter <- bind_rows(sim_2000_not_filter)
 sim_2000_not_filter$cancer <- get_cancer_type(sim_2000_not_filter$sample,
                                               parallel = T,cores = 20)
-saveRDS(sim_2000_not_filter,file = "../data/sim_2000_not_filter_all_ccf.rds")
+saveRDS(sim_2000_not_filter,file = "../data/sim_2000_not_filter_all_ccf.rds")##this file is too large to push to Github
 ```
 
 We can visualize the simulation using `WVPlots` package :
 
 ```{r via1,eval=TRUE}
 neo_nes <- readRDS("../data/neo_nes_ccf06_1.rds")
-sim_all <- readRDS("../data/sim_2000_not_filter_all_ccf.rds")
+sim_all <- readRDS("../../tmp/sim_2000_not_filter_all_ccf.rds")
 sim_all %>%
   group_by(cancer,sim_num) %>%
   summarise(median_es=median(es)) -> summ2
@@ -262,7 +262,7 @@ neo_missense <- all_mut_ccf %>% filter(sample %in% summ$sample)
 neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
 neo_nes <- cal_nes_warp(neo_missense)
 median(neo_nes$es)
-saveRDS(neo_nes,file = "data/neo_nes_ccf06_1_remove_driver_samples.rds")
+saveRDS(neo_nes,file = "../data/neo_nes_ccf06_1_remove_driver_samples.rds")
 ```
 
 
@@ -287,7 +287,7 @@ We can see that samples which neoantigenic and driver mutation lie in the same g
 When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5420, P=0.006) (the simulation procedure is the same as above):
 
 ```{r}
-sim_all <- readRDS("../data/sim_2000_all_ccf.rds")
+sim_all <- readRDS("../../tmp/sim_2000_all_ccf.rds")##this file is too large to push to Github
 sim_all %>%
   group_by(cancer,sim_num) %>%
   summarise(median_es=median(es)) -> summ2
@@ -385,7 +385,7 @@ saveRDS(nes_exp,file = "../data/nes_exp.rds")
 ```
 
 ```{r}
-sim_all <- readRDS("../data/sim_2000_all_exp.rds")
+sim_all <- readRDS("../../tmp/sim_2000_all_exp.rds")##this file is too large to push to Github
 nes_exp <- readRDS("../data/nes_exp.rds")
 sim_all %>%
   group_by(cancer,sim_num) %>%

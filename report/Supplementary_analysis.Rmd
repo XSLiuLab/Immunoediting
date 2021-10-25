@@ -218,7 +218,7 @@ draw(pd,x = unit(14, "cm"), y = unit(6, "cm"), just = c("left", "bottom"))
 
 ```{r eval=TRUE,warning=FALSE}
 
-knitr::include_graphics("../data/Immunotherapy/sample_statistics.png")
+knitr::include_graphics("sample_statistics.png")
 ```
 
 ```{r eval=FALSE}
@@ -257,7 +257,7 @@ gridExtra::grid.table(gt_input)
 
 ```{r eval=TRUE,warning=FALSE}
 
-knitr::include_graphics("../data/Immunotherapy/sample_table.png")
+knitr::include_graphics("sample_table.png")
 ```
 
 

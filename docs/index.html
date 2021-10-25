@@ -8,7 +8,7 @@
         <meta name="author" content="Tao Wu" />
         <meta name="author" content="Xue-Song Liu (Corresponding author)" />
     
-        <meta name="date" content="2021-10-24" />
+        <meta name="date" content="2021-10-25" />
     
     <title>Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</title>
 
@@ -234,7 +234,7 @@
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Tao Wu</p>
                         <p class="author"><span class="glyphicon glyphicon-user"></span> Xue-Song Liu (Corresponding author)</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-10-24</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2021-10-25</p>
           </div>
    </div>
      
@@ -257,6 +257,8 @@
 <li><a href="https://github.com/thomasp85/patchwork">patchwork</a> - arrange figures into complex compound figures</li>
 <li><a href="https://github.com/PoisonAlien/maftools">maftools</a> - summarize, Analyze and Visualize MAF files</li>
 <li><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a> - make heatmap</li>
+<li><a href="https://github.com/ShixiangWang/ezcox">ezcox</a> - operate a batch of univariate or multivariate Cox models and return tidy result</li>
+<li><a href="https://github.com/thomas-neitmann/ggcharts">ggcharts</a> - plot pyramid bar plot</li>
 <li>parallel - Parallel Computing</li>
 <li><a href="https://julialang.org/">Julia</a> - do simulation</li>
 <li>knitr, rmdformats - used to compile this file</li>
@@ -271,7 +273,9 @@
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ComplexHeatmap)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maftools)</span></code></pre></div>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maftools)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ezcox)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggcharts)</span></code></pre></div>
 </div>
 <div id="data-download-and-preprocessing" class="section level1">
 <h1>Data download and preprocessing</h1>
@@ -283,14 +287,14 @@
 <p>Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were downloaded from <a href="https://xenabrowser.net/datapages/?dataset=GDC-PANCAN.mutect2_snv.tsv&amp;host=https%3A%2F%2Fgdc.xenahubs.net&amp;removeHub=https%3A%2F%2Fxena.treehouse.gi.ucsc.edu%3A443">Xena</a> and only keep missense variants for following analysis</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mutect2 <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">&quot;~/useful_data/GDC-PANCAN.mutect2_snv.tsv&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(effect<span class="sc">==</span><span class="st">&quot;missense_variant&quot;</span> <span class="sc">&amp;</span> filter<span class="sc">==</span><span class="st">&quot;PASS&quot;</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(mutect2,<span class="at">file =</span> <span class="st">&quot;~/Immunoediting/data/pancancer_mutation.rds&quot;</span>)</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(mutect2,<span class="at">file =</span> <span class="st">&quot;../data/pancancer_mutation.rds&quot;</span>)</span></code></pre></div>
 <p>view this file:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pancancer_mutation <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/pancancer_mutation.rds&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="fu">head</span>(pancancer_mutation),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">keys =</span> <span class="cn">TRUE</span>), <span class="at">rownames =</span> <span class="cn">FALSE</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div id="htmlwidget-c9bcc27039071f18c9bf" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c9bcc27039071f18c9bf">{"x":{"filter":"none","data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-e5719218a276043094a0" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e5719218a276043094a0">{"x":{"filter":"none","data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>To predict neoantigen, mutation files were first transformed into single sample VCF format by maf2vcf tools (This Code can be found in <code>code/shell/TCGA_neoantigen</code> folder).</p>
 <p>ABSOLUTE-annotated MAF file which contains cancer cell fraction (CCF) information of mutations was downloaded from GDC PanCanAtlas publications (<a href="https://gdc.cancer.gov/node/905/">TCGA_consolidated.abs_mafs_truncated.fixed.txt.gz</a>), and then we used liftover function from R package “rtracklayer” to convert the this hg37 genome coordinates file to hg38 coordinates:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>absolute_maf <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">&quot;~/useful_data/TCGA_consolidated.abs_mafs_truncated.fixed.txt&quot;</span>)</span>
@@ -322,12 +326,12 @@
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Variant_Classification<span class="sc">==</span><span class="st">&quot;Missense_Mutation&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">index=</span><span class="fu">paste</span>(<span class="fu">substr</span>(sample,<span class="dv">1</span>,<span class="dv">16</span>),seqnames,start,Reference_Allele,Tumor_Seq_Allele2,<span class="at">sep =</span> <span class="st">&quot;:&quot;</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample,index,Hugo_Symbol,Protein_Change,Reference_Allele,Tumor_Seq_Allele2,purity,ccf_hat)</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results,<span class="at">file =</span> <span class="st">&quot;data/all_mut_mis_ccf.rds&quot;</span>)</span></code></pre></div>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results,<span class="at">file =</span> <span class="st">&quot;../data/all_mut_mis_ccf.rds&quot;</span>)</span></code></pre></div>
 <p>Driver mutation data was downloaded from Bailey M H et.al study (<a href="https://gdc.cancer.gov/about-data/publications/pancan-driver">Mutation.CTAT.3D.Scores.txt</a>). This study used three different categories of tools to find driver mutations: (1) tools distinguishing benign versus pathogenic mutations using sequence (CTAT population); (2) tools distinguishing driver versus passenger mutations using sequence (CTAT cancer); and (3) tools discovering statistically significant three-dimensional clusters of missense mutations (structure based). We keep mutations identified by ≥2 approaches as finial high confident driver mutations, including 2165 unique mutations:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>driver <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">&quot;~/useful_data/Mutation.CTAT.3D.Scores.txt&quot;</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>driver_mutations <span class="ot">&lt;-</span> driver <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="st">`</span><span class="at">Combined flag (strong evidence)</span><span class="st">`</span><span class="sc">==</span><span class="dv">1</span> <span class="sc">|</span> <span class="st">`</span><span class="at">Combined flag (weaker evidence)</span><span class="st">`</span> <span class="sc">==</span><span class="dv">1</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(driver_mutations,<span class="at">file =</span> <span class="st">&quot;data/driver_mutations.rds&quot;</span>)</span></code></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(driver_mutations,<span class="at">file =</span> <span class="st">&quot;../data/driver_mutations.rds&quot;</span>)</span></code></pre></div>
 </div>
 <div id="expression-data" class="section level3">
 <h3>Expression data</h3>
@@ -371,14 +375,14 @@
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  re[[i]] <span class="ot">&lt;-</span> dt</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(re)</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results,<span class="at">file =</span> <span class="st">&quot;data/pancancer_subtcells.rds&quot;</span>)</span></code></pre></div>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(results,<span class="at">file =</span> <span class="st">&quot;../data/pancancer_subtcells.rds&quot;</span>)</span></code></pre></div>
 <p>We can view this file:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pancancer_immune <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/pancancer_subtcells.rds&quot;</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="fu">head</span>(pancancer_immune),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">keys =</span> <span class="cn">TRUE</span>), <span class="at">rownames =</span> <span class="cn">FALSE</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div id="htmlwidget-39ff150c0548fd1b7a98" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-39ff150c0548fd1b7a98">{"x":{"filter":"none","data":[["TCGA-OR-A5J1-01A","TCGA-OR-A5J2-01A","TCGA-OR-A5J3-01A","TCGA-OR-A5J5-01A","TCGA-OR-A5J6-01A","TCGA-OR-A5J7-01A"],[0,0,0.089,0.014,0,0.042],[0.115,0.114,0.087,0.218,0,0.069],[0.436,0.427,0.192,0.406,0.537,0.218],[0.035,0.08,0,0.003,0.105,0.02],[0.04,0.104,0.033,0.079,0.123,0.174],[0.048,0.025,0,0,0.11,0.013],[0.065,0.245,0,0,0.156,0.003],[0.158,0.152,0.069,0.004,0.148,0.025],[0.334,0.219,0,0.082,0.325,0],[0.057,0.044,0.253,0.114,0.203,0.112],[0.075,0.115,0,0.055,0.03,0.043],[0,0.087,0.061,0,0,0.041],[0.027,0.012,0,0,0.031,0],[0,0.143,0.07,0.105,0,0.043],[0.278,0.163,0.045,0.173,0.17,0.051],[0.15,0.207,0.149,0.088,0.224,0.13],[0.026,0.068,0.067,0.114,0.038,0.14],[0.104,0.095,0.076,0.148,0.172,0.086],[0.182,0.102,0.085,0.085,0.275,0.112],[0.162,0.003,0.146,0.254,0.377,0.179],[0.115,0.106,0.162,0.122,0.115,0.157],[0.089,0.07,0.13,0.151,0.09,0.06],[0.102,0.084,0.123,0.087,0.058,0.094],[0.201,0.211,0.046,0.156,0.206,0.048],[0.606,0.508,0.496,0.613,0.851,0.549]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>CD4_naive<\/th>\n      <th>CD8_naive<\/th>\n      <th>Tc<\/th>\n      <th>Tex<\/th>\n      <th>Tr1<\/th>\n      <th>nTreg<\/th>\n      <th>iTreg<\/th>\n      <th>Th1<\/th>\n      <th>Th2<\/th>\n      <th>Th17<\/th>\n      <th>Tfh<\/th>\n      <th>Tcm<\/th>\n      <th>Tem<\/th>\n      <th>NKT<\/th>\n      <th>MAIT<\/th>\n      <th>DC<\/th>\n      <th>B_cell<\/th>\n      <th>Monocyte<\/th>\n      <th>Macrophage<\/th>\n      <th>NK<\/th>\n      <th>Neutrophil<\/th>\n      <th>Tgd<\/th>\n      <th>CD4_T<\/th>\n      <th>CD8_T<\/th>\n      <th>InfiltrationScore<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-4bfd59674dbe79054aec" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4bfd59674dbe79054aec">{"x":{"filter":"none","data":[["TCGA-OR-A5J1-01A","TCGA-OR-A5J2-01A","TCGA-OR-A5J3-01A","TCGA-OR-A5J5-01A","TCGA-OR-A5J6-01A","TCGA-OR-A5J7-01A"],[0,0,0.089,0.014,0,0.042],[0.115,0.114,0.087,0.218,0,0.069],[0.436,0.427,0.192,0.406,0.537,0.218],[0.035,0.08,0,0.003,0.105,0.02],[0.04,0.104,0.033,0.079,0.123,0.174],[0.048,0.025,0,0,0.11,0.013],[0.065,0.245,0,0,0.156,0.003],[0.158,0.152,0.069,0.004,0.148,0.025],[0.334,0.219,0,0.082,0.325,0],[0.057,0.044,0.253,0.114,0.203,0.112],[0.075,0.115,0,0.055,0.03,0.043],[0,0.087,0.061,0,0,0.041],[0.027,0.012,0,0,0.031,0],[0,0.143,0.07,0.105,0,0.043],[0.278,0.163,0.045,0.173,0.17,0.051],[0.15,0.207,0.149,0.088,0.224,0.13],[0.026,0.068,0.067,0.114,0.038,0.14],[0.104,0.095,0.076,0.148,0.172,0.086],[0.182,0.102,0.085,0.085,0.275,0.112],[0.162,0.003,0.146,0.254,0.377,0.179],[0.115,0.106,0.162,0.122,0.115,0.157],[0.089,0.07,0.13,0.151,0.09,0.06],[0.102,0.084,0.123,0.087,0.058,0.094],[0.201,0.211,0.046,0.156,0.206,0.048],[0.606,0.508,0.496,0.613,0.851,0.549]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>CD4_naive<\/th>\n      <th>CD8_naive<\/th>\n      <th>Tc<\/th>\n      <th>Tex<\/th>\n      <th>Tr1<\/th>\n      <th>nTreg<\/th>\n      <th>iTreg<\/th>\n      <th>Th1<\/th>\n      <th>Th2<\/th>\n      <th>Th17<\/th>\n      <th>Tfh<\/th>\n      <th>Tcm<\/th>\n      <th>Tem<\/th>\n      <th>NKT<\/th>\n      <th>MAIT<\/th>\n      <th>DC<\/th>\n      <th>B_cell<\/th>\n      <th>Monocyte<\/th>\n      <th>Macrophage<\/th>\n      <th>NK<\/th>\n      <th>Neutrophil<\/th>\n      <th>Tgd<\/th>\n      <th>CD4_T<\/th>\n      <th>CD8_T<\/th>\n      <th>InfiltrationScore<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div id="tcga-pancancer-data-processing" class="section level2">
@@ -449,7 +453,7 @@
 <span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>all_mut1 <span class="ot">&lt;-</span> all_mut1 <span class="sc">%&gt;%</span></span>
 <span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>neo,<span class="sc">-</span>exp) <span class="sc">%&gt;%</span></span>
 <span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">neo=</span>neo2)</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(all_mut1,<span class="at">file =</span> <span class="st">&quot;~/test/all_mut_tpm_not_filter.rds&quot;</span>)<span class="do">##this file is used to calculte EXP-ES</span></span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(all_mut1,<span class="at">file =</span> <span class="st">&quot;../data/all_mut_tpm_not_filter.rds&quot;</span>)<span class="do">##this file is used to calculte EXP-ES</span></span>
 <span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="do">##add ccf</span></span>
 <span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;~/test/data/2021_04_05/all_mut_mis_ccf.rds&quot;</span>)</span>
@@ -466,7 +470,7 @@
 <span id="cb10-73"><a href="#cb10-73" aria-hidden="true" tabindex="-1"></a>  <span class="at">by=</span><span class="st">&quot;index&quot;</span></span>
 <span id="cb10-74"><a href="#cb10-74" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-75"><a href="#cb10-75" aria-hidden="true" tabindex="-1"></a>all_mut_ccf <span class="ot">&lt;-</span> all_mut_ccf[<span class="sc">!</span><span class="fu">duplicated</span>(all_mut_ccf<span class="sc">$</span>index),]</span>
-<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(all_mut_ccf,<span class="at">file =</span> <span class="st">&quot;data/all_mut_ccf_tpm.rds&quot;</span>)<span class="do">##This file is used to calculate CCF-ES</span></span></code></pre></div>
+<span id="cb10-76"><a href="#cb10-76" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(all_mut_ccf,<span class="at">file =</span> <span class="st">&quot;../data/all_mut_ccf_tpm.rds&quot;</span>)<span class="do">##This file is used to calculate CCF-ES</span></span></code></pre></div>
 </div>
 </div>
 <div id="immunotherapy-data-download-and-clean" class="section level2">
@@ -608,7 +612,7 @@
 <span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>neo_missense <span class="ot">&lt;-</span> neo_missense <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample,neo,ccf) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ccf))</span>
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">cal_nes_warp</span>(neo_missense)</span>
-<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_nes,<span class="at">file =</span> <span class="st">&quot;data/neo_nes_ccf06_1.rds&quot;</span>)</span></code></pre></div>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_nes,<span class="at">file =</span> <span class="st">&quot;../data/neo_nes_ccf06_1.rds&quot;</span>)</span></code></pre></div>
 <p>For each sample, we permutate the neoantigen labeling (ie. randomly select the same number of mutations as the actual neoantigen number in the selected sample and label them as neoantigenic mutations) and calculate ES value. For pan-cancer or cancer type dataset, we can obtain the same number of simulated samples and corresponding ES values, then calculate the median ES of these simulated samples. This process was repeated many times (usually 2000 times) to get the simulated distribution of median ES. The actual pan-cancer or cancer type median ES values are compared with this simulated ES distribution, and p values are then reported:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;/public/slst/home/wutao2/cal_nes/ccf/neo_nes_ccf06_1.rds&quot;</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>all_mut_ccf <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;/public/slst/home/wutao2/cal_nes/ccf/all_mut_ccf_tpm.rds&quot;</span>)</span>
@@ -654,10 +658,10 @@
 <span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>sim_2000_not_filter <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(sim_2000_not_filter)</span>
 <span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>sim_2000_not_filter<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(sim_2000_not_filter<span class="sc">$</span>sample,</span>
 <span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>                                              <span class="at">parallel =</span> T,<span class="at">cores =</span> <span class="dv">20</span>)</span>
-<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(sim_2000_not_filter,<span class="at">file =</span> <span class="st">&quot;../data/sim_2000_not_filter_all_ccf.rds&quot;</span>)</span></code></pre></div>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(sim_2000_not_filter,<span class="at">file =</span> <span class="st">&quot;../data/sim_2000_not_filter_all_ccf.rds&quot;</span>)<span class="do">##this file is too large to push to Github</span></span></code></pre></div>
 <p>We can visualize the simulation using <code>WVPlots</code> package :</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/neo_nes_ccf06_1.rds&quot;</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/sim_2000_not_filter_all_ccf.rds&quot;</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_not_filter_all_ccf.rds&quot;</span>)</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
@@ -791,7 +795,7 @@
 <span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>neo_missense <span class="ot">&lt;-</span> neo_missense <span class="sc">%&gt;%</span> <span class="fu">select</span>(sample,neo,ccf) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ccf))</span>
 <span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">cal_nes_warp</span>(neo_missense)</span>
 <span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="fu">median</span>(neo_nes<span class="sc">$</span>es)</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_nes,<span class="at">file =</span> <span class="st">&quot;data/neo_nes_ccf06_1_remove_driver_samples.rds&quot;</span>)</span></code></pre></div>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_nes,<span class="at">file =</span> <span class="st">&quot;../data/neo_nes_ccf06_1_remove_driver_samples.rds&quot;</span>)</span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/neo_nes_ccf06_1.rds&quot;</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>neo_nes_remove_drivers <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/neo_nes_ccf06_1_remove_driver_samples.rds&quot;</span>)</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>neo_nes2 <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span></span>
@@ -808,7 +812,7 @@
 <p><img src="report_main_files/figure-html/unnamed-chunk-8-1.png" width="2400" /></p>
 <p>We can see that samples which neoantigenic and driver mutation lie in the same gene have the higher ES than other samples. So we filtered these sample to remove the effect that driver mutation cound couse.</p>
 <p>When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5420, P=0.006) (the simulation procedure is the same as above):</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/sim_2000_all_ccf.rds&quot;</span>)</span>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_all_ccf.rds&quot;</span>)<span class="do">##this file is too large to push to Github</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
@@ -903,7 +907,7 @@
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>nes_exp <span class="ot">&lt;-</span> <span class="fu">cal_nes_warp</span>(neo_exp)</span>
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(nes_exp,<span class="at">file =</span> <span class="st">&quot;../data/nes_exp.rds&quot;</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/sim_2000_all_exp.rds&quot;</span>)</span>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_all_exp.rds&quot;</span>)<span class="do">##this file is too large to push to Github</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>nes_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/nes_exp.rds&quot;</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
@@ -1894,8 +1898,8 @@
 <span id="cb47-66"><a href="#cb47-66" aria-hidden="true" tabindex="-1"></a>pd <span class="ot">=</span> <span class="fu">packLegend</span>(lgd1, lgd2,lgd3,lgd4)</span>
 <span id="cb47-67"><a href="#cb47-67" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(pd,<span class="at">x =</span> <span class="fu">unit</span>(<span class="dv">14</span>, <span class="st">&quot;cm&quot;</span>), <span class="at">y =</span> <span class="fu">unit</span>(<span class="dv">6</span>, <span class="st">&quot;cm&quot;</span>), <span class="at">just =</span> <span class="fu">c</span>(<span class="st">&quot;left&quot;</span>, <span class="st">&quot;bottom&quot;</span>))</span></code></pre></div>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;../data/Immunotherapy/sample_statistics.png&quot;</span>)</span></code></pre></div>
-<p><img src="../data/Immunotherapy/sample_statistics.png" width="565" /></p>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;sample_statistics.png&quot;</span>)</span></code></pre></div>
+<p><img src="sample_statistics.png" width="565" /></p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>all_sample_exp_ccf <span class="ot">&lt;-</span> <span class="fu">left_join</span>(all_sample_exp_ccf,dt_cli,<span class="at">by=</span><span class="st">&quot;sample&quot;</span>)</span>
 <span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>all_sample_exp_ccf <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(sample) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">TMB=</span><span class="fu">log</span>((<span class="fu">n</span>()<span class="sc">/</span><span class="dv">38</span>)<span class="sc">+</span><span class="dv">1</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(.,dt_cli,<span class="at">by=</span><span class="st">&quot;sample&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(cohort)) <span class="ot">-&gt;</span> all_tmb</span>
@@ -1928,8 +1932,8 @@
 <span id="cb49-30"><a href="#cb49-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="ot">-&gt;</span> gt_tbl</span>
 <span id="cb49-31"><a href="#cb49-31" aria-hidden="true" tabindex="-1"></a>gridExtra<span class="sc">::</span><span class="fu">grid.table</span>(gt_input)</span></code></pre></div>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;../data/Immunotherapy/sample_table.png&quot;</span>)</span></code></pre></div>
-<p><img src="../data/Immunotherapy/sample_table.png" width="641" /></p>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">&quot;sample_table.png&quot;</span>)</span></code></pre></div>
+<p><img src="sample_table.png" width="641" /></p>
 <div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="do">#####oncoprint############</span></span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="do">##liu</span></span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>liu_mutations <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/Immunotherapy/liu_mutations.rds&quot;</span>)</span>
@@ -1963,7 +1967,7 @@
 <span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   FLG</span></span>
 <span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Processing clinical data</span></span>
 <span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; --Missing clinical data</span></span>
-<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 5.380s elapsed (4.050s cpu)</span></span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 5.490s elapsed (4.280s cpu)</span></span>
 <span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a><span class="fu">oncoplot</span>(<span class="at">maf =</span> willy_maf,<span class="at">top=</span><span class="dv">10</span>,<span class="at">draw_titv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="report_main_files/figure-html/unnamed-chunk-31-2.png" width="2400" /></p>
 <div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -1981,7 +1985,7 @@
 <span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   OBSCN</span></span>
 <span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Processing clinical data</span></span>
 <span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; --Missing clinical data</span></span>
-<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 3.670s elapsed (2.770s cpu)</span></span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 4.060s elapsed (2.930s cpu)</span></span>
 <span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a><span class="fu">oncoplot</span>(<span class="at">maf =</span> nadeem_maf,<span class="at">top=</span><span class="dv">10</span>,<span class="at">draw_titv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p><img src="report_main_files/figure-html/unnamed-chunk-31-3.png" width="2400" /></p>
 </div>

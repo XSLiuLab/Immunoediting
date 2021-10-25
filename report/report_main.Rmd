@@ -38,6 +38,8 @@ This project is depended on R software, R packages, shell bash, Julia software a
 - [patchwork](https://github.com/thomasp85/patchwork) - arrange figures into complex compound figures
 - [maftools](https://github.com/PoisonAlien/maftools) - summarize, Analyze and Visualize MAF files
 - [ComplexHeatmap](https://github.com/jokergoo/ComplexHeatmap) - make heatmap
+- [ezcox](https://github.com/ShixiangWang/ezcox) -  operate a batch of univariate or multivariate Cox models and return tidy result
+- [ggcharts](https://github.com/thomas-neitmann/ggcharts) - plot pyramid bar plot
 - parallel - Parallel Computing
 - [Julia](https://julialang.org/) - do simulation
 - knitr, rmdformats - used to compile this file
@@ -54,6 +56,8 @@ library(data.table)
 library(patchwork)
 library(ComplexHeatmap)
 library(maftools)
+library(ezcox)
+library(ggcharts)
 ```
 
 # Data download and preprocessing

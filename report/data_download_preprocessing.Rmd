@@ -35,7 +35,7 @@ Pre-compiled curated somatic mutations (called by MuTect2) for TCGA cohorts were
 ```{r mut_data,eval=FALSE}
 mutect2 <- data.table::fread("~/useful_data/GDC-PANCAN.mutect2_snv.tsv") %>% 
   dplyr::filter(effect=="missense_variant" & filter=="PASS")
-saveRDS(mutect2,file = "~/Immunoediting/data/pancancer_mutation.rds")
+saveRDS(mutect2,file = "../data/pancancer_mutation.rds")
 ```
 view this file:
 
@@ -80,7 +80,7 @@ results <- results %>%
   filter(Variant_Classification=="Missense_Mutation") %>%
   mutate(index=paste(substr(sample,1,16),seqnames,start,Reference_Allele,Tumor_Seq_Allele2,sep = ":")) %>%
   select(sample,index,Hugo_Symbol,Protein_Change,Reference_Allele,Tumor_Seq_Allele2,purity,ccf_hat)
-saveRDS(results,file = "data/all_mut_mis_ccf.rds")
+saveRDS(results,file = "../data/all_mut_mis_ccf.rds")
 ```
 
 Driver mutation data was downloaded from Bailey M H et.al study ([Mutation.CTAT.3D.Scores.txt](https://gdc.cancer.gov/about-data/publications/pancan-driver)). This study used three different categories of tools to find driver mutations: (1) tools distinguishing benign versus pathogenic mutations using sequence (CTAT population); (2) tools distinguishing driver versus passenger mutations using sequence (CTAT cancer); and (3) tools discovering statistically significant three-dimensional clusters of missense mutations (structure based). We keep mutations identified by ≥2 approaches as finial high confident driver mutations, including 2165 unique mutations:
@@ -89,7 +89,7 @@ Driver mutation data was downloaded from Bailey M H et.al study ([Mutation.CTAT.
 driver <- data.table::fread("~/useful_data/Mutation.CTAT.3D.Scores.txt")
 driver_mutations <- driver %>%
   filter(`Combined flag (strong evidence)`==1 | `Combined flag (weaker evidence)` ==1)
-saveRDS(driver_mutations,file = "data/driver_mutations.rds")
+saveRDS(driver_mutations,file = "../data/driver_mutations.rds")
 ```
 
 ### Expression data
@@ -143,7 +143,7 @@ for(i in seq_along(re)){
   re[[i]] <- dt
 }
 results <- bind_rows(re)
-saveRDS(results,file = "data/pancancer_subtcells.rds")
+saveRDS(results,file = "../data/pancancer_subtcells.rds")
 ```
 
 We can view this file:
@@ -226,7 +226,7 @@ saveRDS(all_mut1,file = "~/test/all_mut_tpm.rds")
 all_mut1 <- all_mut1 %>%
   select(-neo,-exp) %>%
   rename(neo=neo2)
-saveRDS(all_mut1,file = "~/test/all_mut_tpm_not_filter.rds")##this file is used to calculte EXP-ES
+saveRDS(all_mut1,file = "../data/all_mut_tpm_not_filter.rds")##this file is used to calculte EXP-ES
 
 ##add ccf
 results <- readRDS("~/test/data/2021_04_05/all_mut_mis_ccf.rds")
@@ -243,7 +243,7 @@ all_mut_ccf <- inner_join(
   by="index"
 )
 all_mut_ccf <- all_mut_ccf[!duplicated(all_mut_ccf$index),]
-saveRDS(all_mut_ccf,file = "data/all_mut_ccf_tpm.rds")##This file is used to calculate CCF-ES
+saveRDS(all_mut_ccf,file = "../data/all_mut_ccf_tpm.rds")##This file is used to calculate CCF-ES
 ```
 
 ## Immunotherapy data download and clean
