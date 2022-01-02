@@ -18,6 +18,7 @@ knitr::opts_knit$set(width = 75)
 
 ```{r lib4,echo=TRUE,eval=TRUE,include=FALSE,message=FALSE}
 library(dplyr)
+library(tidyr)
 library(NeoEnrichment)
 library(ggplot2)
 library(ggcharts)
@@ -279,13 +280,13 @@ liu <- read.maf(maf = liu_mutations,
 oncoplot(maf = liu,top=10,draw_titv = TRUE)
 
 ##willy
-files <- as.list(paste0("../data/Immunotherapy/willy/",dir("../data/Immunotherapy/willy/")))
-willy_maf <- merge_mafs(files)
+files <- list.files("../data/Immunotherapy/willy/",full.names = T)
+willy_maf <- merge_mafs(mafs = files)
 oncoplot(maf = willy_maf,top=10,draw_titv = TRUE)
 
 ###nadeem
-files <- as.list(paste0("../data/Immunotherapy/nadeem/",dir("../data/Immunotherapy/nadeem/")))
-nadeem_maf <- merge_mafs(files)
+files <- list.files("../data/Immunotherapy/nadeem/",full.names = T)
+nadeem_maf <- merge_mafs(mafs=files)
 oncoplot(maf = nadeem_maf,top=10,draw_titv = TRUE)
 ```
 

@@ -86,9 +86,10 @@ saveRDS(results,file = "../data/all_mut_mis_ccf.rds")
 Driver mutation data was downloaded from Bailey M H et.al study ([Mutation.CTAT.3D.Scores.txt](https://gdc.cancer.gov/about-data/publications/pancan-driver)). This study used three different categories of tools to find driver mutations: (1) tools distinguishing benign versus pathogenic mutations using sequence (CTAT population); (2) tools distinguishing driver versus passenger mutations using sequence (CTAT cancer); and (3) tools discovering statistically significant three-dimensional clusters of missense mutations (structure based). We keep mutations identified by ≥2 approaches as finial high confident driver mutations, including 2165 unique mutations:
 
 ```{r driver_mutation_data,eval=FALSE}
-driver <- data.table::fread("~/useful_data/Mutation.CTAT.3D.Scores.txt")
+driver <- data.table::fread("~/data/Mutation.CTAT.3D.Scores.txt")
 driver_mutations <- driver %>%
-  filter(`Combined flag (strong evidence)`==1 | `Combined flag (weaker evidence)` ==1)
+  mutate(nmethod=`New_Linear (functional) flag`+`New_Linear (cancer-focused) flag`+`New_3D mutational hotspot flag`) %>% 
+  filter(nmethod>=2)
 saveRDS(driver_mutations,file = "../data/driver_mutations.rds")
 ```
 

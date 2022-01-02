@@ -85,7 +85,7 @@ cal_nes_warp <- function(dt){
   results_ccf <- vector("list",length = length(unique(dt$sample)))
   names(results_ccf) <- unique(dt$sample)
 
-  cl <- makeCluster(getOption("cl.cores", 23),type="FORK")
+  cl <- makeCluster(getOption("cl.cores", 30),type="FORK")
   results_ccf <- parSapply(cl=cl,names(results_ccf),
                            function(x){
                              data <- dt %>% filter(sample == x)
@@ -117,7 +117,7 @@ sim_2000_not_filter <- readRDS("~/test/data/2021_09_26/sim_2000_not_filter.rds")
 sim_2000_not_filter <- bind_rows(sim_2000_not_filter)
 sim_2000_not_filter$cancer <- get_cancer_type(sim_2000_not_filter$sample,
                                               parallel = T,cores = 20)
-saveRDS(sim_2000_not_filter,file = "../data/sim_2000_not_filter_all_ccf.rds")##this file is too large to push to Github
+saveRDS(sim_2000_not_filter,file = "../../tmp/sim_2000_not_filter_all_ccf.rds")##this file is too large to push to Github
 ```
 
 We can visualize the simulation using `WVPlots` package :
@@ -202,9 +202,10 @@ get_f1 <- function(dt,pancancer_p,dt2,median_es){
     arrange(median_est) %>%
     mutate(label=paste0(cancer,"\n(n=",c,")"))-> summ1
   summ1 <- left_join(summ1,dt2 %>% select(cancer,p))
+  summ1$p <- signif(summ1$p,digits = 1)
   summ1 <- summ1 %>%
     mutate(sig=case_when(
-      p < 0.05 & p > 0.01 ~ "*",
+      p <= 0.05 & p > 0.01 ~ "*",
       p < 0.01 ~ "**",
       TRUE ~ "ns"
     ))
@@ -240,10 +241,10 @@ driver_mutations <- driver_mutations %>%
 
 all_mut_ccf <- all_mut_ccf %>%
   mutate(is_driver=ifelse(gene_protein_change %in% driver_mutations$gene_protein_change,"yes","no"))
-sum(all_mut_ccf$is_driver=="yes" & all_mut_ccf$neo=="yes") / sum(all_mut_ccf$neo=="yes")
+sum(all_mut_ccf$is_driver=="yes" & all_mut_ccf$neo=="yes") / sum(all_mut_ccf$neo=="yes")##0.01029878
 all_mut_ccf %>% group_by(sample) %>%
   summarise(inter_gene=intersect(Hugo_Symbol[neo=="yes"],
-                                 Hugo_Symbol[is_driver=="yes"])) -> aaa
+                                 Hugo_Symbol[is_driver=="yes"])) -> aaa##701 samples
 all_mut_ccf <- all_mut_ccf %>%
   mutate(sample_neo_index=paste(sample,neo,Hugo_Symbol,sep = ","))
 aaa <- aaa %>% mutate(sample_neo_index=paste(sample,"yes",inter_gene,sep = ","))
@@ -260,15 +261,15 @@ all_mut_ccf  %>%
   summarise(c_n=sum(neo=="yes"),c_m=sum(neo=="no")) %>% filter(c_n>=1 & c_m >=1) -> summ
 neo_missense <- all_mut_ccf %>% filter(sample %in% summ$sample)
 neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
-neo_nes <- cal_nes_warp(neo_missense)
+neo_nes <- cal_nes_warp(neo_missense)##addp
 median(neo_nes$es)
-saveRDS(neo_nes,file = "../data/neo_nes_ccf06_1_remove_driver_samples.rds")
+saveRDS(neo_nes,file = "../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
 ```
 
 
 ```{r }
 neo_nes <- readRDS("../data/neo_nes_ccf06_1.rds")
-neo_nes_remove_drivers <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples.rds")
+neo_nes_remove_drivers <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
 neo_nes2 <- neo_nes %>%
   filter(!(sample %in% neo_nes_remove_drivers$sample))
 dt <- data.frame(es=c(neo_nes_remove_drivers$es,neo_nes2$es),
@@ -287,8 +288,10 @@ We can see that samples which neoantigenic and driver mutation lie in the same g
 When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5420, P=0.006) (the simulation procedure is the same as above):
 
 ```{r}
-sim_all <- readRDS("../../tmp/sim_2000_all_ccf.rds")##this file is too large to push to Github
-sim_all %>%
+sim_all <- readRDS("../../tmp/sim_2000_not_filter_all_ccf.rds")##this file is too large to push to Github
+sim_filter_driver <- sim_all %>% 
+  filter(sample %in% neo_nes_remove_drivers$sample)
+sim_filter_driver %>%
   group_by(cancer,sim_num) %>%
   summarise(median_es=median(es)) -> summ2
 neo_nes_remove_drivers$cancer <- get_cancer_type(neo_nes_remove_drivers$sample)
@@ -298,7 +301,7 @@ neo_nes_summ <- neo_nes_remove_drivers %>%
 #The following code can be used to plot cancer type simulation which showd in FigS5 
 #res <- vector("list",30)
 # for (i in 1:30){
-#   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])
+#   dt <- sim_filter_driver %>% filter(cancer==neo_nes_summ$cancer[i])
 #   dt_summ <- dt %>% 
 #     group_by(sim_num) %>%
 #     summarise(median_es=median(es))
@@ -319,7 +322,7 @@ neo_nes_summ <- neo_nes_remove_drivers %>%
 # 
 # plot_grid(plotlist = res)
 
-sim_all %>%
+sim_filter_driver %>%
   group_by(sim_num) %>%
   summarise(median_es=median(es)) -> summ
 p <- WVPlots::ShadedDensity(frame = summ, 
@@ -343,9 +346,10 @@ p1
 #   mutate(p=mean(summ2$median_es[summ2$cancer==cancer] <= median_es))
 # saveRDS(neo_nes_summ,file = "neo_nes_summ_ccf_061.rds")
 
-neo_nes3 <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples.rds")
+neo_nes3 <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds") %>% 
+  select(-p)
 neo_nes_summ <- readRDS("../data/neo_nes_summ_ccf_061.rds")
-p3 <- get_f1(neo_nes3,pancancer_p = 0.006,dt2 = neo_nes_summ,median_es = median(neo_nes3$es))
+p3 <- get_f1(neo_nes3,pancancer_p = 0.0055,dt2 = neo_nes_summ,median_es = median(neo_nes3$es))
 p3
 ```
 
