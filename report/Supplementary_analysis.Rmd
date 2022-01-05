@@ -29,6 +29,8 @@ library(readr)
 library(gt)
 ```
 
+## Sample statistics and clinical features
+
 Number of the patient with CCF information and number of patient with at least one neoantigenic mutation and subclonal mutation (CCF<0.6) are shown for each cancer type and number of the patient with mRNA expression information and number of patient with at least one neoantigenic mutation and accompanied mRNA expression information are shown for each cancer type:
 
 ```{r}
@@ -172,7 +174,7 @@ liu_clinical <- readRDS("../data/Immunotherapy/liu_clinical.rds") %>%
   select(-`gender..Male.1..Female.0.`) %>% mutate(Age=NA) %>%
   rename(sample=X,Treatment=Tx) %>% mutate(sample=paste0("liu_",sample)) %>% filter(grepl("_Patient",sample))
 all_tre <- bind_rows(list(willy_tre,nadeem_tre,liu_clinical))
-
+saveRDS(all_tre,file = "../data/Immunotherapy/all_treatment.rds")
 dt <- data.frame(sample=all_sample,
                  stringsAsFactors = F) %>%
   mutate(`Data type`= case_when(
@@ -257,7 +259,6 @@ gridExtra::grid.table(gt_input)
 ```
 
 ```{r eval=TRUE,warning=FALSE}
-
 knitr::include_graphics("sample_table.png")
 ```
 
@@ -289,4 +290,209 @@ files <- list.files("../data/Immunotherapy/nadeem/",full.names = T)
 nadeem_maf <- merge_mafs(mafs=files)
 oncoplot(maf = nadeem_maf,top=10,draw_titv = TRUE)
 ```
+
+## Immune escape analysis
+
+We consider the following immune escape mechanisms: 
+
+1. Suppress the transcription of genome alterations encoding high antigenicity (quantified as ESRNA); 
+2. Antigen presentation pathway gene alterations; 
+3. PD-L1 or CTLA-4 overexpression.
+
+Antigen presentation pathway genes were selected based on the list of antigen processing and presentation machinery (APM) from the Gene Ontology Consortium (GO:0002474). Gene level non-silent mutation file was downloaded from UCSC Xena. If one sample has non-silent mutations in APM genes, then this sample was labled as escape by APM mutation.
+
+Immune checkpoint gene overexpression was assessed using RNA-seq data. Normal expression values (in transcripts per million mapped reads (TPM)) of PD-L1 and CTLA-4 were established from the TCGA based on RNA-seq expression of the two proteins in normal samples. Checkpoint overexpression was called if either PD-L1 or CTLA-4 expression in the tumor was higher than the mean plus two standard deviations of normal expression:
+
+```{r eval=FALSE}
+library(tidyr)
+####apm
+apm_gene <- readRDS("data/ap_pathway.rds")
+non_slient_mutation <- data.table::fread("~/data/mc3.v0.2.8.PUBLIC.nonsilentGene.xena",data.table = F)
+apm_gene <- apm_gene$V1
+which(!(apm_gene %in% non_slient_mutation$sample))
+non_slient_mutation <- non_slient_mutation %>%
+  dplyr::filter(sample %in% apm_gene) 
+check <- apply(non_slient_mutation[,2:ncol(non_slient_mutation)],2,function(x){any(x==1)}) %>% as.data.frame()
+colnames(check) <- "apm_mut"
+check$sample <- rownames(check)
+saveRDS(check,file = "data/apm_mut_sample.rds")
+###checkpoint over expression CD274 CTLA-4
+tpm_gene <- readRDS("~/data/tpm_trans.rds")
+CD274 <- tpm_gene %>% filter(gene == "CD274") %>%
+  select(c(3:ncol(tpm_gene))) %>% t() %>% as.data.frame()
+CD274$sample <- rownames(CD274)
+colnames(CD274)[1] <- "PDL1"
+CTLA4 <- tpm_gene %>% filter(gene == "CTLA4") %>%
+  select(c(3:ncol(tpm_gene))) %>% t() %>% as.data.frame()
+CTLA4$sample <- rownames(CTLA4)
+colnames(CTLA4)[1] <- "CTLA4"
+
+check_point <- left_join(CD274,CTLA4,by="sample")
+saveRDS(check_point,file = "data/checkpoint_exp.rds")
+table(substr(check_point$sample,14,15))
+
+normal <- data.frame(sample=colnames(tpm_gene)[which(substr(colnames(tpm_gene),14,15)==11)])
+normal <- left_join(normal,check_point,by="sample")
+normal$cancer <- EasyBioinfo::get_cancer_type(normal$sample)
+normal %>%
+  group_by(cancer) %>%
+  summarise(mean_pdl1 = mean(PDL1),
+            sd_pdl1 = sd(PDL1),
+            mean_ctla4 = mean(CTLA4),
+            sd_ctla4 = sd(CTLA4)) -> mean_sd
+
+cancer <- check_point %>% 
+  filter(as.numeric(substr(sample,14,15)) < 11)
+cancer$cancer <- EasyBioinfo::get_cancer_type(cancer$sample)
+cancer <- left_join(cancer,mean_sd,by="cancer")
+cancer <- na.omit(cancer)
+
+cancer <- cancer %>%
+  mutate(PDL1_over = ifelse(PDL1 > (mean_pdl1+2*sd_pdl1),"yes","no"),
+         CTLA4_over = ifelse(CTLA4 > (mean_ctla4+2*sd_ctla4),"yes","no")) 
+saveRDS(cancer,file = "data/checkpoint_over.rds")
+```
+
+Then we can compare the ESccf between escape samples and no escape samples:
+```{r}
+nes_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
+nes_exp <- readRDS("../data/nes_exp_addp.rds")
+
+both <- left_join(
+  nes_ccf,
+  nes_exp %>% select(es,sample,p_value) %>% rename(es_exp=es,p_exp=p_value)
+) %>% na.omit() %>% 
+  mutate(exp_type=ifelse(es_exp<0 & p_exp<0.05,"escape","no_escape"))
+##other escape mechanisms
+checkpoint_over <- readRDS("../data/checkpoint_over.rds")
+apm_mut_sample <- readRDS("../data/apm_mut_sample.rds")
+
+inter_sample <- Reduce(intersect, list(checkpoint_over$sample,apm_mut_sample$sample,
+                                       substr(both$sample,1,15)))
+both_other <- Reduce(left_join,list(both %>% mutate(sample=substr(sample,1,15)) %>% 
+                                      dplyr::filter(sample %in% inter_sample),
+                                    checkpoint_over %>% select(sample,PDL1_over,CTLA4_over) %>% 
+                                      dplyr::filter(sample %in% inter_sample),
+                                    apm_mut_sample %>% dplyr::filter(sample %in% inter_sample)))
+both_other <- both_other %>% 
+  mutate(escape=ifelse(exp_type=="escape" | PDL1_over == "yes" | CTLA4_over == "yes" | apm_mut,"yes","no"))
+
+ggplot(data=both_other,aes(x=escape,y=es))+
+  geom_boxplot()+
+  stat_compare_means()+
+  labs(x="Escape",y="ESccf")+
+  theme_prism()
+# both_other$cancer <- EasyBioinfo::get_cancer_type(both_other$sample)
+# saveRDS(both_other,file = "../data/all_escape_mech.rds")
+```
+
+We can get the simulation p value for pancancer and cancer types as previously described:
+
+```{r}
+sim_all <- readRDS("../../tmp/sim_2000_not_filter_all_ccf.rds")
+neo_nes <- readRDS("../data/all_escape_mech.rds")
+neo_nes$cancer <- EasyBioinfo::get_cancer_type(neo_nes$sample)
+escape <- neo_nes %>% filter(escape=="yes")
+no_escape <- neo_nes %>% filter(escape!="yes")
+sim_escape <- sim_all %>% 
+  filter(substr(sample,1,15) %in% escape$sample)
+sim_no_escape <- sim_all %>% 
+  filter(substr(sample,1,15) %in% no_escape$sample)
+
+sim_escape %>%
+  group_by(cancer,sim_num) %>%
+  summarise(median_es=median(es)) -> summ1
+escape_summ <- escape %>% 
+  group_by(cancer) %>% summarise(median_es=median(es))
+sim_escape %>%
+  group_by(sim_num) %>%
+  summarise(median_es=median(es)) -> summ2
+p <- WVPlots::ShadedDensity(frame = summ2, 
+                            xvar = "median_es",
+                            threshold = median(escape$es),
+                            title = "",
+                            tail = "left")
+
+p$layers[[1]]$aes_params$colour <- "red"
+p$layers[[1]]$aes_params$size <- 1
+p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+p$layers[[3]]$aes_params$colour <- "black" 
+p$layers[[3]]$aes_params$size <- 1
+p1 <- p + labs(x="Simulation median es")+
+  theme_prism()+
+  labs(y="Density")
+p1
+
+noescape_summ <- no_escape %>% 
+  group_by(cancer) %>% summarise(median_es=median(es))
+sim_no_escape %>%
+  group_by(sim_num) %>%
+  summarise(median_es=median(es)) -> summ3
+p <- WVPlots::ShadedDensity(frame = summ3, 
+                            xvar = "median_es",
+                            threshold = median(no_escape$es),
+                            title = "",
+                            tail = "left")
+
+p$layers[[1]]$aes_params$colour <- "red"
+p$layers[[1]]$aes_params$size <- 1
+p$layers[[2]]$aes_params$fill <- "blue"     #geom_ribbon
+p$layers[[3]]$aes_params$colour <- "black" 
+p$layers[[3]]$aes_params$size <- 1
+p2 <- p + labs(x="Simulation median es")+
+  theme_prism()+
+  labs(y="Density")
+p2
+
+sim_no_escape %>%
+  group_by(cancer,sim_num) %>%
+  summarise(median_es=median(es)) -> summ4
+
+noescape_summ <- noescape_summ %>%
+  rowwise() %>%
+  mutate(p=mean(summ4$median_es[summ4$cancer==cancer] <= median_es))
+escape_summ <- escape_summ %>%
+  rowwise() %>%
+  mutate(p=mean(summ1$median_es[summ1$cancer==cancer] <= median_es))
+
+escape <- escape %>% select(-p)
+no_escape <- no_escape %>% select(-p)
+p3 <- get_f1(escape,pancancer_p = 0.76,dt2 = escape_summ,median_es = median(escape$es))
+p3
+
+p4 <- get_f1(no_escape,pancancer_p = 0.019,dt2 = noescape_summ,median_es = median(no_escape$es))
+p4
+
+```
+
+The result shows that immune elimination signal can be detected in samples without escape signal, while in samples with immunoediting escape mechanisms this signal is much weaker. ESCCF values of patients without immune escape mechanisms are significantly lower than patients with immune escape mechanisms. This data is consistent with our previous observation that there is anti-correlation between immunoediting elimination and escape signal. 
+
+## CCF distribution analysis
+
+As our method is relied on the distribution of CCF, we can show the CCF distribution of pancancer and all cancer types, plotting as well the CCF of neoantigen and non-neoantigens:
+
+```{r eval=FALSE}
+all_mut_ccf <- readRDS("../data/all_mut_ccf_tpm.rds") %>% as.data.frame()
+all_mut_ccf <- all_mut_ccf %>%
+  rename(ccf=ccf_hat) %>%
+  mutate(neo=ifelse(neo=="neo","yes","no"))
+es <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
+neo_missense <- all_mut_ccf %>% 
+  filter(sample %in% es$sample) %>% 
+  select(sample,neo,ccf) %>% filter(!is.na(ccf))
+
+neo_missense$cancer <- get_cancer_type(neo_missense$sample)
+
+ggplot(data = neo_missense,aes(x=ccf,..scaled..,color=neo))+
+  geom_density(size=1)+
+  theme_prism()+
+  labs(y="Density",x="CCF")+
+  facet_wrap(. ~ cancer)
+```
+
+```{r eval=TRUE,warning=FALSE}
+knitr::include_graphics("s3.png")
+```
+
+It is apparent that in many cancer types there are clear shift of CCF curves of neoantigenic mutations compared with non-neoantigenic mutations, and this difference highlight the immunoediting elimination signal quantified in this study.
 

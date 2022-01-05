@@ -154,6 +154,22 @@ p7 <- p4 + p5 + p6
 p7
 ```
 
-The H-L test P-value of TMB is 0.051, close to 0.05, implicate the difference between prediction and expectation is close to significant. The H-L test P-value of ESCCF is 0.771 , higher than the H-L test P-value of TMB and neoantigen count, suggesting ESCCF is more suitable for predicting prognosis of patients than TMB and neoantigen count.
+The H-L test P-value of TMB is 0.051, close to 0.05, implicate the difference between prediction and expectation is close to significant. The H-L test P-value of ESCCF is 0.771 , suggesting that the quantified immunoediting-elimination signal can be biomarker for ICI clinical response prediction.
 
+ICI clinical response are known to be influenced by variables like gender and drug type, so we performed multivariate Cox regression including treament (Nivolumab or Pembrolizumab) and gender as covariate:
 
+```{r}
+all_tre <- readRDS("../data/Immunotherapy/all_treatment.rds")
+neo_nes <- left_join(
+  neo_nes,all_tre
+)
+
+show_forest(neo_nes,covariates = c("es"),
+            time = "OS.time",status = "OS",
+            controls = "Treatment")
+show_forest(neo_nes,covariates = c("es"),
+            time = "OS.time",status = "OS",
+            controls = "Gender")
+```
+
+Based on this analysis, the effects of ESCCF is not influence by ICI type and gender, however more samples are needed to further validated the clinical effects of ESCCF in ICI clinical response prediction.

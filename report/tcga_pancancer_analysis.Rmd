@@ -132,7 +132,7 @@ neo_nes$cancer <- get_cancer_type(neo_nes$sample)
 neo_nes_summ <- neo_nes %>% 
   group_by(cancer) %>% summarise(median_es=median(es))
 
-#The following code can be used to plot cancer type simulation which showd in FigS3
+#The following code can be used to plot cancer type simulation which showd in FigS4
 #res <- vector("list",30)
 # for (i in 1:30){
 #   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])
@@ -231,7 +231,7 @@ p3 <- get_f1(neo_nes4,pancancer_p = 0.051,dt2 = neo_nes_summ,median_es = median(
 p3
 ```
 
-The observed ESCCF is -0.017 (p=0.051). In PAAD and LUAD, the observed ESCCF values are significant lower compared with the random simulations, suggesting the existence of immunoediting-elimination signal (Fig. 3a and Extended Data Fig.3). Since some neoantigenic mutations can be cancer drivers, which are known to undergo positive selection during the evolution of cancer. Neoantigens that happens to be cancer drivers are not undergoing immune based negative selection, probably because the driving force could override the negative selection, so we compared ES between the samples which neoantigenic and driver lie in the same gene with other samples:
+The observed ESCCF is -0.017 (p=0.051). In PAAD and LUAD, the observed ESCCF values are significant lower compared with the random simulations, suggesting the existence of immunoediting-elimination signal. Since some neoantigenic mutations can be cancer drivers, which are known to undergo positive selection during the evolution of cancer. Neoantigens that happens to be cancer drivers are not undergoing immune based negative selection, probably because the driving force could override the negative selection, so we compared ES between the samples which neoantigenic and driver lie in the same gene with other samples:
 
 ```{r eval=FALSE}
 all_mut_ccf <- all_mut_ccf %>%
@@ -285,7 +285,7 @@ ggplot(data = dt,aes(x=type,y=es))+
 
 We can see that samples which neoantigenic and driver mutation lie in the same gene have the higher ES than other samples. So we filtered these sample to remove the effect that driver mutation cound couse.
 
-When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5420, P=0.006) (the simulation procedure is the same as above):
+When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5295, P=0.0055) (the simulation procedure is the same as above):
 
 ```{r}
 sim_all <- readRDS("../../tmp/sim_2000_not_filter_all_ccf.rds")##this file is too large to push to Github
@@ -298,7 +298,7 @@ neo_nes_remove_drivers$cancer <- get_cancer_type(neo_nes_remove_drivers$sample)
 neo_nes_summ <- neo_nes_remove_drivers %>% 
   group_by(cancer) %>% summarise(median_es=median(es))
 
-#The following code can be used to plot cancer type simulation which showd in FigS5 
+#The following code can be used to plot cancer type simulation which showd in FigS6
 #res <- vector("list",30)
 # for (i in 1:30){
 #   dt <- sim_filter_driver %>% filter(cancer==neo_nes_summ$cancer[i])
@@ -353,7 +353,7 @@ p3 <- get_f1(neo_nes3,pancancer_p = 0.0055,dt2 = neo_nes_summ,median_es = median
 p3
 ```
 
-Several cancer types including ACC, CHOL, UCEC, LUAD show significant low ESCCF values. This data demonstrates the existence of immunoediting-elimination signal in TCGA dataset.
+Several cancer types including ACC, PAAD, UCEC, LUAD show significant low ESCCF values. This data demonstrates the existence of immunoediting-elimination signal in TCGA dataset.
 
 We then calculated the EXP-ES and corresponding simulation median ES distribution:
 
@@ -398,7 +398,7 @@ nes_exp$cancer <- get_cancer_type(nes_exp$sample)
 neo_nes_summ <- nes_exp %>% 
   group_by(cancer) %>% summarise(median_es=median(es))
 
-#The following code can be used to plot cancer type simulation which showd in FigS6 
+#The following code can be used to plot cancer type simulation which showd in FigS7 
 #res <- vector("list",30)
 # for (i in 1:30){
 #   dt <- sim_all %>% filter(cancer==neo_nes_summ$cancer[i])

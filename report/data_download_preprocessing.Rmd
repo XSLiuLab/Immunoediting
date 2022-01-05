@@ -83,7 +83,13 @@ results <- results %>%
 saveRDS(results,file = "../data/all_mut_mis_ccf.rds")
 ```
 
-Driver mutation data was downloaded from Bailey M H et.al study ([Mutation.CTAT.3D.Scores.txt](https://gdc.cancer.gov/about-data/publications/pancan-driver)). This study used three different categories of tools to find driver mutations: (1) tools distinguishing benign versus pathogenic mutations using sequence (CTAT population); (2) tools distinguishing driver versus passenger mutations using sequence (CTAT cancer); and (3) tools discovering statistically significant three-dimensional clusters of missense mutations (structure based). We keep mutations identified by ≥2 approaches as finial high confident driver mutations, including 2165 unique mutations:
+Driver mutation data was downloaded from Bailey M H et.al study ([Mutation.CTAT.3D.Scores.txt](https://gdc.cancer.gov/about-data/publications/pancan-driver)). This study used three different categories of tools to find driver mutations: 
+
+1. tools distinguishing benign versus pathogenic mutations using sequence (CTAT population); 
+2. tools distinguishing driver versus passenger mutations using sequence (CTAT cancer); 
+3. tools discovering statistically significant three-dimensional clusters of missense mutations (structure based). 
+
+We keep mutations identified by ≥2 approaches as finial high confident driver mutations, including 3437 unique mutations:
 
 ```{r driver_mutation_data,eval=FALSE}
 driver <- data.table::fread("~/data/Mutation.CTAT.3D.Scores.txt")
@@ -156,6 +162,8 @@ DT::datatable(head(pancancer_immune),
 )
 ```
 
+Other Immune cell infiltration data including CIBERSORT (abs mode), Quantiseq were downloaded from the [TIMER2.0](http://timer.comp-genomics.org/) study.
+
 ## TCGA pancancer data processing
 
 This part describes HLA typing and neoantigen prediction of TCGA data.
@@ -219,16 +227,14 @@ all_mut$tpm_exp <- mapply(function(sample,gene){
 all_mut1 <- all_mut %>%
   filter(lengths(tpm_exp)!=0)
 all_mut1$tpm_exp <- as.numeric(all_mut1$tpm_exp)
+saveRDS(all_mut1,file = "../data/all_mut_tpm_not_filter.rds")##this file is used to calculte EXP-ES
 
 all_mut1 <- all_mut1 %>%
   mutate(neo2=ifelse(neo=="neo" & tpm_exp>1,"neo","not_neo"))
-saveRDS(all_mut1,file = "~/test/all_mut_tpm.rds")
-
 all_mut1 <- all_mut1 %>%
   select(-neo,-exp) %>%
   rename(neo=neo2)
-saveRDS(all_mut1,file = "../data/all_mut_tpm_not_filter.rds")##this file is used to calculte EXP-ES
-
+saveRDS(all_mut1,file = "~/test/all_mut_tpm.rds")
 ##add ccf
 results <- readRDS("~/test/data/2021_04_05/all_mut_mis_ccf.rds")
 
