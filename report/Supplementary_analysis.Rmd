@@ -471,7 +471,7 @@ The result shows that immune elimination signal can be detected in samples witho
 
 As our method is relied on the distribution of CCF, we can show the CCF distribution of pancancer and all cancer types, plotting as well the CCF of neoantigen and non-neoantigens:
 
-```{r eval=FALSE}
+```{r eval=TRUE}
 all_mut_ccf <- readRDS("../data/all_mut_ccf_tpm.rds") %>% as.data.frame()
 all_mut_ccf <- all_mut_ccf %>%
   rename(ccf=ccf_hat) %>%
@@ -485,13 +485,9 @@ neo_missense$cancer <- get_cancer_type(neo_missense$sample)
 
 ggplot(data = neo_missense,aes(x=ccf,..scaled..,color=neo))+
   geom_density(size=1)+
-  theme_prism()+
+  theme_bw()+
   labs(y="Density",x="CCF")+
   facet_wrap(. ~ cancer)
-```
-
-```{r eval=TRUE,warning=FALSE}
-knitr::include_graphics("s3.png")
 ```
 
 It is apparent that in many cancer types there are clear shift of CCF curves of neoantigenic mutations compared with non-neoantigenic mutations, and this difference highlight the immunoediting elimination signal quantified in this study.
