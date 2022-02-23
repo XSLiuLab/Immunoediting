@@ -96,7 +96,7 @@ We also calculated the significant sample in each cancer type:
 ```{r}
 pancancer_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds") %>%
   mutate(es_type=ifelse(es<0 & p <0.05,"sig_neg","others"))
-pancancer_exp <- readRDS("../data/nes_exp_addp.rds") %>%
+pancancer_exp <- readRDS("../data/es_exp_filter_driver.rds") %>%
   mutate(es_type=ifelse(es<0 & p_value <0.05,"sig_neg","others"))
 pancancer_ccf$cancer <- get_cancer_type(pancancer_ccf$sample)
 pancancer_exp$cancer <- get_cancer_type(pancancer_exp$sample)
