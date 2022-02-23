@@ -41,12 +41,16 @@ all_mut_ccf <- readRDS("../data/all_mut_ccf_tpm.rds")
 all_mut_ccf <- all_mut_ccf %>%
   rename(ccf=ccf_hat) %>%
   mutate(neo=ifelse(neo=="neo","yes","no"))
-samples_has_subclonal <- all_mut_ccf %>% filter(ccf<0.6) %>% select(sample) %>%
+samples_has_subclonal <- all_mut_ccf %>% 
+  filter(ccf<0.6) %>% 
+  select(sample) %>%
   distinct(sample)
-all_mut_ccf  %>% filter(sample %in% samples_has_subclonal$sample) %>%
+all_mut_ccf  %>% 
+  filter(sample %in% samples_has_subclonal$sample) %>%
   group_by(sample) %>%
   summarise(c_n=sum(neo=="yes"),c_m=sum(neo=="no")) %>% filter(c_n>=1 & c_m >=1) -> summ
-neo_missense <- all_mut_ccf %>% filter(sample %in% summ$sample)
+neo_missense <- all_mut_ccf %>% 
+  filter(sample %in% summ$sample)
 cal_nes_warp <- function(dt){
   results_ccf <- vector("list",length = length(unique(dt$sample)))
   names(results_ccf) <- unique(dt$sample)
@@ -78,8 +82,11 @@ all_mut_ccf <- readRDS("/public/slst/home/wutao2/cal_nes/ccf/all_mut_ccf_tpm.rds
 all_mut_ccf <- all_mut_ccf %>%
   rename(ccf=ccf_hat) %>%
   mutate(neo=ifelse(neo=="neo","yes","no"))
-neo_missense <- all_mut_ccf %>% filter(sample %in% neo_nes$sample)
-neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
+neo_missense <- all_mut_ccf %>% 
+  filter(sample %in% neo_nes$sample)
+neo_missense <- neo_missense %>% 
+  select(sample,neo,ccf) %>% 
+  filter(!is.na(ccf))
 
 cal_nes_warp <- function(dt){
   results_ccf <- vector("list",length = length(unique(dt$sample)))
@@ -359,18 +366,52 @@ We then calculated the EXP-ES and corresponding simulation median ES distributio
 
 ```{r eval=FALSE}
 all_mut_exp <- readRDS("../data/all_mut_tpm_not_filter.rds")
-all_mut_exp <- all_mut_exp %>% select(sample,tpm_exp,neo) %>% rename(exp=tpm_exp)
+all_mut_exp <- all_mut_exp %>% 
+  select(sample,tpm_exp,neo,chr,position,gene) %>% 
+  rename(exp=tpm_exp)
 all_mut_exp %>%
   group_by(sample) %>%
   summarise(n_a=sum(neo=="not_neo"),n_c=sum(neo=="neo")) %>%
   filter(n_a>=1,n_c>=1) -> summ
+
+pancancer_mutation <- readRDS("../data/pancancer_mutation.rds") %>% 
+  mutate(index=paste(Sample_ID,chrom,start,sep = ":")) %>% 
+  select(index,Amino_Acid_Change)
+all_mut_exp <- left_join(
+  all_mut_exp %>% mutate(index=paste(sample,chr,position,sep = ":")),
+  pancancer_mutation
+)
+all_mut_exp <- all_mut_exp %>%
+  mutate(gene_protein_change=paste(gene,Amino_Acid_Change,sep = "-"))
+driver_mutations <- readRDS("../data/driver_mutations.rds")
+driver_mutations <- driver_mutations %>%
+  mutate(gene_protein_change=paste(gene,protein_change,sep = "-"))
+
+all_mut_exp <- all_mut_exp %>%
+  mutate(is_driver=ifelse(gene_protein_change %in% driver_mutations$gene_protein_change,"yes","no"))
+sum(all_mut_exp$is_driver=="yes" & all_mut_exp$neo=="neo") / sum(all_mut_exp$neo=="neo")##0.004702473
+all_mut_exp %>% group_by(sample) %>%
+  summarise(inter_gene=intersect(gene[neo=="neo"],
+                                 gene[is_driver=="yes"])) -> aaa##778 samples
+all_mut_exp <- all_mut_exp %>%
+  mutate(sample_neo_index=paste(sample,neo,gene,sep = ","))
+aaa <- aaa %>% mutate(sample_neo_index=paste(sample,"neo",inter_gene,sep = ","))
+
+all_mut_exp %>%
+  mutate(in_aaa = ifelse(sample_neo_index %in% aaa$sample_neo_index,"yes","no")) %>%
+  group_by(sample) %>%
+  summarise(need_sample=ifelse(any(in_aaa=="yes"),"no","yes")) %>%
+  filter(need_sample=="no") -> summ2
+
 neo_exp <- all_mut_exp %>% filter(sample %in% summ$sample) %>%
   filter(!(sample %in% summ2$sample))
+neo_exp <- neo_exp %>% 
+  select(sample,neo,exp)
 cal_nes_warp <- function(dt){
   results_ccf <- vector("list",length = length(unique(dt$sample)))
   names(results_ccf) <- unique(dt$sample)
-
-  cl <- makeCluster(getOption("cl.cores", 18),type="FORK")
+  
+  cl <- makeCluster(getOption("cl.cores", 20),type="FORK")
   results_ccf <- parSapply(cl=cl,names(results_ccf),
                            function(x){
                              a <- NeoEnrichment::cales_t(data = dt,barcode = x,type = "II",
@@ -385,13 +426,67 @@ cal_nes_warp <- function(dt){
   return(pancancer_nes_ccf)
 }
 nes_exp <- cal_nes_warp(neo_exp)
-saveRDS(nes_exp,file = "../data/nes_exp.rds")
+saveRDS(nes_exp,file = "../data/es_exp_filter_driver.rds")
+
+neo_exp <- all_mut_exp %>% filter(sample %in% summ$sample) %>% select(sample,neo,exp)
+nes_exp <- cal_nes_warp(neo_exp)
+saveRDS(nes_exp,file = "../data/es_exp_not_filter_driver.rds")
+
+##sim
+neo_nes <- readRDS("../data/es_exp_not_filter_driver.rds")
+all_mut_exp <- readRDS("../data/all_mut_tpm_not_filter.rds")
+all_mut_exp <- all_mut_exp %>% 
+  select(sample,tpm_exp,neo) %>% 
+  rename(exp=tpm_exp)
+neo_missense <- all_mut_exp %>% filter(sample %in% neo_nes$sample)
+neo_missense <- neo_missense %>% filter(!is.na(exp))
+
+cal_nes_warp <- function(dt){
+  results_ccf <- vector("list",length = length(unique(dt$sample)))
+  names(results_ccf) <- unique(dt$sample)
+  
+  cl <- makeCluster(getOption("cl.cores", 40),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             a <- NeoEnrichment::cales_t(data = dt,barcode = x,type = "II",
+                                                         calp = FALSE,sample_counts = 1000,
+                                                         cal_type = "exp")
+                             df <- data.frame(sample=x,es=a)
+                             return(df)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+  pancancer_nes_ccf <- bind_rows(results_ccf)
+  return(pancancer_nes_ccf)
+}
+res <- vector("list",2000)
+for (i in 1:2000){
+  neo_missense_sim <- neo_missense %>%
+    group_by(sample) %>%
+    mutate(neo_sim=sample(neo,length(neo))) %>% 
+    ungroup()
+  neo_missense_sim <- neo_missense_sim %>%
+    select(-neo) %>%
+    rename(neo=neo_sim)
+  neo_nes_sim <- cal_nes_warp(neo_missense_sim)
+  neo_nes_sim$sim_num <- i
+  res[[i]] <- neo_nes_sim
+  print(paste0("Complete ",i," sim. "))
+}
+saveRDS(res,file = "../data/sim_2000_not_filter_driver_exp.rds")
+sim_2000_not_filter <- readRDS("../data/sim_2000_not_filter_driver_exp.rds")
+sim_2000_not_filter <- bind_rows(sim_2000_not_filter)
+sim_2000_not_filter$cancer <- get_cancer_type(sim_2000_not_filter$sample,
+                                              parallel = T,cores = 20)
+saveRDS(sim_2000_not_filter,file = "../../tmp/sim_2000_not_filter_driver_exp_all.rds")
 ```
 
 ```{r}
-sim_all <- readRDS("../../tmp/sim_2000_all_exp.rds")##this file is too large to push to Github
-nes_exp <- readRDS("../data/nes_exp.rds")
-sim_all %>%
+sim_all <- readRDS("../../tmp/sim_2000_not_filter_driver_exp_all.rds")
+nes_exp <- readRDS("../data/es_exp_filter_driver.rds")
+sim_filter_driver <- sim_all %>% 
+  filter(sample %in% nes_exp$sample)
+sim_filter_driver %>%
   group_by(cancer,sim_num) %>%
   summarise(median_es=median(es)) -> summ2
 nes_exp$cancer <- get_cancer_type(nes_exp$sample)
@@ -438,13 +533,14 @@ p$layers[[3]]$aes_params$colour <- "black"
 p$layers[[3]]$aes_params$size <- 1
 #p$layers[[4]]$aes_params$label <- "Actual median ES" #geom_text
 p1 <- p + labs(x="Simulation median es")+
-  theme_prism()
+  theme_prism()+
+  scale_y_continuous(breaks=c(0,25,50,75,100))
 p1
 ##save
 # neo_nes_summ <- neo_nes_summ %>% 
 #   rowwise() %>% 
 #   mutate(p=mean(summ2$median_es[summ2$cancer==cancer] <= median_es))
-# saveRDS(neo_nes_summ,file = "neo_nes_summ_exp.rds")
+# saveRDS(neo_nes_summ,file = "../data/neo_nes_summ_exp.rds")
 
 neo_nes_summ <- readRDS("../data/neo_nes_summ_exp.rds")
 p3 <- get_f1(nes_exp,pancancer_p = "< 0.0005",dt2 = neo_nes_summ,median_es = median(nes_exp$es))
@@ -458,7 +554,7 @@ When we compared the median cancer type CCF-ES and EXP-ES, we found the signific
 ```{r}
 ##these add p data can be calculated by change the parameter of need_p to TRUE
 nes_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
-nes_exp <- readRDS("../data/nes_exp_addp.rds")
+nes_exp <- readRDS("../data/es_exp_filter_driver.rds")
 
 nes_ccf_exp <- inner_join(
   nes_ccf %>% rename(ccf_es=es),
@@ -546,7 +642,7 @@ ggplot(data=nes_sim_s,aes(x=paste0("-",selection),y=es,fill=selection))+
              color = "red", size=1,linetype = "dashed")+
   labs(x="Selection",y="ES")+
   guides(fill=F)+
-  stat_summary(fun="median", geom="point",color="yellow",size=1)
+  stat_summary(fun="median", geom="point",color="yellow",size=2)
 
 nes_sim_s %>%
   group_by(selection) %>%
@@ -787,7 +883,7 @@ Then we compared the immune cell infiltration level between tumors with detectab
 ```{r}
 pancancer_subtcells <- readRDS("../data/pancancer_subtcells.rds")
 nes_ccf <- readRDS("../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds")
-nes_exp <- readRDS("../data/nes_exp_addp.rds")
+nes_exp <- readRDS("../data/es_exp_filter_driver.rds")
 
 ccf_immune <- left_join(
   nes_ccf,
