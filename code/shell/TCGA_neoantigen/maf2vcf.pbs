@@ -1,0 +1,18 @@
+#PBS -N <sample>_mv
+#PBS -l nodes=2:ppn=10
+#PBS -l walltime=04:00:00
+#PBS -S /bin/bash
+#PBS -q normal_8
+#PBS -j oe
+
+source activate neo
+
+maf_dir=/public/home/wangshx/wx/neoantigens_delption/find_neoantigens_delotion_signal/maflike_file/pancancer_maf
+vcf_dir=/public/home/wangshx/wx/neoantigens_delption/find_neoantigens_delotion_signal/vcf_file
+
+
+perl /public/home/liuxs/anaconda3/envs/neo/bin/maf2vcf.pl \
+ --input-maf $maf_dir/<sample>.maf \
+ --output-dir $vcf_dir \
+ --output-vcf $vcf_dir/<sample>.vcf \
+ --ref-fasta /public/home/liuxs/biodata/reference/genome/hg38/hg38.fa

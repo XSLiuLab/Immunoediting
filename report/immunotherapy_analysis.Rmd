@@ -1,0 +1,175 @@
+---
+title: "immunotherapy_analysis"
+author: "Tao Wu"
+date: "`r Sys.Date()`"
+output:   
+  rmdformats::readthedown:
+    highlight: kate
+    lightbox: false
+    toc_depth: 3
+    mathjax: true
+---
+
+```{r immunotherapy_analysis, include=FALSE}
+options(max.print = "75")
+knitr::opts_chunk$set(echo = TRUE, comment = "#>", eval = TRUE, collapse = TRUE,cache = FALSE)
+knitr::opts_knit$set(width = 75)
+```
+
+```{r lib2,echo=TRUE,eval=TRUE,include=FALSE,message=FALSE}
+library(EasyBioinfo)
+library(dplyr)
+library(ezcox)
+library(ggplot2)
+library(ggprism)
+library(ggpubr)
+library(survminer)
+library(survival)
+library(patchwork)
+```
+
+## Quantified immunoediting-elimination signal predicts the clinical response of cancer immunotherapy
+
+To investigate the predictive performance of the quantified immunoediting-elimination signal (ESCCF) in ICI response prediction for individual patient, we searched for public ICI datasets with raw WES data and RNA-seq data available, and three melanoma ICI datasets have been identified. Then we calculated the immunoediting-elimination signal (ES-CCF) for each patient:
+
+```{r eval=FALSE}
+all_mut_ccf_ici <- readRDS("../data/Immunotherapy/all_mut_ccf_ici.rds")
+all_mut_ccf_ici <- all_mut_ccf_ici %>%
+  rename(ccf=cancer_cell_frac) %>%
+  mutate(neo=ifelse(neo=="neo","yes","no"))
+samples_has_subclonal <- all_mut_ccf_ici %>% filter(ccf<0.6) %>% select(sample) %>%
+  distinct(sample)
+all_mut_ccf_ici  %>% filter(sample %in% samples_has_subclonal$sample) %>%
+  group_by(sample) %>%
+  summarise(c_n=sum(neo=="yes"),c_m=sum(neo=="no")) %>% filter(c_n>=1 & c_m >=1) -> summ
+neo_missense <- all_mut_ccf_ici %>% filter(sample %in% summ$sample)
+cal_nes_warp <- function(dt){
+  results_ccf <- vector("list",length = length(unique(dt$sample)))
+  names(results_ccf) <- unique(dt$sample)
+
+  cl <- makeCluster(getOption("cl.cores", 18),type="FORK")
+  results_ccf <- parSapply(cl=cl,names(results_ccf),
+                           function(x){
+                             data <- dt %>% filter(sample == x)
+                             a <- NeoEnrichment::cal_nes_new_test(dt = data,
+                                                                  sample_counts = 1000,
+                                                                  need_p = FALSE)
+                             return(a)
+                           },simplify = FALSE)
+  stopCluster(cl)
+  results_ccf <- Filter(function(x){length(x)>1},results_ccf)
+  pancancer_nes_ccf <- bind_rows(results_ccf)
+  return(pancancer_nes_ccf)
+}
+neo_missense <- neo_missense %>% select(sample,neo,ccf) %>% filter(!is.na(ccf))
+neo_nes <- cal_nes_warp(neo_missense)
+neo_nes$es <- round(neo_nes$es,digits = 3)
+saveRDS(neo_nes,file = "../data/Immunotherapy/nes_immunetherapy.rds")
+```
+
+In univariate Cox proportional hazards regression analysis, quantified ESCCF value is significantly associated with cancer patients' survival (p=0.03), and low ESCCF value (suggest the presence of high immunoediting-elimination signal) is associated with improved ICI clinical response (Hazard ratio (HR)=3.74, 95%CI=1.11-12.6) :
+
+```{r}
+all_clinical <- readRDS("../data/Immunotherapy/all_clinical.rds")
+
+neo_nes <- readRDS("../data/Immunotherapy/nes_immunetherapy.rds")
+neo_nes <- left_join(neo_nes,all_clinical,by="sample")
+neo_nes <- neo_nes %>% filter(!is.na(response2))
+
+##cox analysis
+p1 <- show_forest(neo_nes,covariates = "es",time = "OS.time",status = "OS")
+p1
+```
+
+Patients are divided into three groups based on ES-CCF value cutoff determined by `surv_cutpoint` function, patients with lowest ES-CCF values (indicate the presence of immunoediting-elimination signal) show the best survival after ICI:
+
+```{r}
+all_mut_ccf_ici <- readRDS("../data/Immunotherapy/all_mut_ccf_ici.rds")
+all_mut_ccf_ici <- all_mut_ccf_ici %>%
+  rename(ccf=cancer_cell_frac) %>%
+  mutate(neo=ifelse(neo=="neo","yes","no"))
+surv_cutpoint(neo_nes,"OS.time","OS","es")
+neo_nes <- neo_nes %>%
+  mutate(es_type = case_when(
+    es <= (-0.222) ~ "low",
+    es > (-0.222) ~ "high"
+  ))
+
+low <- neo_nes %>% filter(es_type=="low")
+high <- neo_nes %>% filter(es_type=="high")
+all_clinical <- all_clinical %>%
+  filter(sample %in% all_mut_ccf_ici$sample) %>%
+  mutate(type=case_when(
+    sample %in% low$sample ~ "low",
+    sample %in% high$sample ~ "high",
+    TRUE ~ "others"
+  ))
+p3 <- show_km(all_clinical,"type")
+p3
+```
+
+we use logistic regression to compare the efficiency of ESCCF, TMB and neoantigenic mutation count in predicting immunotherapy clinical response. Relationship between prognosis (patients with clinical response or without clinical response) and ESCCF, TMB and neoantigenic mutation count was analyzed. The goodness of fit was performed by Hosmer–Lemeshow test (H-L test):
+
+```{r}
+neo_nes <- neo_nes %>%
+  mutate(obj=ifelse(response2=="response",1,0))
+model <- glm(obj ~ es, data = neo_nes, family = "binomial")
+summary(model)
+performance::performance_hosmer(model)
+
+all_mut_ccf_ici %>%
+  group_by(sample) %>%
+  summarise(tmb=n()/38,nb=sum(neo=="yes")/38) -> tmb_nb
+neo_nes <- left_join(neo_nes,tmb_nb)
+model2 <- glm(obj ~ tmb, data = neo_nes, family = "binomial")
+summary(model2)
+performance::performance_hosmer(model2)
+
+model3 <- glm(obj ~ nb, data = neo_nes, family = "binomial")
+summary(model3)
+performance::performance_hosmer(model3)
+
+p4 <- ggplot(neo_nes, aes(x=es, y=obj)) +
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, fullrange=TRUE,
+              method.args = list(family=binomial),color="red")+
+  theme_bw()+
+  theme(axis.title.y = element_blank())+
+  labs(x="ES",title = "H-L test P value = 0.771")
+p5 <- ggplot(neo_nes, aes(x=tmb, y=obj)) +
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, fullrange=TRUE,
+              method.args = list(family=binomial),color="red")+
+  theme_bw()+
+  theme(axis.title.y = element_blank())+
+  labs(x="TMB",title = "H-L test P value = 0.051")
+p6 <- ggplot(neo_nes, aes(x=nb, y=obj)) +
+  geom_point(alpha=.5) +
+  stat_smooth(method="glm", se=FALSE, fullrange=TRUE,
+              method.args = list(family=binomial),color="red")+
+  theme_bw()+
+  theme(axis.title.y = element_blank())+
+  labs(x="Neoantigen burden",title = "H-L test P value = 0.311")
+p7 <- p4 + p5 + p6
+p7
+```
+
+The H-L test P-value of TMB is 0.051, close to 0.05, implicate the difference between prediction and expectation is close to significant. The H-L test P-value of ESCCF is 0.771 , suggesting that the quantified immunoediting-elimination signal can be biomarker for ICI clinical response prediction.
+
+ICI clinical response are known to be influenced by variables like gender and drug type, so we performed multivariate Cox regression including treament (Nivolumab or Pembrolizumab) and gender as covariate:
+
+```{r}
+all_tre <- readRDS("../data/Immunotherapy/all_treatment.rds")
+neo_nes <- left_join(
+  neo_nes,all_tre
+)
+
+show_forest(neo_nes,covariates = c("es"),
+            time = "OS.time",status = "OS",
+            controls = "Treatment")
+show_forest(neo_nes,covariates = c("es"),
+            time = "OS.time",status = "OS",
+            controls = "Gender")
+```
+
+Based on this analysis, the effects of ESCCF is not influence by ICI type and gender, however more samples are needed to further validated the clinical effects of ESCCF in ICI clinical response prediction.

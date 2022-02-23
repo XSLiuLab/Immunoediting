@@ -1,0 +1,40 @@
+Patient ID,irRECIST,Study site,Gender,Age,Disease Status,Overall Survival,Vital Status,Previous MAPKi,Anatomical Location,BRAF,NRAS,NF1,Treatment,Biopsy Time,WES,RNAseq,"SRA Run ID, tumor WES","SRA Run ID, normal WES","AccessionID, WES","SRA Run ID, tumor RNA","Accession ID, RNAseq"
+Pt1,Progressive Disease,UCLA,F,66,M1b,607,Dead,N,"L post. Thigh, inf., SC",-,Q61L,,Pembrolizumab,pre-treatment,1,1,SRR3083866,SRR3083867,SRP067938+,SRR3184279,GSE78220
+Pt2,Partial Response,UCLA,M,55,M1c,927,Alive,N,Lung,-,-,"Frame_Shift_Ins H31fs, Splice_Site",Pembrolizumab,pre-treatment,1,1,SRR3083839,SRR3083840,SRP067938+,SRR3184280,GSE78220
+Pt3,Partial Response,UCLA,M,58,M1c,691,Dead,N,Bowel,V600K,-,E572K,Pembrolizumab,pre-treatment,1,0,SRR3083841,SRR3083842,SRP067938+,NA,NA
+Pt4,Partial Response,UCLA,M,62,M1c,948,Alive,Y,Adrenal,L331F,-,S2597*,Pembrolizumab,pre-treatment,1,1,SRR3083837,SRR3083838,SRP067938+,SRR3184281,GSE78220
+Pt5,Partial Response,UCLA,M,61,M1c,439,Alive,N,"L Chestwall, SC",V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083857,SRR3083858,SRP067938+,SRR3184282,GSE78220
+Pt6,Partial Response,UCLA,M,51,M1c,882,Alive,Y,"L forearm, SC",V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083863,SRR3083864,SRP067938+,SRR3184283,GSE78220
+Pt7,Progressive Disease,UCLA,F,55,M1c,662,Dead,N,"Crown/scalp, SC",,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083870,SRR3083871,SRP067938+,SRR3184284,GSE78220
+Pt8,Complete Response,UCLA,M,69,M1a,NA,Alive,N,"R leg, SC",V600R,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289715,SRR4289714,SRP090294,SRR3184285,GSE78220
+Pt9,Complete Response,UCLA,M,68,M0,1054,Alive,N,"L forearm, SC",V600K,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083849,SRR3083850,SRP067938+,SRR3184286,GSE78220
+Pt10,Progressive Disease,UCLA,M,60,M1a,387,Alive,Y,"Neck, SC",,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289717,SRR4289716,SRP090294,SRR3184287,GSE78220
+Pt11,Progressive Disease,UCLA,M,37,M1c,467,Dead,N,"L face, C",V600E,-,-,Pembrolizumab,on-treatment,1,0,SRR4289719,SRR4289718,SRP090294,NA,NA
+Pt12,Progressive Disease,UCLA,M,59,M1c,327,Dead,N,"L lower abdomen, SC",V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083882,SRR3083883,SRP067938+,SRR3184288,GSE78220
+Pt13,Complete Response,UCLA,F,53,M1c,917,Alive,N,"Lower back, SC",,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083855,SRR3083856,SRP067938+,SRR3184289,GSE78220
+Pt14,Progressive Disease,UCLA,F,27,M1c,54,Alive,N,"R neck, SC",V600E,-,R2349C,Pembrolizumab,pre-treatment,1,1,SRR3083868,SRR3083869,SRP067938+,SRR3184290,GSE78220
+Pt15,Partial Response,UCLA,M,70,M1b,980,Dead,Y,"R clavicle, LN",-,G13D,Q1255*,Pembrolizumab,pre-treatment,1,1,SRR3083845,SRR3083846,SRP067938+,SRR3184291,GSE78220
+Pt16,Progressive Disease,UCLA,M,19,M1b,186,Dead,Y,Lung,V600E,-,-,Pembrolizumab,on-treatment,1,1,SRR4289721,SRR4289720,SRP090294,SRR3184292,GSE78220
+Pt17,Progressive Disease,UCLA,M,67,M1a,953,Dead,N,"Scalp, SC",V600K,-,-,Pembrolizumab,on-treatment,1,0,SRR4289723,SRR4289722,SRP090294,NA,NA
+Pt18,Partial Response,UCLA,M,64,M1c,1081,Alive,N,"R Axilla, LN",V600E,-,-,Pembrolizumab,pre-treatment,1,0,SRR3083859,SRR3083860,SRP067938+,NA,NA
+Pt19,Partial Response,UCLA,M,45,M1c,1060,Alive,N,"Chest, SC",-,Q61K,-,Pembrolizumab,pre-treatment,1,1,SRR3083847,SRR3083848,SRP067938+,SRR3184293,GSE78220
+Pt20,Progressive Disease,UCLA,F,63,M1c,337,Dead,N,L clavicle,-,Q61R,K615K Splice Site,Pembrolizumab,pre-treatment,1,1,SRR3083872,SRR3083873,SRP067938+,SRR3184294,GSE78220
+Pt21,Partial Response,UCLA,M,60,M1b,945,Dead,N,Lung,L597P,-,-,Pembrolizumab,pre-treatment,1*,0,SRR3083861,SRR3083862,SRP067938+,NA,NA
+Pt22,Progressive Disease,UCLA,M,55,M1c,182,Dead,N,"Left Flank, SC",V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083878,SRR3083879,SRP067938+,SRR3184295,GSE78220
+Pt23,Progressive Disease,UCLA,M,63,M1c,103,Dead,Y,"Left Leg, SC",V600K,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083874,SRR3083875,SRP067938+,SRR3184296,GSE78220
+Pt24,Partial Response,UCLA,M,70,M1c,974,Dead,N,"L Inguinal, LN",-,Q61K,-,Pembrolizumab,pre-treatment,1*,0,SRR3083853,SRR3083854,SRP067938+,NA,NA
+Pt25,Progressive Disease,UCLA,M,74,M1c,262,Dead,Y,L Outer Inguinal,-,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083880,SRR3083881,SRP067938+,SRR3184297,GSE78220
+Pt26,Complete Response,UCLA,M,71,M1c,1336,Alive,Y,L Inguinal,-,-,R440*,Pembrolizumab,on-treatment,1,0,SRR3083843,SRR3083844,SRP067938+,NA,NA
+Pt27,Complete Response,UCLA,M,83,M1c,548,Alive,N,R upper arm,-,T50I,-,Pembrolizumab,pre-treatment,1,1,SRR4289725,SRR4289724,SRP090294,SRR3184298,GSE78220
+,,,,,,,,,R upper back,-,T50I,-,Pembrolizumab,pre-treatment,1^,1,SRR4289726,,SRP090294,SRR3184299,GSE78220
+Pt28,Partial Response,UCLA,M,82,M1c,439,Dead,N,"Scalp, SC",-,-,R1653C,Pembrolizumab,pre-treatment,1,1,SRR3083851,SRR3083852,SRP067938+,SRR3184300,GSE78220
+Pt29,Progressive Disease,UCLA,M,84,M1c,269,Dead,Y,Lung,-,-,-,Pembrolizumab,pre-treatment,1,1,SRR3083876,SRR3083877,SRP067938+,SRR3184301,GSE78220
+Pt30,Progressive Disease,VIC,F,80,M1c,100,Dead,N,Retrocecal mass,-,Q61L,-,Pembrolizumab,pre-treatment,1,0,SRR4289728,SRR4289727,SRP090294,NA,NA
+Pt31,Progressive Disease,VIC,M,47,M1c,704,Alive,N,Sigmoid colon,V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289730,SRR4289729,SRP090294,SRR3184302,GSE78220
+Pt32,Progressive Disease,VIC,M,47,M1c,171,Dead,Y,Abdominal wall,V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289732,SRR4289731,SRP090294,SRR3184303,GSE78220
+Pt33,Complete Response,VIC,F,80,M1a,2177,Alive,N,"Groin, SC",-,Q61R,-,Nivolumab,pre-treatment,1,0,SRR4289734,SRR4289733,SRP090294,NA,NA
+Pt34,Complete Response,VIC,M,42,M1c,418,Alive,Y,Abdominal wall,-,Q61K,-,Pembrolizumab,pre-treatment,1,0,SRR4289736,SRR4289735,SRP090294,NA,NA
+Pt35,Partial Response,VIC,F,65,M1c,427,Alive,Y,Flank,V600E,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289738,SRR4289737,SRP090294,SRR3184304,GSE78220
+Pt36,Progressive Disease,VIC,F,61,M1a,837,Dead,N,Axillary LN,-,-,-,Nivolumab,pre-treatment,1,0,SRR4289740,SRR4289739,SRP090294,NA,NA
+Pt37,Partial Response,VIC,F,70,M1c,364,Alive,Y,Small bowel,"K483T, D594N",-,-,Pembrolizumab,pre-treatment,1,1,SRR4289742,SRR4289741,SRP090294,SRR3184305,GSE78220
+Pt38,Partial Response,VIC,F,57,M1c,448,Alive,Y,"Cervical, LN",-,-,-,Pembrolizumab,pre-treatment,1,1,SRR4289744,SRR4289743,SRP090294,SRR3184306,GSE78220
