@@ -42,7 +42,8 @@ view this file:
 ```{r view_mut,eval=TRUE}
 pancancer_mutation <- readRDS("../data/pancancer_mutation.rds")
 DT::datatable(head(pancancer_mutation),
-  options = list(scrollX = TRUE, keys = TRUE), rownames = FALSE
+  options = list(scrollX = TRUE, keys = TRUE,
+                 columnDefs = list(list(className = 'dt-center', targets = 2))), rownames = FALSE
 )
 ```
 
