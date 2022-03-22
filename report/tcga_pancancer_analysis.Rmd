@@ -28,6 +28,7 @@ library(cowplot)
 library(ComplexHeatmap)
 library(tidyr)
 library(RColorBrewer)
+library(ggrepel)
 ```
 
 ## The existence of significant immunoediting signal
@@ -569,7 +570,8 @@ cor.test(summ_ccf_exp$median_ccf_es,summ_ccf_exp$median_exp_es)
 ggplot(data = summ_ccf_exp,aes(x=median_ccf_es,y=median_exp_es))+
   geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
   geom_point()+
-  stat_cor(label.y = 0.3,
+  geom_label_repel(aes(label = cancer), size = 3,max.overlaps=35)+
+  stat_cor(label.y = 0.2,label.x = 0,
            aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")),
            size=4)+
   theme_prism()+
@@ -584,7 +586,8 @@ cor.test(summ$per_escape,summ$median_es)
 ggplot(data = summ,aes(x=median_es,y=per_escape))+
   geom_smooth(method = "lm", se=FALSE, color="black", formula = y ~ x) +
   geom_point()+
-  stat_cor(label.y = 0.2,
+  geom_label_repel(aes(label = cancer), size = 3,max.overlaps=35)+
+  stat_cor(label.y = 0.12,label.x = 0.1,
            aes(label = paste(..r.label.., ..p.label.., sep = "~`,`~")),
            size=4)+
   theme_prism()+

@@ -8,7 +8,7 @@
         <meta name="author" content="Tao Wu" />
         <meta name="author" content="Xue-Song Liu (Corresponding author)" />
     
-        <meta name="date" content="2022-02-23" />
+        <meta name="date" content="2022-03-22" />
     
     <title>Pan-cancer quantification of neoantigen-mediated immunoediting in cancer evolution</title>
 
@@ -26,12 +26,12 @@
         <script src="report_main_files/readthedown-0.1/readthedown.js"></script>
         <script src="report_main_files/htmlwidgets-1.5.4/htmlwidgets.js"></script>
         <link href="report_main_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
-        <script src="report_main_files/datatables-binding-0.19/datatables.js"></script>
-        <link href="report_main_files/dt-core-1.10.20/css/jquery.dataTables.min.css" rel="stylesheet" />
-        <link href="report_main_files/dt-core-1.10.20/css/jquery.dataTables.extra.css" rel="stylesheet" />
-        <script src="report_main_files/dt-core-1.10.20/js/jquery.dataTables.min.js"></script>
-        <link href="report_main_files/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
-        <script src="report_main_files/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+        <script src="report_main_files/datatables-binding-0.20/datatables.js"></script>
+        <link href="report_main_files/dt-core-1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" />
+        <link href="report_main_files/dt-core-1.11.3/css/jquery.dataTables.extra.css" rel="stylesheet" />
+        <script src="report_main_files/dt-core-1.11.3/js/jquery.dataTables.min.js"></script>
+        <link href="report_main_files/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+        <script src="report_main_files/crosstalk-1.2.0/js/crosstalk.min.js"></script>
     
     
         <style type="text/css">code{white-space: pre;}</style>
@@ -248,7 +248,7 @@
     <div id="postamble" data-toggle="wy-nav-shift" class="status">
                   <p class="author"><span class="glyphicon glyphicon-user"></span> Tao Wu</p>
                         <p class="author"><span class="glyphicon glyphicon-user"></span> Xue-Song Liu (Corresponding author)</p>
-                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2022-02-23</p>
+                        <p class="date"><span class="glyphicon glyphicon-calendar"></span> 2022-03-22</p>
           </div>
    </div>
      
@@ -305,10 +305,11 @@
 <p>view this file:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pancancer_mutation <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/pancancer_mutation.rds&quot;</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="fu">head</span>(pancancer_mutation),</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">keys =</span> <span class="cn">TRUE</span>), <span class="at">rownames =</span> <span class="cn">FALSE</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div id="htmlwidget-21b8ae6bb6aa75d51bd4" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-21b8ae6bb6aa75d51bd4">{"x":{"filter":"none","vertical":false,"data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">keys =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">columnDefs =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="at">className =</span> <span class="st">&#39;dt-center&#39;</span>, <span class="at">targets =</span> <span class="dv">2</span>))), <span class="at">rownames =</span> <span class="cn">FALSE</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<div id="htmlwidget-5f55ce9ab6ef2f186387" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5f55ce9ab6ef2f186387">{"x":{"filter":"none","vertical":false,"data":[["TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A","TCGA-P6-A5OH-01A"],["WASF2","MACF1","NFIA","CADM3","DUSP27","RGSL1"],["chr1","chr1","chr1","chr1","chr1","chr1"],[27410171,39455094,61088434,159200836,167126702,182556049],[27410171,39455094,61088434,159200836,167126702,182556049],["G","T","C","G","G","G"],["A","A","T","A","C","C"],["p.A287V","p.H6923Q","p.L105F","p.D371N","p.G524A","p.E1075Q"],["missense_variant","missense_variant","missense_variant","missense_variant","missense_variant","missense_variant"],["PASS","PASS","PASS","PASS","PASS","PASS"],[0.25531914893617,0.0720720720720721,0.152671755725191,0.299479166666667,0.0555555555555556,0.2734375]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>Sample_ID<\/th>\n      <th>gene<\/th>\n      <th>chrom<\/th>\n      <th>start<\/th>\n      <th>end<\/th>\n      <th>ref<\/th>\n      <th>alt<\/th>\n      <th>Amino_Acid_Change<\/th>\n      <th>effect<\/th>\n      <th>filter<\/th>\n      <th>dna_vaf<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-center","targets":2},{"className":"dt-right","targets":[3,4,10]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>To predict neoantigen, mutation files were first transformed into single sample VCF format by maf2vcf tools (This Code can be found in <code>code/shell/TCGA_neoantigen</code> folder).</p>
 <p>ABSOLUTE-annotated MAF file which contains cancer cell fraction (CCF) information of mutations was downloaded from GDC PanCanAtlas publications (<a href="https://gdc.cancer.gov/node/905/">TCGA_consolidated.abs_mafs_truncated.fixed.txt.gz</a>), and then we used liftover function from R package “rtracklayer” to convert the this hg37 genome coordinates file to hg38 coordinates:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>absolute_maf <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">&quot;~/useful_data/TCGA_consolidated.abs_mafs_truncated.fixed.txt&quot;</span>)</span>
@@ -402,8 +403,8 @@
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>DT<span class="sc">::</span><span class="fu">datatable</span>(<span class="fu">head</span>(pancancer_immune),</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">options =</span> <span class="fu">list</span>(<span class="at">scrollX =</span> <span class="cn">TRUE</span>, <span class="at">keys =</span> <span class="cn">TRUE</span>), <span class="at">rownames =</span> <span class="cn">FALSE</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<div id="htmlwidget-3c951fcd25aba4d89430" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-3c951fcd25aba4d89430">{"x":{"filter":"none","vertical":false,"data":[["TCGA-OR-A5J1-01A","TCGA-OR-A5J2-01A","TCGA-OR-A5J3-01A","TCGA-OR-A5J5-01A","TCGA-OR-A5J6-01A","TCGA-OR-A5J7-01A"],[0,0,0.089,0.014,0,0.042],[0.115,0.114,0.087,0.218,0,0.069],[0.436,0.427,0.192,0.406,0.537,0.218],[0.035,0.08,0,0.003,0.105,0.02],[0.04,0.104,0.033,0.079,0.123,0.174],[0.048,0.025,0,0,0.11,0.013],[0.065,0.245,0,0,0.156,0.003],[0.158,0.152,0.069,0.004,0.148,0.025],[0.334,0.219,0,0.082,0.325,0],[0.057,0.044,0.253,0.114,0.203,0.112],[0.075,0.115,0,0.055,0.03,0.043],[0,0.087,0.061,0,0,0.041],[0.027,0.012,0,0,0.031,0],[0,0.143,0.07,0.105,0,0.043],[0.278,0.163,0.045,0.173,0.17,0.051],[0.15,0.207,0.149,0.088,0.224,0.13],[0.026,0.068,0.067,0.114,0.038,0.14],[0.104,0.095,0.076,0.148,0.172,0.086],[0.182,0.102,0.085,0.085,0.275,0.112],[0.162,0.003,0.146,0.254,0.377,0.179],[0.115,0.106,0.162,0.122,0.115,0.157],[0.089,0.07,0.13,0.151,0.09,0.06],[0.102,0.084,0.123,0.087,0.058,0.094],[0.201,0.211,0.046,0.156,0.206,0.048],[0.606,0.508,0.496,0.613,0.851,0.549]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>CD4_naive<\/th>\n      <th>CD8_naive<\/th>\n      <th>Tc<\/th>\n      <th>Tex<\/th>\n      <th>Tr1<\/th>\n      <th>nTreg<\/th>\n      <th>iTreg<\/th>\n      <th>Th1<\/th>\n      <th>Th2<\/th>\n      <th>Th17<\/th>\n      <th>Tfh<\/th>\n      <th>Tcm<\/th>\n      <th>Tem<\/th>\n      <th>NKT<\/th>\n      <th>MAIT<\/th>\n      <th>DC<\/th>\n      <th>B_cell<\/th>\n      <th>Monocyte<\/th>\n      <th>Macrophage<\/th>\n      <th>NK<\/th>\n      <th>Neutrophil<\/th>\n      <th>Tgd<\/th>\n      <th>CD4_T<\/th>\n      <th>CD8_T<\/th>\n      <th>InfiltrationScore<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-aefa079db6d324ac6645" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aefa079db6d324ac6645">{"x":{"filter":"none","vertical":false,"data":[["TCGA-OR-A5J1-01A","TCGA-OR-A5J2-01A","TCGA-OR-A5J3-01A","TCGA-OR-A5J5-01A","TCGA-OR-A5J6-01A","TCGA-OR-A5J7-01A"],[0,0,0.089,0.014,0,0.042],[0.115,0.114,0.087,0.218,0,0.069],[0.436,0.427,0.192,0.406,0.537,0.218],[0.035,0.08,0,0.003,0.105,0.02],[0.04,0.104,0.033,0.079,0.123,0.174],[0.048,0.025,0,0,0.11,0.013],[0.065,0.245,0,0,0.156,0.003],[0.158,0.152,0.069,0.004,0.148,0.025],[0.334,0.219,0,0.082,0.325,0],[0.057,0.044,0.253,0.114,0.203,0.112],[0.075,0.115,0,0.055,0.03,0.043],[0,0.087,0.061,0,0,0.041],[0.027,0.012,0,0,0.031,0],[0,0.143,0.07,0.105,0,0.043],[0.278,0.163,0.045,0.173,0.17,0.051],[0.15,0.207,0.149,0.088,0.224,0.13],[0.026,0.068,0.067,0.114,0.038,0.14],[0.104,0.095,0.076,0.148,0.172,0.086],[0.182,0.102,0.085,0.085,0.275,0.112],[0.162,0.003,0.146,0.254,0.377,0.179],[0.115,0.106,0.162,0.122,0.115,0.157],[0.089,0.07,0.13,0.151,0.09,0.06],[0.102,0.084,0.123,0.087,0.058,0.094],[0.201,0.211,0.046,0.156,0.206,0.048],[0.606,0.508,0.496,0.613,0.851,0.549]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>sample<\/th>\n      <th>CD4_naive<\/th>\n      <th>CD8_naive<\/th>\n      <th>Tc<\/th>\n      <th>Tex<\/th>\n      <th>Tr1<\/th>\n      <th>nTreg<\/th>\n      <th>iTreg<\/th>\n      <th>Th1<\/th>\n      <th>Th2<\/th>\n      <th>Th17<\/th>\n      <th>Tfh<\/th>\n      <th>Tcm<\/th>\n      <th>Tem<\/th>\n      <th>NKT<\/th>\n      <th>MAIT<\/th>\n      <th>DC<\/th>\n      <th>B_cell<\/th>\n      <th>Monocyte<\/th>\n      <th>Macrophage<\/th>\n      <th>NK<\/th>\n      <th>Neutrophil<\/th>\n      <th>Tgd<\/th>\n      <th>CD4_T<\/th>\n      <th>CD8_T<\/th>\n      <th>InfiltrationScore<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"scrollX":true,"keys":true,"columnDefs":[{"className":"dt-right","targets":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 <p>Other Immune cell infiltration data including CIBERSORT (abs mode), Quantiseq were downloaded from the <a href="http://timer.comp-genomics.org/">TIMER2.0</a> study.</p>
 </div>
 </div>
@@ -692,54 +693,55 @@
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS4</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_all %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
-<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
-<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
-<p><img src="report_main_files/figure-html/via1-1.png" width="2400" /></p>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS4</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_all %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
+<p><img src="report_main_files/figure-html/via1-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">##save</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># neo_nes_summ &lt;- neo_nes_summ %&gt;% </span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   rowwise() %&gt;% </span></span>
@@ -792,7 +794,7 @@
 <span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-6-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-6-1.svg" width="2400" /></p>
 <p>The observed ESCCF is -0.017 (p=0.051). In PAAD and LUAD, the observed ESCCF values are significant lower compared with the random simulations, suggesting the existence of immunoediting-elimination signal. Since some neoantigenic mutations can be cancer drivers, which are known to undergo positive selection during the evolution of cancer. Neoantigens that happens to be cancer drivers are not undergoing immune based negative selection, probably because the driving force could override the negative selection, so we compared ES between the samples which neoantigenic and driver lie in the same gene with other samples:</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>all_mut_ccf <span class="ot">&lt;-</span> all_mut_ccf <span class="sc">%&gt;%</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gene_protein_change=</span><span class="fu">paste</span>(Hugo_Symbol,Protein_Change,<span class="at">sep =</span> <span class="st">&quot;-&quot;</span>))</span>
@@ -837,7 +839,7 @@
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>()<span class="sc">+</span></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_blank</span>())</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-8-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-8-1.svg" width="2400" /></p>
 <p>We can see that samples which neoantigenic and driver mutation lie in the same gene have the higher ES than other samples. So we filtered these sample to remove the effect that driver mutation cound couse.</p>
 <p>When samples with neoantigenic and driver mutations lied on same genes are not included, the observed median ESCCF is -0.023 (n=5295, P=0.0055) (the simulation procedure is the same as above):</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_not_filter_all_ccf.rds&quot;</span>)<span class="do">##this file is too large to push to Github</span></span>
@@ -846,54 +848,55 @@
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>sim_filter_driver <span class="sc">%&gt;%</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>neo_nes_remove_drivers<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes_remove_drivers<span class="sc">$</span>sample)</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes_remove_drivers <span class="sc">%&gt;%</span> </span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS6</span></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_filter_driver %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>sim_filter_driver <span class="sc">%&gt;%</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes_remove_drivers<span class="sc">$</span>es),</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-9-1.png" width="2400" /></p>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>neo_nes_remove_drivers<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes_remove_drivers<span class="sc">$</span>sample)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes_remove_drivers <span class="sc">%&gt;%</span> </span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS6</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_filter_driver %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>sim_filter_driver <span class="sc">%&gt;%</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes_remove_drivers<span class="sc">$</span>es),</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-9-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">##save</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># neo_nes_summ &lt;- neo_nes_summ %&gt;% </span></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   rowwise() %&gt;% </span></span>
@@ -907,7 +910,7 @@
 <span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-9-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-9-2.svg" width="2400" /></p>
 <p>Several cancer types including ACC, PAAD, UCEC, LUAD show significant low ESCCF values. This data demonstrates the existence of immunoediting-elimination signal in TCGA dataset.</p>
 <p>We then calculated the EXP-ES and corresponding simulation median ES distribution:</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>all_mut_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/all_mut_tpm_not_filter.rds&quot;</span>)</span>
@@ -1031,55 +1034,56 @@
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>sim_filter_driver <span class="sc">%&gt;%</span></span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>nes_exp<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(nes_exp<span class="sc">$</span>sample)</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> nes_exp <span class="sc">%&gt;%</span> </span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS7 </span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_all %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(nes_exp<span class="sc">$</span>es),</span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
-<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">25</span>,<span class="dv">50</span>,<span class="dv">75</span>,<span class="dv">100</span>))</span>
-<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-11-1.png" width="2400" /></p>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>nes_exp<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(nes_exp<span class="sc">$</span>sample)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> nes_exp <span class="sc">%&gt;%</span> </span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">#The following code can be used to plot cancer type simulation which showd in FigS7 </span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">#res &lt;- vector(&quot;list&quot;,30)</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co"># for (i in 1:30){</span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt &lt;- sim_all %&gt;% filter(cancer==neo_nes_summ$cancer[i])</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">#   dt_summ &lt;- dt %&gt;% </span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co">#     group_by(sim_num) %&gt;%</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">#     summarise(median_es=median(es))</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="co">#   p &lt;- WVPlots::ShadedDensity(frame = dt_summ, </span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="co">#                               xvar = &quot;median_es&quot;,</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="co">#                               threshold = neo_nes_summ$median_es[i],</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                               title = neo_nes_summ$cancer[i],</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co">#                               tail = &quot;left&quot;)</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$colour &lt;- &quot;red&quot;</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[1]]$aes_params$size &lt;- 1</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[2]]$aes_params$fill &lt;- &quot;blue&quot;     #geom_ribbon</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$colour &lt;- &quot;black&quot; </span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="co">#   p$layers[[3]]$aes_params$size &lt;- 1</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="co">#   p1 &lt;- p + labs(x=&quot;Simulation median es&quot;)+</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="co">#     theme_prism()</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="co">#   res[[i]] &lt;- p1</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="co"># plot_grid(plotlist = res)</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(nes_exp<span class="sc">$</span>es),</span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="co">#p$layers[[4]]$aes_params$label &lt;- &quot;Actual median ES&quot; #geom_text</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">25</span>,<span class="dv">50</span>,<span class="dv">75</span>,<span class="dv">100</span>))</span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-11-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="do">##save</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># neo_nes_summ &lt;- neo_nes_summ %&gt;% </span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   rowwise() %&gt;% </span></span>
@@ -1091,7 +1095,7 @@
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-11-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-11-2.svg" width="2400" /></p>
 <p>In majority of cancer types (including KICH, DLBC, CHOL, SARC, LUAD, PAAD, UCS, STAD, LGG, LUSC, HNSC, OV, UCEC, BRCA, LIHC, COAD), a significant low ESRNA values are observed . This study demonstrates that the immunoediting escape through down-regulating the expression of neoantigenic alteration is prevalent in human cancer.</p>
 <p>When we compared the median cancer type CCF-ES and EXP-ES, we found the significant negative corrlation between this two type ES value:</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="do">##these add p data can be calculated by change the parameter of need_p to TRUE</span></span>
@@ -1123,12 +1127,13 @@
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> summ_ccf_exp,<span class="fu">aes</span>(<span class="at">x=</span>median_ccf_es,<span class="at">y=</span>median_exp_es))<span class="sc">+</span></span>
 <span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">formula =</span> y <span class="sc">~</span> x) <span class="sc">+</span></span>
 <span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">label.y =</span> <span class="fl">0.3</span>,</span>
-<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(..r.label.., ..p.label.., <span class="at">sep =</span> <span class="st">&quot;~`,`~&quot;</span>)),</span>
-<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>           <span class="at">size=</span><span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Median CCF ES&quot;</span>,<span class="at">y=</span><span class="st">&quot;Median EXP ES&quot;</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-12-1.png" width="2400" /></p>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> cancer), <span class="at">size =</span> <span class="dv">3</span>,<span class="at">max.overlaps=</span><span class="dv">35</span>)<span class="sc">+</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">label.y =</span> <span class="fl">0.2</span>,<span class="at">label.x =</span> <span class="dv">0</span>,</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(..r.label.., ..p.label.., <span class="at">sep =</span> <span class="st">&quot;~`,`~&quot;</span>)),</span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">size=</span><span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Median CCF ES&quot;</span>,<span class="at">y=</span><span class="st">&quot;Median EXP ES&quot;</span>)</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-12-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>nes_ccf_exp <span class="sc">%&gt;%</span></span>
@@ -1150,12 +1155,13 @@
 <span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> summ,<span class="fu">aes</span>(<span class="at">x=</span>median_es,<span class="at">y=</span>per_escape))<span class="sc">+</span></span>
 <span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se=</span><span class="cn">FALSE</span>, <span class="at">color=</span><span class="st">&quot;black&quot;</span>, <span class="at">formula =</span> y <span class="sc">~</span> x) <span class="sc">+</span></span>
 <span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">label.y =</span> <span class="fl">0.2</span>,</span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(..r.label.., ..p.label.., <span class="at">sep =</span> <span class="st">&quot;~`,`~&quot;</span>)),</span>
-<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>           <span class="at">size=</span><span class="dv">4</span>)<span class="sc">+</span></span>
-<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Median CCF ES&quot;</span>,<span class="at">y=</span><span class="st">&quot;Escape sample percent&quot;</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-12-2.png" width="2400" /></p>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_label_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> cancer), <span class="at">size =</span> <span class="dv">3</span>,<span class="at">max.overlaps=</span><span class="dv">35</span>)<span class="sc">+</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">label.y =</span> <span class="fl">0.12</span>,<span class="at">label.x =</span> <span class="fl">0.1</span>,</span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>           <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(..r.label.., ..p.label.., <span class="at">sep =</span> <span class="st">&quot;~`,`~&quot;</span>)),</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>           <span class="at">size=</span><span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Median CCF ES&quot;</span>,<span class="at">y=</span><span class="st">&quot;Escape sample percent&quot;</span>)</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-12-2.svg" width="2400" /></p>
 </div>
 <div id="neoantigen-enrichment-score-and-immune-negative-selection-strength-quantification" class="section level2">
 <h2>Neoantigen enrichment score and immune negative selection strength quantification</h2>
@@ -1203,20 +1209,21 @@
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun=</span><span class="st">&quot;median&quot;</span>, <span class="at">geom=</span><span class="st">&quot;point&quot;</span>,<span class="at">color=</span><span class="st">&quot;yellow&quot;</span>,<span class="at">size=</span><span class="dv">2</span>)</span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; =</span></span>
 <span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &quot;none&quot;)` instead.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-14-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-14-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>nes_sim_s <span class="sc">%&gt;%</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(selection) <span class="sc">%&gt;%</span></span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">adj_p=</span><span class="fu">p.adjust</span>(p,<span class="at">method =</span> <span class="st">&quot;fdr&quot;</span>),<span class="at">sig_per=</span><span class="fu">mean</span>(adj_p<span class="sc">&lt;</span><span class="fl">0.1</span>)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;selection&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(selection) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">per=</span><span class="fu">unique</span>(sig_per))</span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>summ,<span class="fu">aes</span>(<span class="at">x=</span>selection,<span class="at">y=</span>per<span class="sc">*</span><span class="dv">100</span>))<span class="sc">+</span></span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="sc">+</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>,<span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Selection&quot;</span>,<span class="at">y=</span><span class="st">&quot;Percent of significant samples (%)&quot;</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-14-2.png" width="2400" /></p>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;selection&#39;. You can override using the</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>summ <span class="ot">&lt;-</span> summ <span class="sc">%&gt;%</span> <span class="fu">group_by</span>(selection) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">per=</span><span class="fu">unique</span>(sig_per))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>summ,<span class="fu">aes</span>(<span class="at">x=</span>selection,<span class="at">y=</span>per<span class="sc">*</span><span class="dv">100</span>))<span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="sc">+</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>,<span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Selection&quot;</span>,<span class="at">y=</span><span class="st">&quot;Percent of significant samples (%)&quot;</span>)</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-14-2.svg" width="2400" /></p>
 <p>ES-CCF show near linear correlation with s values. This analysis suggests that the quantified ES-CCF can be used to infer the immune selection strength in patient. The median ES-CCF in TCGA datasets is -0.023, suggesting a median immune negative selection strength s=-0.08.</p>
 <p>Using this simulated data, we can also compare our method with other method. To compare the power of our method with method used in this study (Lakatos et al., 2020), we used two side K-S test to detect the difference between the VAF distribution of all mutations and neoantigen-associated mutations and reported K-S D statistic and corresponding p value:</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data/merge/&quot;</span>)</span>
@@ -1266,18 +1273,19 @@
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun=</span><span class="st">&quot;median&quot;</span>, <span class="at">geom=</span><span class="st">&quot;point&quot;</span>,<span class="at">color=</span><span class="st">&quot;yellow&quot;</span>,<span class="at">size=</span><span class="dv">1</span>)</span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; =</span></span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; &quot;none&quot;)` instead.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-16-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-16-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>res_ks_s <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(selection) <span class="sc">%&gt;%</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">adj_p=</span><span class="fu">p.adjust</span>(p,<span class="at">method =</span> <span class="st">&quot;fdr&quot;</span>),<span class="at">sig_per=</span><span class="fu">mean</span>(adj_p<span class="sc">&lt;</span><span class="fl">0.1</span>)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;selection&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>summ,<span class="fu">aes</span>(<span class="at">x=</span>selection,<span class="at">y=</span>sig_per))<span class="sc">+</span></span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="sc">+</span></span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>,<span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
-<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Selection&quot;</span>,<span class="at">y=</span><span class="st">&quot;Percent of significant samples&quot;</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-16-2.png" width="2400" /> Of note, no tumors show significant signal under the same simulated conditions.</p>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;selection&#39;. You can override using the</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span>summ,<span class="fu">aes</span>(<span class="at">x=</span>selection,<span class="at">y=</span>sig_per))<span class="sc">+</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">&quot;identity&quot;</span>)<span class="sc">+</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>,<span class="at">vjust =</span> <span class="dv">1</span>, <span class="at">hjust =</span> <span class="dv">1</span>))<span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Selection&quot;</span>,<span class="at">y=</span><span class="st">&quot;Percent of significant samples&quot;</span>)</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-16-2.svg" width="2400" /> Of note, no tumors show significant signal under the same simulated conditions.</p>
 <p>To futher compare the power of methods, in addition to sequencing limitations, we also added different proportions of false positive neoantigen: we randomly sampled nonantigenic mutations of simulated tumors (varied between 5 and 500% of the number of true neoantigen) that were falsely labeled as neoantigen. Then we calculated the number of significant samples in each read depth and proportions of false positive neoantigen combination as the power of method to detect selection strength:</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="do">###power analysis</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="do">##es</span></span>
@@ -1460,7 +1468,7 @@
 <span id="cb33-86"><a href="#cb33-86" aria-hidden="true" tabindex="-1"></a>        <span class="at">row_title =</span> <span class="st">&quot;Ratio of false positive </span><span class="sc">\n</span><span class="st"> neoantigens added (%)&quot;</span>,</span>
 <span id="cb33-87"><a href="#cb33-87" aria-hidden="true" tabindex="-1"></a>        <span class="at">column_title =</span> <span class="st">&quot;Read depth&quot;</span>,<span class="at">column_names_rot =</span> <span class="dv">0</span>,<span class="at">column_title_side =</span> <span class="st">&quot;bottom&quot;</span>)</span>
 <span id="cb33-88"><a href="#cb33-88" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: The input is a data frame, convert it to a matrix.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-18-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-18-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="do">##ks</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>re <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/sim_growth_power_alt_ks.rds&quot;</span>)</span>
@@ -1550,7 +1558,7 @@
 <span id="cb34-87"><a href="#cb34-87" aria-hidden="true" tabindex="-1"></a>        <span class="at">row_title =</span> <span class="st">&quot;Ratio of false positive </span><span class="sc">\n</span><span class="st"> neoantigens added (%)&quot;</span>,</span>
 <span id="cb34-88"><a href="#cb34-88" aria-hidden="true" tabindex="-1"></a>        <span class="at">column_title =</span> <span class="st">&quot;Read depth&quot;</span>,<span class="at">column_names_rot =</span> <span class="dv">0</span>,<span class="at">column_title_side =</span> <span class="st">&quot;bottom&quot;</span>)</span>
 <span id="cb34-89"><a href="#cb34-89" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: The input is a data frame, convert it to a matrix.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-18-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-18-2.svg" width="2400" /></p>
 </div>
 <div id="pan-cancer-features-and-correlations-of-immunoediting-signal" class="section level2">
 <h2>Pan-cancer features and correlations of immunoediting signal</h2>
@@ -1588,7 +1596,7 @@
 <span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 70 rows containing non-finite values (stat_compare_means).</span></span>
 <span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 70 rows containing non-finite values (stat_boxplot).</span></span>
 <span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 70 rows containing non-finite values (stat_compare_means).</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-19-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-19-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>exp_immune,<span class="fu">aes</span>(<span class="at">x=</span>es_type,<span class="at">y=</span>CD8_T<span class="sc">+</span>NK))<span class="sc">+</span></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
@@ -1605,7 +1613,7 @@
 <span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 92 rows containing non-finite values (stat_compare_means).</span></span>
 <span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 92 rows containing non-finite values (stat_boxplot).</span></span>
 <span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 92 rows containing non-finite values (stat_compare_means).</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-19-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-19-2.svg" width="2400" /></p>
 <p>In tumors with detectable immunoediting-elimination signal, a slightly increased CD8+ T cell infiltration status compared with the remaining samples were observed, but the difference does not reach statistical significance (P=0.2). This data suggests that historically happened immunoediting-elimination process may not be reflected in the current immune cell infiltration status.</p>
 <p>The immunoediting-escape signal quantified as ES-RNA also do not show statistically significant difference between samples with detectable immunoediting-escape signal and the remaining samples in CD8+ T cell infiltration. However we observe a significant up-regulated regulatory T cell (Treg) percentage in samples with detectable immunoediting-escape signal, and up-regulated Treg has been reported to stimulate tumor immune escape.</p>
 </div>
@@ -1662,7 +1670,7 @@
 <span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
 <span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Resized limits to included dashed line in forest panel</span></span>
 <span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-21-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-21-1.svg" width="2400" /></p>
 <p>Patients are divided into three groups based on ES-CCF value cutoff determined by <code>surv_cutpoint</code> function, patients with lowest ES-CCF values (indicate the presence of immunoediting-elimination signal) show the best survival after ICI:</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>all_mut_ccf_ici <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/Immunotherapy/all_mut_ccf_ici.rds&quot;</span>)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>all_mut_ccf_ici <span class="ot">&lt;-</span> all_mut_ccf_ici <span class="sc">%&gt;%</span></span>
@@ -1688,7 +1696,7 @@
 <span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">show_km</span>(all_clinical,<span class="st">&quot;type&quot;</span>)</span>
 <span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-22-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-22-1.svg" width="2400" /></p>
 <p>we use logistic regression to compare the efficiency of ESCCF, TMB and neoantigenic mutation count in predicting immunotherapy clinical response. Relationship between prognosis (patients with clinical response or without clinical response) and ESCCF, TMB and neoantigenic mutation count was analyzed. The goodness of fit was performed by Hosmer–Lemeshow test (H-L test):</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">obj=</span><span class="fu">ifelse</span>(response2<span class="sc">==</span><span class="st">&quot;response&quot;</span>,<span class="dv">1</span>,<span class="dv">0</span>))</span>
@@ -1819,7 +1827,7 @@
 <span id="cb40-127"><a href="#cb40-127" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `geom_smooth()` using formula &#39;y ~ x&#39;</span></span>
 <span id="cb40-128"><a href="#cb40-128" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `geom_smooth()` using formula &#39;y ~ x&#39;</span></span>
 <span id="cb40-129"><a href="#cb40-129" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `geom_smooth()` using formula &#39;y ~ x&#39;</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-23-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-23-1.svg" width="2400" /></p>
 <p>The H-L test P-value of TMB is 0.051, close to 0.05, implicate the difference between prediction and expectation is close to significant. The H-L test P-value of ESCCF is 0.771 , suggesting that the quantified immunoediting-elimination signal can be biomarker for ICI clinical response prediction.</p>
 <p>ICI clinical response are known to be influenced by variables like gender and drug type, so we performed multivariate Cox regression including treament (Nivolumab or Pembrolizumab) and gender as covariate:</p>
 <div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>all_tre <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/Immunotherapy/all_treatment.rds&quot;</span>)</span>
@@ -1834,8 +1842,11 @@
 <span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable es</span></span>
 <span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-24-1.png" width="2400" /></p>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in recalculate_width_panels(panel_positions, mapped_text =</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mapped_text, : Unable to resize forest panel to be smaller than its heading;</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; consider a smaller text size</span></span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-24-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">show_forest</span>(neo_nes,<span class="at">covariates =</span> <span class="fu">c</span>(<span class="st">&quot;es&quot;</span>),</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">time =</span> <span class="st">&quot;OS.time&quot;</span>,<span class="at">status =</span> <span class="st">&quot;OS&quot;</span>,</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">controls =</span> <span class="st">&quot;Gender&quot;</span>)</span>
@@ -1843,7 +1854,7 @@
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-24-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-24-2.svg" width="2400" /></p>
 <p>Based on this analysis, the effects of ESCCF is not influence by ICI type and gender, however more samples are needed to further validated the clinical effects of ESCCF in ICI clinical response prediction.</p>
 </div>
 </div>
@@ -1919,9 +1930,9 @@
 <span id="cb43-65"><a href="#cb43-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: `expand_scale()` is deprecated; use `expansion()` instead.</span></span>
 <span id="cb43-66"><a href="#cb43-66" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb43-67"><a href="#cb43-67" aria-hidden="true" tabindex="-1"></a>p1 </span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-25-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-25-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>p2</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-25-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-25-2.svg" width="2400" /></p>
 <p>We also calculated the significant sample in each cancer type:</p>
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>pancancer_ccf <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/neo_nes_ccf06_1_remove_driver_samples_addp.rds&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">es_type=</span><span class="fu">ifelse</span>(es<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> p <span class="sc">&lt;</span><span class="fl">0.05</span>,<span class="st">&quot;sig_neg&quot;</span>,<span class="st">&quot;others&quot;</span>))</span>
@@ -1952,9 +1963,9 @@
 <span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a><span class="fu">get_plot</span>(pancancer_ccf,<span class="fu">sum</span>(pancancer_ccf<span class="sc">$</span>es_type<span class="sc">==</span><span class="st">&quot;sig_neg&quot;</span>))</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-26-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-26-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_plot</span>(pancancer_exp,<span class="fu">sum</span>(pancancer_exp<span class="sc">$</span>es_type<span class="sc">==</span><span class="st">&quot;sig_neg&quot;</span>))</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-26-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-26-2.svg" width="2400" /></p>
 <p>Pan-cancer sample distribution in pie plot:</p>
 <div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>pancancer_ccf <span class="ot">&lt;-</span> pancancer_ccf <span class="sc">%&gt;%</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">es_type2=</span><span class="fu">ifelse</span>(es<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> p<span class="sc">&lt;</span><span class="fl">0.05</span>,<span class="st">&quot;ES &lt; 0 &amp; P &lt; 0.05&quot;</span>,<span class="st">&quot;Others&quot;</span>))</span>
@@ -1975,7 +1986,7 @@
 <span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pie</span>(exp_es,<span class="at">expression =</span> <span class="st">&quot;exp_es&lt;0&quot;</span>,<span class="fu">c</span>(<span class="st">&quot;ES (EXP) &lt; 0&quot;</span>,<span class="st">&quot;ES (EXP) &gt;= 0&quot;</span>))</span>
 <span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; NULL</span></span>
 <span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_pie</span>(exp_es1,<span class="at">expression =</span> <span class="st">&quot;exp_es1==&#39;ES &lt; 0 &amp; P &lt; 0.05&#39;&quot;</span>,<span class="fu">c</span>(<span class="st">&quot;ES (EXP) &lt; 0 &amp; P &lt; 0.05&quot;</span>,<span class="st">&quot;Others&quot;</span>))</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-27-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-27-1.svg" width="2400" /></p>
 <pre><code>#&gt; NULL</code></pre>
 <p>The immune-thearpy dataset sample distribution and clinical parameters:</p>
 <div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>all_sample_exp_ccf <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/Immunotherapy/all_mut_ccf_ici.rds&quot;</span>)</span>
@@ -2098,7 +2109,7 @@
 <span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a><span class="fu">oncoplot</span>(<span class="at">maf =</span> liu,<span class="at">top=</span><span class="dv">10</span>,<span class="at">draw_titv =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in titv(maf = maf, useSyn = TRUE, plot = FALSE): Non standard Ti/Tv</span></span>
 <span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; class: 1540TRUE</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-32-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-32-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="do">##willy</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;../data/Immunotherapy/willy/&quot;</span>,<span class="at">full.names =</span> T)</span>
@@ -2113,9 +2124,9 @@
 <span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   FLG</span></span>
 <span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Processing clinical data</span></span>
 <span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; --Missing clinical data</span></span>
-<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 3.840s elapsed (3.640s cpu)</span></span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 7.426s elapsed (10.4s cpu)</span></span>
 <span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a><span class="fu">oncoplot</span>(<span class="at">maf =</span> willy_maf,<span class="at">top=</span><span class="dv">10</span>,<span class="at">draw_titv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-32-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-32-2.svg" width="2400" /></p>
 <div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="do">###nadeem</span></span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;../data/Immunotherapy/nadeem/&quot;</span>,<span class="at">full.names =</span> T)</span>
@@ -2130,9 +2141,9 @@
 <span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   OBSCN</span></span>
 <span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Processing clinical data</span></span>
 <span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; --Missing clinical data</span></span>
-<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 1.560s elapsed (1.520s cpu)</span></span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; -Finished in 2.972s elapsed (5.603s cpu)</span></span>
 <span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a><span class="fu">oncoplot</span>(<span class="at">maf =</span> nadeem_maf,<span class="at">top=</span><span class="dv">10</span>,<span class="at">draw_titv =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-32-3.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-32-3.svg" width="2400" /></p>
 </div>
 <div id="robust-of-method" class="section level2">
 <h2>Robust of method</h2>
@@ -2218,7 +2229,7 @@
 <span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;neoantigen counts&quot;</span>,<span class="at">y=</span><span class="st">&quot;all mutation counts&quot;</span>)<span class="sc">+</span></span>
 <span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span>neo_mut_sig<span class="sc">$</span>neo_c, <span class="at">labels =</span> neo_mut_sig<span class="sc">$</span>neo_c)</span>
 <span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-34-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-34-1.svg" width="2400" /></p>
 <p>For example, if a patient sample only have one neoantigenic mutations, then at least 20 total mutations are required for reliable quantification of the immunoediting signal. This is a bottom line requirement, and indicates that any samples with 1 neoantigenic mutation and less than 20 total mutations will not have the chance to have significant (P&lt;0.05) immunoediting signal.</p>
 </div>
 <div id="threshold-for-neoantigen-prediction" class="section level3">
@@ -2537,7 +2548,7 @@
 <span id="cb60-43"><a href="#cb60-43" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
 <span id="cb60-44"><a href="#cb60-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
 <span id="cb60-45"><a href="#cb60-45" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-37-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-37-1.svg" width="2400" /></p>
 <p>Under this new cutoff, a trend in ESCCF signal (ES=-0.013, P=0.054) can still be observed. The pan-cancer ESRNA signal (ES=-0.056, P&lt;0.005) is still significant.</p>
 </div>
 <div id="another-method-for-neoantigen-prediction" class="section level3">
@@ -2698,7 +2709,7 @@
 <span id="cb61-153"><a href="#cb61-153" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(sim_2000,<span class="at">file =</span> <span class="st">&quot;../../tmp/sim_2000_filter_all_ccf_mhcfurry.rds&quot;</span>)</span>
 <span id="cb61-154"><a href="#cb61-154" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb61-155"><a href="#cb61-155" aria-hidden="true" tabindex="-1"></a><span class="do">##exp</span></span>
-<span id="cb61-156"><a href="#cb61-156" aria-hidden="true" tabindex="-1"></a>all_mut_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_method/all_mut_neo_exp.rds&quot;</span>)</span>
+<span id="cb61-156"><a href="#cb61-156" aria-hidden="true" tabindex="-1"></a>all_mut_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_methods/all_mut_neo_exp.rds&quot;</span>)</span>
 <span id="cb61-157"><a href="#cb61-157" aria-hidden="true" tabindex="-1"></a>all_mut_exp <span class="ot">&lt;-</span> all_mut_exp <span class="sc">%&gt;%</span> </span>
 <span id="cb61-158"><a href="#cb61-158" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">neo=</span>neo_MHCfurry) <span class="sc">%&gt;%</span> </span>
 <span id="cb61-159"><a href="#cb61-159" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">exp=</span>tpm_exp)</span>
@@ -2759,11 +2770,11 @@
 <span id="cb61-214"><a href="#cb61-214" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(pancancer_nes_ccf)</span>
 <span id="cb61-215"><a href="#cb61-215" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb61-216"><a href="#cb61-216" aria-hidden="true" tabindex="-1"></a>nes_exp <span class="ot">&lt;-</span> <span class="fu">cal_nes_warp</span>(neo_exp)</span>
-<span id="cb61-217"><a href="#cb61-217" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(nes_exp,<span class="at">file =</span> <span class="st">&quot;../data/another_method/es_exp_filter_driver_mhcfurry.rds&quot;</span>)</span>
+<span id="cb61-217"><a href="#cb61-217" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(nes_exp,<span class="at">file =</span> <span class="st">&quot;../data/another_methods/es_exp_filter_driver_mhcfurry.rds&quot;</span>)</span>
 <span id="cb61-218"><a href="#cb61-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb61-219"><a href="#cb61-219" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_exp,<span class="at">file =</span> <span class="st">&quot;../data/another_method/mut_call_exp_mhcfurry.rds&quot;</span>)</span>
+<span id="cb61-219"><a href="#cb61-219" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_exp,<span class="at">file =</span> <span class="st">&quot;../data/another_methods/mut_call_exp_mhcfurry.rds&quot;</span>)</span>
 <span id="cb61-220"><a href="#cb61-220" aria-hidden="true" tabindex="-1"></a><span class="do">##sim</span></span>
-<span id="cb61-221"><a href="#cb61-221" aria-hidden="true" tabindex="-1"></a>neo_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_method/mut_call_exp_mhcfurry.rds&quot;</span>)</span>
+<span id="cb61-221"><a href="#cb61-221" aria-hidden="true" tabindex="-1"></a>neo_exp <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_methods/mut_call_exp_mhcfurry.rds&quot;</span>)</span>
 <span id="cb61-222"><a href="#cb61-222" aria-hidden="true" tabindex="-1"></a>cal_nes_warp <span class="ot">&lt;-</span> <span class="cf">function</span>(dt){</span>
 <span id="cb61-223"><a href="#cb61-223" aria-hidden="true" tabindex="-1"></a>  results_ccf <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">&quot;list&quot;</span>,<span class="at">length =</span> <span class="fu">length</span>(<span class="fu">unique</span>(dt<span class="sc">$</span>sample)))</span>
 <span id="cb61-224"><a href="#cb61-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(results_ccf) <span class="ot">&lt;-</span> <span class="fu">unique</span>(dt<span class="sc">$</span>sample)</span>
@@ -2803,61 +2814,63 @@
 <span id="cb61-258"><a href="#cb61-258" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(sim2000,<span class="at">file =</span> <span class="st">&quot;../../tmp/sim_2000_filter_all_exp_mhcfurry.rds&quot;</span>)</span></code></pre></div>
 <p>Then we can get the simulation p values for MHCfurry dataset:</p>
 <div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="do">##ccf mhcfurry</span></span>
-<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_method/es_ccf_mhcfurry_filter_driver.rds&quot;</span>)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_methods/es_ccf_mhcfurry_filter_driver.rds&quot;</span>)</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_filter_all_ccf_mhcfurry.rds&quot;</span>)</span>
 <span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
 <span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
-<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
-<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
-<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
-<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
-<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
-<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a><span class="do">###exp mhcfurry</span></span>
-<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_method/es_exp_filter_driver_mhcfurry.rds&quot;</span>)</span>
-<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_filter_all_exp_mhcfurry.rds&quot;</span>)</span>
-<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
-<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
-<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
-<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
-<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
-<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
-<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
-<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb62-51"><a href="#cb62-51" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb62-52"><a href="#cb62-52" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb62-53"><a href="#cb62-53" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb62-54"><a href="#cb62-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
-<span id="cb62-55"><a href="#cb62-55" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-39-1.png" width="2400" /></p>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
+<span id="cb62-11"><a href="#cb62-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb62-12"><a href="#cb62-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-13"><a href="#cb62-13" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
+<span id="cb62-14"><a href="#cb62-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb62-15"><a href="#cb62-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
+<span id="cb62-16"><a href="#cb62-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
+<span id="cb62-17"><a href="#cb62-17" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb62-18"><a href="#cb62-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
+<span id="cb62-19"><a href="#cb62-19" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb62-20"><a href="#cb62-20" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb62-21"><a href="#cb62-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-22"><a href="#cb62-22" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb62-23"><a href="#cb62-23" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb62-24"><a href="#cb62-24" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb62-25"><a href="#cb62-25" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb62-26"><a href="#cb62-26" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb62-27"><a href="#cb62-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
+<span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a><span class="do">###exp mhcfurry</span></span>
+<span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/another_methods/es_exp_filter_driver_mhcfurry.rds&quot;</span>)</span>
+<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_filter_all_exp_mhcfurry.rds&quot;</span>)</span>
+<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
+<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
+<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a>neo_nes<span class="sc">$</span>cancer <span class="ot">&lt;-</span> <span class="fu">get_cancer_type</span>(neo_nes<span class="sc">$</span>sample)</span>
+<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a>neo_nes_summ <span class="ot">&lt;-</span> neo_nes <span class="sc">%&gt;%</span> </span>
+<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a>sim_all <span class="sc">%&gt;%</span></span>
+<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ</span>
+<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ, </span>
+<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(neo_nes<span class="sc">$</span>es),</span>
+<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb62-51"><a href="#cb62-51" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb62-52"><a href="#cb62-52" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb62-53"><a href="#cb62-53" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb62-54"><a href="#cb62-54" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb62-55"><a href="#cb62-55" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb62-56"><a href="#cb62-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span>
+<span id="cb62-57"><a href="#cb62-57" aria-hidden="true" tabindex="-1"></a>p1<span class="sc">/</span>p2</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-39-1.svg" width="2400" /></p>
 <p>With this new neoantigen prediction tool, we still see a trends of immunoediting signal (ESCCF=-0.017, P=0.015). Similarly a significant ESRNA signal can also been detected (ES=-0.029, P&lt;0.005). This data further demonstrate the original conclusion of this study.</p>
 </div>
 </div>
@@ -2964,7 +2977,7 @@
 <span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ComplexHeatmap)</span>
 <span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(circlize)</span>
 <span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ========================================</span></span>
-<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; circlize version 0.4.13</span></span>
+<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; circlize version 0.4.14</span></span>
 <span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; CRAN page: https://cran.r-project.org/package=circlize</span></span>
 <span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Github page: https://github.com/jokergoo/circlize</span></span>
 <span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Documentation: https://jokergoo.github.io/circlize_book/book/</span></span>
@@ -2983,7 +2996,7 @@
 <span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a>          <span class="fu">grid.text</span>(<span class="fu">sprintf</span>(<span class="st">&quot;%.1f&quot;</span>, dt[i, j]), x, y, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">10</span>))</span>
 <span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a>        },<span class="at">cluster_rows =</span> F,<span class="at">cluster_columns =</span> F)</span>
 <span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: The input is a data frame, convert it to a matrix.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-42-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-42-1.svg" width="2400" /></p>
 <p>Then we can compare the ESccf between escape samples and no escape samples:</p>
 <div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>checkpoint_over <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/checkpoint_over.rds&quot;</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">type=</span><span class="fu">ifelse</span>(PDL1_over<span class="sc">==</span><span class="st">&quot;yes&quot;</span> <span class="sc">|</span> CTLA4_over<span class="sc">==</span><span class="st">&quot;yes&quot;</span>,<span class="st">&quot;yes&quot;</span>,<span class="st">&quot;no&quot;</span>))</span>
@@ -3012,7 +3025,7 @@
 <span id="cb66-25"><a href="#cb66-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
 <span id="cb66-26"><a href="#cb66-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_compare_means</span>()<span class="sc">+</span></span>
 <span id="cb66-27"><a href="#cb66-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-43-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-43-1.svg" width="2400" /></p>
 <p>We can get the simulation p value for pancancer and cancer types as previously described:</p>
 <div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>sim_all <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../../tmp/sim_2000_not_filter_all_ccf.rds&quot;</span>)</span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>sim_escape <span class="ot">&lt;-</span> sim_all <span class="sc">%&gt;%</span> </span>
@@ -3023,28 +3036,29 @@
 <span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>sim_escape <span class="sc">%&gt;%</span></span>
 <span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ1</span>
-<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>escape_summ <span class="ot">&lt;-</span> escape <span class="sc">%&gt;%</span> </span>
-<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
-<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>sim_escape <span class="sc">%&gt;%</span></span>
-<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
-<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
-<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ2, </span>
-<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
-<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(escape<span class="sc">$</span>es),</span>
-<span id="cb67-19"><a href="#cb67-19" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
-<span id="cb67-20"><a href="#cb67-20" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
-<span id="cb67-21"><a href="#cb67-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb67-22"><a href="#cb67-22" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
-<span id="cb67-23"><a href="#cb67-23" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb67-24"><a href="#cb67-24" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
-<span id="cb67-25"><a href="#cb67-25" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
-<span id="cb67-26"><a href="#cb67-26" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb67-27"><a href="#cb67-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
-<span id="cb67-28"><a href="#cb67-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
-<span id="cb67-29"><a href="#cb67-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">&quot;Density&quot;</span>)</span>
-<span id="cb67-30"><a href="#cb67-30" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-44-1.png" width="2400" /></p>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>escape_summ <span class="ot">&lt;-</span> escape <span class="sc">%&gt;%</span> </span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>sim_escape <span class="sc">%&gt;%</span></span>
+<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sim_num) <span class="sc">%&gt;%</span></span>
+<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ2</span>
+<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> WVPlots<span class="sc">::</span><span class="fu">ShadedDensity</span>(<span class="at">frame =</span> summ2, </span>
+<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>                            <span class="at">xvar =</span> <span class="st">&quot;median_es&quot;</span>,</span>
+<span id="cb67-19"><a href="#cb67-19" aria-hidden="true" tabindex="-1"></a>                            <span class="at">threshold =</span> <span class="fu">median</span>(escape<span class="sc">$</span>es),</span>
+<span id="cb67-20"><a href="#cb67-20" aria-hidden="true" tabindex="-1"></a>                            <span class="at">title =</span> <span class="st">&quot;&quot;</span>,</span>
+<span id="cb67-21"><a href="#cb67-21" aria-hidden="true" tabindex="-1"></a>                            <span class="at">tail =</span> <span class="st">&quot;left&quot;</span>)</span>
+<span id="cb67-22"><a href="#cb67-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-23"><a href="#cb67-23" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;red&quot;</span></span>
+<span id="cb67-24"><a href="#cb67-24" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">1</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb67-25"><a href="#cb67-25" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">2</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>fill <span class="ot">&lt;-</span> <span class="st">&quot;blue&quot;</span>     <span class="co">#geom_ribbon</span></span>
+<span id="cb67-26"><a href="#cb67-26" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>colour <span class="ot">&lt;-</span> <span class="st">&quot;black&quot;</span> </span>
+<span id="cb67-27"><a href="#cb67-27" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>layers[[<span class="dv">3</span>]]<span class="sc">$</span>aes_params<span class="sc">$</span>size <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb67-28"><a href="#cb67-28" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> p <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Simulation median es&quot;</span>)<span class="sc">+</span></span>
+<span id="cb67-29"><a href="#cb67-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
+<span id="cb67-30"><a href="#cb67-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">&quot;Density&quot;</span>)</span>
+<span id="cb67-31"><a href="#cb67-31" aria-hidden="true" tabindex="-1"></a>p1</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-44-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>noescape_summ <span class="ot">&lt;-</span> no_escape <span class="sc">%&gt;%</span> </span>
 <span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer) <span class="sc">%&gt;%</span> <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es))</span>
@@ -3066,33 +3080,34 @@
 <span id="cb68-19"><a href="#cb68-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
 <span id="cb68-20"><a href="#cb68-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">&quot;Density&quot;</span>)</span>
 <span id="cb68-21"><a href="#cb68-21" aria-hidden="true" tabindex="-1"></a>p2</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-44-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-44-2.svg" width="2400" /></p>
 <div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>sim_no_escape <span class="sc">%&gt;%</span></span>
 <span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cancer,sim_num) <span class="sc">%&gt;%</span></span>
 <span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median_es=</span><span class="fu">median</span>(es)) <span class="ot">-&gt;</span> summ4</span>
-<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the `.groups` argument.</span></span>
-<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>noescape_summ <span class="ot">&lt;-</span> noescape_summ <span class="sc">%&gt;%</span></span>
-<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p=</span><span class="fu">mean</span>(summ4<span class="sc">$</span>median_es[summ4<span class="sc">$</span>cancer<span class="sc">==</span>cancer] <span class="sc">&lt;=</span> median_es))</span>
-<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>escape_summ <span class="ot">&lt;-</span> escape_summ <span class="sc">%&gt;%</span></span>
-<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p=</span><span class="fu">mean</span>(summ1<span class="sc">$</span>median_es[summ1<span class="sc">$</span>cancer<span class="sc">==</span>cancer] <span class="sc">&lt;=</span> median_es))</span>
-<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a>escape <span class="ot">&lt;-</span> escape <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>p)</span>
-<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>no_escape <span class="ot">&lt;-</span> no_escape <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>p)</span>
-<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">get_f1</span>(escape,<span class="at">pancancer_p =</span> <span class="fl">0.13</span>,<span class="at">dt2 =</span> escape_summ,<span class="at">median_es =</span> <span class="fu">median</span>(escape<span class="sc">$</span>es))</span>
-<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `summarise()` has grouped output by &#39;cancer&#39;. You can override using the</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; `.groups` argument.</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>noescape_summ <span class="ot">&lt;-</span> noescape_summ <span class="sc">%&gt;%</span></span>
+<span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb69-10"><a href="#cb69-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p=</span><span class="fu">mean</span>(summ4<span class="sc">$</span>median_es[summ4<span class="sc">$</span>cancer<span class="sc">==</span>cancer] <span class="sc">&lt;=</span> median_es))</span>
+<span id="cb69-11"><a href="#cb69-11" aria-hidden="true" tabindex="-1"></a>escape_summ <span class="ot">&lt;-</span> escape_summ <span class="sc">%&gt;%</span></span>
+<span id="cb69-12"><a href="#cb69-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rowwise</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb69-13"><a href="#cb69-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p=</span><span class="fu">mean</span>(summ1<span class="sc">$</span>median_es[summ1<span class="sc">$</span>cancer<span class="sc">==</span>cancer] <span class="sc">&lt;=</span> median_es))</span>
+<span id="cb69-14"><a href="#cb69-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-15"><a href="#cb69-15" aria-hidden="true" tabindex="-1"></a>escape <span class="ot">&lt;-</span> escape <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>p)</span>
+<span id="cb69-16"><a href="#cb69-16" aria-hidden="true" tabindex="-1"></a>no_escape <span class="ot">&lt;-</span> no_escape <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>p)</span>
+<span id="cb69-17"><a href="#cb69-17" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> <span class="fu">get_f1</span>(escape,<span class="at">pancancer_p =</span> <span class="fl">0.13</span>,<span class="at">dt2 =</span> escape_summ,<span class="at">median_es =</span> <span class="fu">median</span>(escape<span class="sc">$</span>es))</span>
 <span id="cb69-18"><a href="#cb69-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
-<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-44-3.png" width="2400" /></p>
+<span id="cb69-19"><a href="#cb69-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
+<span id="cb69-20"><a href="#cb69-20" aria-hidden="true" tabindex="-1"></a>p3</span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-44-3.svg" width="2400" /></p>
 <div class="sourceCode" id="cb70"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> <span class="fu">get_f1</span>(no_escape,<span class="at">pancancer_p =</span> <span class="fl">0.034</span>,<span class="at">dt2 =</span> noescape_summ,<span class="at">median_es =</span> <span class="fu">median</span>(no_escape<span class="sc">$</span>es))</span>
 <span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Joining, by = &quot;cancer&quot;</span></span>
 <span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>p4</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-44-4.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-44-4.svg" width="2400" /></p>
 <p>The result shows that immune elimination signal can be detected in samples without escape signal, while in samples with immunoediting escape mechanisms this signal is much weaker. ESCCF values of patients without immune escape mechanisms are significantly lower than patients with immune escape mechanisms. This data is consistent with our previous observation that there is anti-correlation between immunoediting elimination and escape signal.</p>
 </div>
 <div id="ccf-distribution-analysis" class="section level2">
@@ -3114,7 +3129,7 @@
 <span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
 <span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y=</span><span class="st">&quot;Density&quot;</span>,<span class="at">x=</span><span class="st">&quot;CCF&quot;</span>)<span class="sc">+</span></span>
 <span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(. <span class="sc">~</span> cancer)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-45-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-45-1.svg" width="2400" /></p>
 <p>It is apparent that in many cancer types there are clear shift of CCF curves of neoantigenic mutations compared with non-neoantigenic mutations, and this difference highlight the immunoediting elimination signal quantified in this study.</p>
 </div>
 <div id="other-immune-cell-infiltration-quantification-methods" class="section level2">
@@ -3157,7 +3172,7 @@
 <span id="cb72-35"><a href="#cb72-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_prism</span>()<span class="sc">+</span></span>
 <span id="cb72-36"><a href="#cb72-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Escape&quot;</span>,<span class="at">y=</span><span class="st">&quot;NK / Treg&quot;</span>)</span>
 <span id="cb72-37"><a href="#cb72-37" aria-hidden="true" tabindex="-1"></a>(p1 <span class="sc">+</span>p2)<span class="sc">/</span>(p3<span class="sc">+</span>p4)</span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-46-1.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-46-1.svg" width="2400" /></p>
 <div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>immune <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">&quot;../data/infiltration_estimation_for_tcga.csv&quot;</span>,<span class="at">check.names =</span> F,<span class="at">data.table =</span> F) <span class="sc">%&gt;%</span></span>
 <span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">sample=</span>cell_type)</span>
@@ -3309,7 +3324,7 @@
 <span id="cb73-149"><a href="#cb73-149" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 65 rows containing non-finite values (stat_compare_means).</span></span>
 <span id="cb73-150"><a href="#cb73-150" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 88 rows containing non-finite values (stat_boxplot).</span></span>
 <span id="cb73-151"><a href="#cb73-151" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 88 rows containing non-finite values (stat_compare_means).</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-46-2.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-46-2.svg" width="2400" /></p>
 <div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>quantiseq <span class="ot">&lt;-</span> immune <span class="sc">%&gt;%</span> </span>
 <span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(sample,<span class="fu">ends_with</span>(<span class="st">&quot;QUANTISEQ&quot;</span>))</span>
@@ -3346,7 +3361,7 @@
 <span id="cb74-34"><a href="#cb74-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 65 rows containing non-finite values (stat_compare_means).</span></span>
 <span id="cb74-35"><a href="#cb74-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 88 rows containing non-finite values (stat_boxplot).</span></span>
 <span id="cb74-36"><a href="#cb74-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning: Removed 88 rows containing non-finite values (stat_compare_means).</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-46-3.png" width="2400" /></p>
+<p><img src="report_main_files/figure-html/unnamed-chunk-46-3.svg" width="2400" /></p>
 </div>
 <div id="comparison-with-other-biomarkers-of-ici" class="section level2">
 <h2>Comparison with other biomarkers of ICI</h2>
@@ -3627,75 +3642,78 @@
 <span id="cb75-274"><a href="#cb75-274" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(neo_nes,<span class="at">file =</span> <span class="st">&quot;../data/Immunotherapy/all_factors_ici.rds&quot;</span>)</span></code></pre></div>
 <p>Univariate Cox regression analysis was performed to estimate the hazard ratio (HR) associated with different factors:</p>
 <div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>neo_nes <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">&quot;../data/Immunotherapy/all_factors_ici.rds&quot;</span>)</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">show_forest</span>(neo_nes,<span class="at">covariates =</span> <span class="fu">c</span>(<span class="st">&quot;es&quot;</span>,<span class="fu">colnames</span>(neo_nes)[<span class="dv">7</span><span class="sc">:</span><span class="dv">10</span>],</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">colnames</span>(neo_nes)[<span class="dv">14</span><span class="sc">:</span><span class="dv">19</span>],</span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">colnames</span>(neo_nes)[<span class="dv">21</span><span class="sc">:</span><span class="dv">24</span>],<span class="st">&quot;UV&quot;</span>),</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a><span class="fu">show_forest</span>(neo_nes,<span class="at">covariates =</span> <span class="fu">c</span>(<span class="st">&quot;es&quot;</span>,<span class="fu">colnames</span>(neo_nes)[<span class="dv">6</span><span class="sc">:</span><span class="dv">9</span>],</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">colnames</span>(neo_nes)[<span class="dv">13</span><span class="sc">:</span><span class="dv">18</span>],</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>                                   <span class="fu">colnames</span>(neo_nes)[<span class="dv">20</span><span class="sc">:</span><span class="dv">23</span>],<span class="st">&quot;UV&quot;</span>),</span>
 <span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">time =</span> <span class="st">&quot;OS.time&quot;</span>,<span class="at">status =</span> <span class="st">&quot;OS&quot;</span>,<span class="at">merge_models =</span> T)</span>
 <span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable es</span></span>
 <span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable all_tmb</span></span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable response2</span></span>
 <span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable clonal_tmb</span></span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable all_tmb</span></span>
 <span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable indel_counts</span></span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable clonal_tmb</span></span>
 <span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable escape_nmd_indels</span></span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable indel_counts</span></span>
 <span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable SERPINB3_mut</span></span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable APOBEC</span></span>
 <span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD274</span></span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable SERPINB3_mut</span></span>
 <span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-32"><a href="#cb76-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-33"><a href="#cb76-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD38</span></span>
+<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD274</span></span>
 <span id="cb76-35"><a href="#cb76-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-36"><a href="#cb76-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-37"><a href="#cb76-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-38"><a href="#cb76-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD8A</span></span>
+<span id="cb76-38"><a href="#cb76-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD38</span></span>
 <span id="cb76-39"><a href="#cb76-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-40"><a href="#cb76-40" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-41"><a href="#cb76-41" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-42"><a href="#cb76-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CXCL13</span></span>
+<span id="cb76-42"><a href="#cb76-42" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CD8A</span></span>
 <span id="cb76-43"><a href="#cb76-43" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-44"><a href="#cb76-44" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-45"><a href="#cb76-45" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-46"><a href="#cb76-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CXCL9</span></span>
+<span id="cb76-46"><a href="#cb76-46" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable CXCL13</span></span>
 <span id="cb76-47"><a href="#cb76-47" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-48"><a href="#cb76-48" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-49"><a href="#cb76-49" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-50"><a href="#cb76-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable ayer_score</span></span>
+<span id="cb76-50"><a href="#cb76-50" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable PDCD1</span></span>
 <span id="cb76-51"><a href="#cb76-51" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-52"><a href="#cb76-52" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-53"><a href="#cb76-53" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-54"><a href="#cb76-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable IMPRES</span></span>
+<span id="cb76-54"><a href="#cb76-54" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable ayer_score</span></span>
 <span id="cb76-55"><a href="#cb76-55" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-56"><a href="#cb76-56" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-57"><a href="#cb76-57" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-58"><a href="#cb76-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable POPLAR_score</span></span>
+<span id="cb76-58"><a href="#cb76-58" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable IMPRES</span></span>
 <span id="cb76-59"><a href="#cb76-59" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-60"><a href="#cb76-60" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-61"><a href="#cb76-61" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
-<span id="cb76-62"><a href="#cb76-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable cyt</span></span>
+<span id="cb76-62"><a href="#cb76-62" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable POPLAR_score</span></span>
 <span id="cb76-63"><a href="#cb76-63" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-64"><a href="#cb76-64" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
 <span id="cb76-65"><a href="#cb76-65" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
 <span id="cb76-66"><a href="#cb76-66" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; =&gt; Processing variable UV</span></span>
 <span id="cb76-67"><a href="#cb76-67" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Surv object...</span></span>
 <span id="cb76-68"><a href="#cb76-68" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Building Cox model...</span></span>
-<span id="cb76-69"><a href="#cb76-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span></code></pre></div>
-<p><img src="report_main_files/figure-html/unnamed-chunk-48-1.png" width="2400" /></p>
+<span id="cb76-69"><a href="#cb76-69" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ==&gt; Done.</span></span>
+<span id="cb76-70"><a href="#cb76-70" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning in recalculate_width_panels(panel_positions, mapped_text =</span></span>
+<span id="cb76-71"><a href="#cb76-71" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; mapped_text, : Unable to resize forest panel to be smaller than its heading;</span></span>
+<span id="cb76-72"><a href="#cb76-72" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; consider a smaller text size</span></span></code></pre></div>
+<p><img src="report_main_files/figure-html/unnamed-chunk-48-1.svg" width="2400" /></p>
 <p>In this melanoma dataset, only ESCCF and UV signature show significant HR. These new data further validate the performance of ESCCF in immune checkpoint inhibitor therapy clinical response prediction.</p>
 </div>
 </div>

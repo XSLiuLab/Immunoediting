@@ -875,7 +875,7 @@ sim_2000$cancer <- get_cancer_type(sim_2000$sample,
 saveRDS(sim_2000,file = "../../tmp/sim_2000_filter_all_ccf_mhcfurry.rds")
 
 ##exp
-all_mut_exp <- readRDS("../data/another_method/all_mut_neo_exp.rds")
+all_mut_exp <- readRDS("../data/another_methods/all_mut_neo_exp.rds")
 all_mut_exp <- all_mut_exp %>% 
   rename(neo=neo_MHCfurry) %>% 
   rename(exp=tpm_exp)
@@ -936,11 +936,11 @@ cal_nes_warp <- function(dt){
   return(pancancer_nes_ccf)
 }
 nes_exp <- cal_nes_warp(neo_exp)
-saveRDS(nes_exp,file = "../data/another_method/es_exp_filter_driver_mhcfurry.rds")
+saveRDS(nes_exp,file = "../data/another_methods/es_exp_filter_driver_mhcfurry.rds")
 
-saveRDS(neo_exp,file = "../data/another_method/mut_call_exp_mhcfurry.rds")
+saveRDS(neo_exp,file = "../data/another_methods/mut_call_exp_mhcfurry.rds")
 ##sim
-neo_exp <- readRDS("../data/another_method/mut_call_exp_mhcfurry.rds")
+neo_exp <- readRDS("../data/another_methods/mut_call_exp_mhcfurry.rds")
 cal_nes_warp <- function(dt){
   results_ccf <- vector("list",length = length(unique(dt$sample)))
   names(results_ccf) <- unique(dt$sample)
@@ -984,7 +984,7 @@ Then we can get the simulation p values for MHCfurry dataset:
 
 ```{r}
 ##ccf mhcfurry
-neo_nes <- readRDS("../data/another_method/es_ccf_mhcfurry_filter_driver.rds")
+neo_nes <- readRDS("../data/another_methods/es_ccf_mhcfurry_filter_driver.rds")
 sim_all <- readRDS("../../tmp/sim_2000_filter_all_ccf_mhcfurry.rds")
 sim_all %>%
   group_by(cancer,sim_num) %>%
@@ -1010,7 +1010,7 @@ p$layers[[3]]$aes_params$size <- 1
 p1 <- p + labs(x="Simulation median es")+
   theme_prism()
 ###exp mhcfurry
-neo_nes <- readRDS("../data/another_method/es_exp_filter_driver_mhcfurry.rds")
+neo_nes <- readRDS("../data/another_methods/es_exp_filter_driver_mhcfurry.rds")
 sim_all <- readRDS("../../tmp/sim_2000_filter_all_exp_mhcfurry.rds")
 sim_all %>%
   group_by(cancer,sim_num) %>%
@@ -1692,9 +1692,9 @@ Univariate Cox regression analysis was performed to estimate the hazard ratio (H
 
 ```{r}
 neo_nes <- readRDS("../data/Immunotherapy/all_factors_ici.rds")
-show_forest(neo_nes,covariates = c("es",colnames(neo_nes)[7:10],
-                                   colnames(neo_nes)[14:19],
-                                   colnames(neo_nes)[21:24],"UV"),
+show_forest(neo_nes,covariates = c("es",colnames(neo_nes)[6:9],
+                                   colnames(neo_nes)[13:18],
+                                   colnames(neo_nes)[20:23],"UV"),
             time = "OS.time",status = "OS",merge_models = T)
 ```
 
