@@ -1685,6 +1685,13 @@ neo_nes <- left_join(
   left_join(.,cyt_ici)
 colnames(neo_nes)
 
+##add rna
+neo_nes_exp <- readRDS("../data/Immunotherapy/nes_immunetherapy_exp.rds")
+neo_nes <- left_join(
+  neo_nes,
+  neo_nes_exp %>% select(sample,es) %>% rename(es_exp=es)
+) 
+
 saveRDS(neo_nes,file = "../data/Immunotherapy/all_factors_ici.rds")
 ```
 
@@ -1692,9 +1699,9 @@ Univariate Cox regression analysis was performed to estimate the hazard ratio (H
 
 ```{r}
 neo_nes <- readRDS("../data/Immunotherapy/all_factors_ici.rds")
-show_forest(neo_nes,covariates = c("es",colnames(neo_nes)[6:9],
-                                   colnames(neo_nes)[13:18],
-                                   colnames(neo_nes)[20:23],"UV"),
+show_forest(neo_nes,covariates = c("es","es_exp",colnames(neo_nes)[7:10],
+                                   colnames(neo_nes)[14:19],
+                                   colnames(neo_nes)[21:24],"UV"),
             time = "OS.time",status = "OS",merge_models = T)
 ```
 
