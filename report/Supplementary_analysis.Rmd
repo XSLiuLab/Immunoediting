@@ -279,17 +279,17 @@ liu_clinical <- readRDS("../data/Immunotherapy/liu_clinical.rds") %>%
 liu <- read.maf(maf = liu_mutations,
                 clinicalData = liu_clinical,
                 verbose = FALSE)
-oncoplot(maf = liu,top=10,draw_titv = TRUE)
+oncoplot(maf = liu,top=10,draw_titv = TRUE,showTitle = FALSE,removeNonMutated=T)
 
 ##willy
 files <- list.files("../data/Immunotherapy/willy/",full.names = T)
 willy_maf <- merge_mafs(mafs = files)
-oncoplot(maf = willy_maf,top=10,draw_titv = TRUE)
+oncoplot(maf = willy_maf,top=10,draw_titv = TRUE,showTitle = FALSE,removeNonMutated=T)
 
 ###nadeem
 files <- list.files("../data/Immunotherapy/nadeem/",full.names = T)
 nadeem_maf <- merge_mafs(mafs=files)
-oncoplot(maf = nadeem_maf,top=10,draw_titv = TRUE)
+oncoplot(maf = nadeem_maf,top=10,draw_titv = TRUE,showTitle = FALSE,removeNonMutated=T)
 ```
 
 ## Robust of method
