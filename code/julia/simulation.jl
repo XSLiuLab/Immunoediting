@@ -176,7 +176,7 @@ mu = 1
 pesc = 1e-6
 
 s=<s>
-for i=1:200
+for i=1:100
     Nvec, tvec, mutID, cells = birthdeath_neoep(b0, d0, popSize, p, initial_mut, mu,pesc);
     outNDFsim = DataFrame(t=tvec, N=Nvec)
     CSV.write("/public/slst/home/wutao2/julia_simulation/out/minus_"*string(-s)*"/preIT_"*string(i)*".txt", outNDFsim)
