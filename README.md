@@ -34,6 +34,16 @@ This repository provides the analysis reports, code and data for readers who are
 
 ## Citation
 
+Wu T, Wang G, Wang X, et al. Quantification of neoantigen-mediated immunoediting in cancer evolution[J]. Cancer research, 2022: canres. 3717.2021.
+
 ## Acknowledgement
 
+We thank ShanghaiTech University High Performance Computing Public Service Platform for computing services.This work was supported by Shanghai Science and Technology Commission (21ZR1442400), the National Natural Science Foundation of China (31771373), and startup funding from ShanghaiTech University.
+
 ## License
+
+***
+
+**Cancer Biology Group @ShanghaiTech**
+
+**Research group led by Xue-Song Liu in ShanghaiTech University**
